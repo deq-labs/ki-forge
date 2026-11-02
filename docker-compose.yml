@@ -1,0 +1,55 @@
+# Postgres for local dev:           docker compose up -d db
+# API + worker (personal trial):   docker compose --profile full up -d
+# Python commands (tests, alembic): docker compose run --rm api uv run pytest
+#   Python runs only in containers: Windows Smart App Control blocks native wheels in a host venv.
+
+x-api: &api
+  build:
+    context: .
+    dockerfile: services/api/Dockerfile
+  image: kiforge-api:dev
+  profiles: ["full"]
+  environment:
+    DATABASE_URL: postgresql+psycopg://kiforge:kiforge@db:5432/kiforge
+    APP_ENV: local
+  volumes:
+    # Live source for dev; the venv lives at /opt/venv inside the image.
+    - ./services/api:/app/services/api
+    - ./db:/app/db:ro
+    - ./fixtures:/app/fixtures:ro
+  depends_on:
+    db:
+      condition: service_healthy
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: kiforge
+      POSTGRES_PASSWORD: kiforge
+      POSTGRES_DB: kiforge
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kiforge -d kiforge"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  api:
+    <<: *api
+    command: ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
+    ports:
+      - "8000:8000"
+
+  worker:
+    <<: *api
+    command: ["python", "-m", "app.worker"]
+    depends_on:
+      api:
+        condition: service_started
+
+volumes:
+  pgdata:
