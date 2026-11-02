@@ -1,0 +1,1344 @@
+{
+  "program": {
+    "slug": "ki-forge-core",
+    "version": 1,
+    "name": "Ki Forge Core Arc",
+    "cycle_weeks": 84
+  },
+  "exercises": [
+    {
+      "slug": "band-face-pull",
+      "name": "Band face pull",
+      "equipment": [
+        "band"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "band-lat-pulldown",
+      "name": "Band lat pulldown",
+      "equipment": [
+        "band"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "band-lateral-raise",
+      "name": "Band lateral raise",
+      "equipment": [
+        "band"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "band-overhead-extension",
+      "name": "Band overhead extension",
+      "equipment": [
+        "band"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "band-seated-row",
+      "name": "Band seated row",
+      "equipment": [
+        "band"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "barbell-back-squat",
+      "name": "Barbell back squat",
+      "equipment": [
+        "barbell",
+        "rack"
+      ],
+      "increment_lb": 10,
+      "is_timed": false,
+      "needs_garage_space": true,
+      "swap": "x3-bar-squat"
+    },
+    {
+      "slug": "barbell-row",
+      "name": "Barbell row",
+      "equipment": [
+        "barbell"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": "one-arm-dumbbell-row"
+    },
+    {
+      "slug": "barbell-shrug",
+      "name": "Barbell shrug",
+      "equipment": [
+        "barbell"
+      ],
+      "increment_lb": 10,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": "dumbbell-shrug"
+    },
+    {
+      "slug": "behind-the-back-shrug",
+      "name": "Behind-the-back shrug",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "brisk-outdoor-walk",
+      "name": "Brisk outdoor walk",
+      "equipment": [],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "bulgarian-split-squat",
+      "name": "Bulgarian split squat",
+      "equipment": [
+        "dumbbell",
+        "bench"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "cable-face-pull",
+      "name": "Cable face pull",
+      "equipment": [
+        "cable"
+      ],
+      "increment_lb": 2.5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": "band-face-pull"
+    },
+    {
+      "slug": "cable-lateral-raise-drop-set",
+      "name": "Cable lateral raise drop set",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "cable-woodchop",
+      "name": "Cable woodchop",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "conventional-deadlift",
+      "name": "Conventional deadlift",
+      "equipment": [
+        "barbell"
+      ],
+      "increment_lb": 10,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": "x3-bar-deadlift"
+    },
+    {
+      "slug": "deficit-push-ups",
+      "name": "Deficit push-ups",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "dips",
+      "name": "Dips",
+      "equipment": [
+        "dip-station"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": "deficit-push-ups"
+    },
+    {
+      "slug": "dumbbell-romanian-deadlift",
+      "name": "Dumbbell Romanian deadlift",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "dumbbell-shrug",
+      "name": "Dumbbell shrug",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "dumbbell-standing-press",
+      "name": "Dumbbell standing press",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "easy-rower-20-min",
+      "name": "Easy rower 20 min",
+      "equipment": [],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "easy-rower-or-incline-treadmill-walk",
+      "name": "Easy rower or incline treadmill walk",
+      "equipment": [
+        "rower",
+        "treadmill"
+      ],
+      "increment_lb": 5,
+      "is_timed": true,
+      "needs_garage_space": true,
+      "swap": "brisk-outdoor-walk"
+    },
+    {
+      "slug": "farmer-carry",
+      "name": "Farmer carry",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 5,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "goblet-squat",
+      "name": "Goblet squat",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "hammer-curl",
+      "name": "Hammer curl",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 2.5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "hanging-knee-or-leg-raise",
+      "name": "Hanging knee or leg raise",
+      "equipment": [
+        "pull-up-bar"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": "lying-leg-raise"
+    },
+    {
+      "slug": "heavy-farmer-hold",
+      "name": "Heavy farmer hold",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "incline-dumbbell-curl",
+      "name": "Incline dumbbell curl",
+      "equipment": [
+        "dumbbell",
+        "bench"
+      ],
+      "increment_lb": 2.5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "incline-dumbbell-press",
+      "name": "Incline dumbbell press",
+      "equipment": [
+        "dumbbell",
+        "bench"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "jump-rope-or-burpee-intervals",
+      "name": "Jump rope or burpee intervals",
+      "equipment": [],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "l-sit-hold",
+      "name": "L-sit hold",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "lateral-raise",
+      "name": "Lateral raise",
+      "equipment": [
+        "dumbbell",
+        "cable"
+      ],
+      "increment_lb": 2.5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": "band-lateral-raise"
+    },
+    {
+      "slug": "lateral-raise-light",
+      "name": "Lateral raise light",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 2.5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": "band-lateral-raise"
+    },
+    {
+      "slug": "lying-leg-raise",
+      "name": "Lying leg raise",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "one-arm-dumbbell-row",
+      "name": "One-arm dumbbell row",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "overhead-cable-triceps-extension",
+      "name": "Overhead cable triceps extension",
+      "equipment": [
+        "cable"
+      ],
+      "increment_lb": 2.5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": "band-overhead-extension"
+    },
+    {
+      "slug": "paused-back-squat",
+      "name": "Paused back squat",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "pistol-squat-progression",
+      "name": "Pistol squat progression",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "pull-up",
+      "name": "Pull-up",
+      "equipment": [
+        "pull-up-bar"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": true,
+      "swap": "band-lat-pulldown"
+    },
+    {
+      "slug": "rear-delt-dumbbell-fly",
+      "name": "Rear-delt dumbbell fly",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 2.5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "romanian-deadlift",
+      "name": "Romanian deadlift",
+      "equipment": [
+        "barbell"
+      ],
+      "increment_lb": 10,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": "dumbbell-romanian-deadlift"
+    },
+    {
+      "slug": "rower-5-500-m",
+      "name": "Rower 5 × 500 m",
+      "equipment": [],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "rower-intervals-8-250-m",
+      "name": "Rower intervals 8 × 250 m",
+      "equipment": [],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "seated-cable-row",
+      "name": "Seated cable row",
+      "equipment": [
+        "cable"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": "band-seated-row"
+    },
+    {
+      "slug": "seated-dumbbell-press",
+      "name": "Seated dumbbell press",
+      "equipment": [
+        "dumbbell",
+        "bench"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "standing-barbell-overhead-press",
+      "name": "Standing barbell overhead press",
+      "equipment": [
+        "barbell",
+        "rack"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": true,
+      "swap": "dumbbell-standing-press"
+    },
+    {
+      "slug": "standing-calf-raise",
+      "name": "Standing calf raise",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "towel-pull-up-hang",
+      "name": "Towel pull-up hang",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "treadmill-hill-sprints-10-20-s",
+      "name": "Treadmill hill sprints 10 × 20 s",
+      "equipment": [],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "walking-lunge",
+      "name": "Walking lunge",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "x3-bar-deadlift",
+      "name": "X3 bar deadlift",
+      "equipment": [
+        "x3"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
+      "slug": "x3-bar-squat",
+      "name": "X3 bar squat",
+      "equipment": [
+        "x3"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    }
+  ],
+  "paths": [
+    {
+      "slug": "storm",
+      "name": "Storm Fighter",
+      "tagline": "V-taper martial artist",
+      "build": "Wide shoulders, heavy traps, big arms.",
+      "ratio_target": 1.6,
+      "colors": {
+        "primary": "#ff7a1a",
+        "secondary": "#ffd23f"
+      },
+      "emphasis": {
+        "delts": 95,
+        "back": 85,
+        "arms": 85,
+        "legs": 60,
+        "engine": 60
+      },
+      "techniques": [
+        {
+          "exercise": "cable-lateral-raise-drop-set",
+          "name": "Cable lateral raise drop set",
+          "sets": 2,
+          "rep_min": 12,
+          "rep_max": 12,
+          "note": "12 + 12 drop set"
+        },
+        {
+          "exercise": "behind-the-back-shrug",
+          "name": "Behind-the-back shrug",
+          "sets": 2,
+          "rep_min": 12,
+          "rep_max": 15
+        }
+      ],
+      "conditioning": "Rower intervals 8 × 250 m",
+      "conditioning_exercise": "rower-intervals-8-250-m"
+    },
+    {
+      "slug": "shadow",
+      "name": "Shadow Runner",
+      "tagline": "Lean, quick, calisthenics",
+      "build": "Light on the feet, visible abs, strong for bodyweight.",
+      "ratio_target": 1.45,
+      "colors": {
+        "primary": "#4fd8ff",
+        "secondary": "#a68bff"
+      },
+      "emphasis": {
+        "delts": 65,
+        "back": 75,
+        "arms": 60,
+        "legs": 75,
+        "engine": 95
+      },
+      "techniques": [
+        {
+          "exercise": "pistol-squat-progression",
+          "name": "Pistol squat progression",
+          "sets": 3,
+          "rep_min": 5,
+          "rep_max": 5,
+          "note": "per leg"
+        },
+        {
+          "exercise": "l-sit-hold",
+          "name": "L-sit hold",
+          "sets": 3,
+          "rep_min": 1,
+          "rep_max": 1,
+          "note": "15–30 s hold; done = 1"
+        }
+      ],
+      "conditioning": "Treadmill hill sprints 10 × 20 s",
+      "conditioning_exercise": "treadmill-hill-sprints-10-20-s"
+    },
+    {
+      "slug": "titan",
+      "name": "Titan Breaker",
+      "tagline": "Mass and raw strength",
+      "build": "Thick everywhere, moves heavy weight.",
+      "ratio_target": 1.5,
+      "colors": {
+        "primary": "#ff4d6d",
+        "secondary": "#ff9e5e"
+      },
+      "emphasis": {
+        "delts": 80,
+        "back": 90,
+        "arms": 80,
+        "legs": 95,
+        "engine": 40
+      },
+      "techniques": [
+        {
+          "exercise": "paused-back-squat",
+          "name": "Paused back squat",
+          "sets": 3,
+          "rep_min": 3,
+          "rep_max": 3
+        },
+        {
+          "exercise": "heavy-farmer-hold",
+          "name": "Heavy farmer hold",
+          "sets": 3,
+          "rep_min": 1,
+          "rep_max": 1,
+          "note": "30 s hold; done = 1"
+        }
+      ],
+      "conditioning": "Easy rower 20 min",
+      "conditioning_exercise": "easy-rower-20-min"
+    },
+    {
+      "slug": "blade",
+      "name": "Blade Master",
+      "tagline": "Athletic swordsman",
+      "build": "Iron grip, rotational core, lean arms.",
+      "ratio_target": 1.5,
+      "colors": {
+        "primary": "#5ee0a0",
+        "secondary": "#d4ff6a"
+      },
+      "emphasis": {
+        "delts": 70,
+        "back": 80,
+        "arms": 75,
+        "legs": 70,
+        "engine": 80
+      },
+      "techniques": [
+        {
+          "exercise": "cable-woodchop",
+          "name": "Cable woodchop",
+          "sets": 3,
+          "rep_min": 12,
+          "rep_max": 12,
+          "note": "per side"
+        },
+        {
+          "exercise": "towel-pull-up-hang",
+          "name": "Towel pull-up hang",
+          "sets": 3,
+          "rep_min": 1,
+          "rep_max": 1,
+          "note": "max hold; done = 1"
+        }
+      ],
+      "conditioning": "Rower 5 × 500 m",
+      "conditioning_exercise": "rower-5-500-m"
+    }
+  ],
+  "phases": [
+    {
+      "ord": 0,
+      "name": "Trial 0",
+      "kind": "trial",
+      "start_week": 0,
+      "end_week": 0,
+      "rir_target": null,
+      "calorie_mode": "maintenance",
+      "deload_every": null,
+      "modifiers": {}
+    },
+    {
+      "ord": 1,
+      "name": "Foundation",
+      "kind": "phase",
+      "start_week": 1,
+      "end_week": 8,
+      "rir_target": 3,
+      "calorie_mode": "maintenance",
+      "deload_every": null,
+      "modifiers": {
+        "main_lift_scheme": {
+          "sets": 3,
+          "rep_min": 8,
+          "rep_max": 10
+        }
+      }
+    },
+    {
+      "ord": 2,
+      "name": "Trial I",
+      "kind": "trial",
+      "start_week": 9,
+      "end_week": 9,
+      "rir_target": null,
+      "calorie_mode": "maintenance",
+      "deload_every": null,
+      "modifiers": {}
+    },
+    {
+      "ord": 3,
+      "name": "Build",
+      "kind": "phase",
+      "start_week": 10,
+      "end_week": 25,
+      "rir_target": 2,
+      "calorie_mode": "surplus",
+      "deload_every": 6,
+      "modifiers": {}
+    },
+    {
+      "ord": 4,
+      "name": "Trial II",
+      "kind": "trial",
+      "start_week": 26,
+      "end_week": 26,
+      "rir_target": null,
+      "calorie_mode": "surplus",
+      "deload_every": null,
+      "modifiers": {}
+    },
+    {
+      "ord": 5,
+      "name": "Strength",
+      "kind": "phase",
+      "start_week": 27,
+      "end_week": 38,
+      "rir_target": 2,
+      "calorie_mode": "surplus",
+      "deload_every": 5,
+      "modifiers": {
+        "main_lift_scheme": {
+          "sets": 5,
+          "rep_min": 3,
+          "rep_max": 5
+        },
+        "main_lift_rir": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "ord": 6,
+      "name": "Trial III",
+      "kind": "trial",
+      "start_week": 39,
+      "end_week": 39,
+      "rir_target": null,
+      "calorie_mode": "surplus",
+      "deload_every": null,
+      "modifiers": {}
+    },
+    {
+      "ord": 7,
+      "name": "Specialization",
+      "display_name_template": "{path} Specialization",
+      "kind": "phase",
+      "start_week": 40,
+      "end_week": 67,
+      "rir_target": 2,
+      "calorie_mode": "surplus",
+      "deload_every": 6,
+      "modifiers": {
+        "extra_sets": {
+          "lateral-raise": 2,
+          "lateral-raise-light": 2,
+          "barbell-shrug": 2,
+          "incline-dumbbell-curl": 2,
+          "hammer-curl": 2
+        },
+        "optional_day": {
+          "day_of_week": 6,
+          "name": "Specialization 5th day",
+          "prescriptions": [
+            {
+              "exercise": "lateral-raise",
+              "sets": 4,
+              "rep_min": 12,
+              "rep_max": 20
+            },
+            {
+              "exercise": "cable-face-pull",
+              "sets": 3,
+              "rep_min": 15,
+              "rep_max": 15
+            },
+            {
+              "exercise": "barbell-shrug",
+              "sets": 3,
+              "rep_min": 10,
+              "rep_max": 15
+            },
+            {
+              "exercise": "hammer-curl",
+              "sets": 3,
+              "rep_min": 10,
+              "rep_max": 15,
+              "superset_group": "A"
+            },
+            {
+              "exercise": "overhead-cable-triceps-extension",
+              "sets": 3,
+              "rep_min": 10,
+              "rep_max": 15,
+              "superset_group": "A"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "ord": 8,
+      "name": "Trial IV",
+      "kind": "trial",
+      "start_week": 68,
+      "end_week": 68,
+      "rir_target": null,
+      "calorie_mode": "surplus",
+      "deload_every": null,
+      "modifiers": {}
+    },
+    {
+      "ord": 9,
+      "name": "Reveal",
+      "kind": "phase",
+      "start_week": 69,
+      "end_week": 82,
+      "rir_target": 2,
+      "calorie_mode": "deficit",
+      "deload_every": null,
+      "modifiers": {
+        "extra_conditioning_sessions": 1,
+        "diet_break_week": 76,
+        "progression": "hold_weights"
+      }
+    },
+    {
+      "ord": 10,
+      "name": "Final Trial",
+      "kind": "trial",
+      "start_week": 83,
+      "end_week": 83,
+      "rir_target": null,
+      "calorie_mode": "maintenance",
+      "deload_every": null,
+      "modifiers": {
+        "next": "cycle 2 restarts at Build with heavier weights"
+      }
+    }
+  ],
+  "session_templates": [
+    {
+      "code": "upper_a",
+      "name": "Push & Shoulders",
+      "short": "Upper A",
+      "kind": "lift",
+      "day_of_week": 1,
+      "gets_path_techniques": true,
+      "required_for_full_week": true,
+      "prescriptions": [
+        {
+          "exercise": "standing-barbell-overhead-press",
+          "sets": 4,
+          "rep_min": 6,
+          "rep_max": 8,
+          "rest_seconds": 150,
+          "is_main_lift": true
+        },
+        {
+          "exercise": "incline-dumbbell-press",
+          "sets": 3,
+          "rep_min": 8,
+          "rep_max": 12,
+          "rest_seconds": 120,
+          "is_main_lift": false
+        },
+        {
+          "exercise": "lateral-raise",
+          "sets": 4,
+          "rep_min": 12,
+          "rep_max": 20,
+          "rest_seconds": 60,
+          "is_main_lift": false,
+          "superset_group": "A"
+        },
+        {
+          "exercise": "cable-face-pull",
+          "sets": 3,
+          "rep_min": 15,
+          "rep_max": 20,
+          "rest_seconds": 60,
+          "is_main_lift": false,
+          "superset_group": "A"
+        },
+        {
+          "exercise": "dips",
+          "sets": 3,
+          "rep_min": 8,
+          "rep_max": 12,
+          "rest_seconds": 90,
+          "is_main_lift": false,
+          "note": "max reps, stop 1–2 short of failure; top reps 12 for on-target"
+        },
+        {
+          "exercise": "overhead-cable-triceps-extension",
+          "sets": 3,
+          "rep_min": 10,
+          "rep_max": 15,
+          "rest_seconds": 60,
+          "is_main_lift": false
+        }
+      ]
+    },
+    {
+      "code": "lower_a",
+      "name": "Squat Focus",
+      "short": "Lower A",
+      "kind": "lift",
+      "day_of_week": 2,
+      "gets_path_techniques": false,
+      "required_for_full_week": true,
+      "prescriptions": [
+        {
+          "exercise": "barbell-back-squat",
+          "sets": 4,
+          "rep_min": 6,
+          "rep_max": 8,
+          "rest_seconds": 180,
+          "is_main_lift": true
+        },
+        {
+          "exercise": "romanian-deadlift",
+          "sets": 3,
+          "rep_min": 8,
+          "rep_max": 10,
+          "rest_seconds": 120,
+          "is_main_lift": false
+        },
+        {
+          "exercise": "bulgarian-split-squat",
+          "sets": 3,
+          "rep_min": 8,
+          "rep_max": 12,
+          "rest_seconds": 90,
+          "is_main_lift": false,
+          "note": "per leg"
+        },
+        {
+          "exercise": "standing-calf-raise",
+          "sets": 3,
+          "rep_min": 12,
+          "rep_max": 15,
+          "rest_seconds": 60,
+          "is_main_lift": false,
+          "superset_group": "A"
+        },
+        {
+          "exercise": "hanging-knee-or-leg-raise",
+          "sets": 3,
+          "rep_min": 10,
+          "rep_max": 15,
+          "rest_seconds": 60,
+          "is_main_lift": false,
+          "superset_group": "A"
+        }
+      ]
+    },
+    {
+      "code": "engine",
+      "name": "Conditioning",
+      "short": "Engine",
+      "kind": "conditioning",
+      "day_of_week": 3,
+      "gets_path_techniques": false,
+      "required_for_full_week": true,
+      "prescriptions": [
+        {
+          "exercise": "PATH_CONDITIONING",
+          "sets": 1,
+          "rep_min": 1,
+          "rep_max": 1,
+          "rest_seconds": 0,
+          "is_main_lift": false,
+          "garage_swap": "jump-rope-or-burpee-intervals",
+          "note": "content comes from the active path; logged as done = 1"
+        }
+      ]
+    },
+    {
+      "code": "upper_b",
+      "name": "Pull & Arms",
+      "short": "Upper B",
+      "kind": "lift",
+      "day_of_week": 4,
+      "gets_path_techniques": true,
+      "required_for_full_week": true,
+      "prescriptions": [
+        {
+          "exercise": "pull-up",
+          "sets": 4,
+          "rep_min": 5,
+          "rep_max": 8,
+          "rest_seconds": 150,
+          "is_main_lift": true,
+          "note": "add weight once 10+ strict reps"
+        },
+        {
+          "exercise": "barbell-row",
+          "sets": 3,
+          "rep_min": 8,
+          "rep_max": 10,
+          "rest_seconds": 120,
+          "is_main_lift": false
+        },
+        {
+          "exercise": "seated-cable-row",
+          "sets": 3,
+          "rep_min": 10,
+          "rep_max": 12,
+          "rest_seconds": 90,
+          "is_main_lift": false
+        },
+        {
+          "exercise": "barbell-shrug",
+          "sets": 4,
+          "rep_min": 10,
+          "rep_max": 15,
+          "rest_seconds": 60,
+          "is_main_lift": false
+        },
+        {
+          "exercise": "incline-dumbbell-curl",
+          "sets": 3,
+          "rep_min": 8,
+          "rep_max": 12,
+          "rest_seconds": 60,
+          "is_main_lift": false,
+          "superset_group": "A"
+        },
+        {
+          "exercise": "rear-delt-dumbbell-fly",
+          "sets": 3,
+          "rep_min": 15,
+          "rep_max": 20,
+          "rest_seconds": 60,
+          "is_main_lift": false,
+          "superset_group": "A"
+        },
+        {
+          "exercise": "hammer-curl",
+          "sets": 2,
+          "rep_min": 10,
+          "rep_max": 15,
+          "rest_seconds": 60,
+          "is_main_lift": false
+        }
+      ]
+    },
+    {
+      "code": "lower_b",
+      "name": "Hinge & Shoulders",
+      "short": "Lower B",
+      "kind": "lift",
+      "day_of_week": 5,
+      "gets_path_techniques": false,
+      "required_for_full_week": true,
+      "prescriptions": [
+        {
+          "exercise": "conventional-deadlift",
+          "sets": 3,
+          "rep_min": 4,
+          "rep_max": 6,
+          "rest_seconds": 180,
+          "is_main_lift": true
+        },
+        {
+          "exercise": "goblet-squat",
+          "sets": 3,
+          "rep_min": 8,
+          "rep_max": 10,
+          "rest_seconds": 120,
+          "is_main_lift": false
+        },
+        {
+          "exercise": "walking-lunge",
+          "sets": 2,
+          "rep_min": 10,
+          "rep_max": 10,
+          "rest_seconds": 90,
+          "is_main_lift": false,
+          "note": "per leg"
+        },
+        {
+          "exercise": "seated-dumbbell-press",
+          "sets": 3,
+          "rep_min": 10,
+          "rep_max": 12,
+          "rest_seconds": 60,
+          "is_main_lift": false,
+          "superset_group": "A"
+        },
+        {
+          "exercise": "lateral-raise-light",
+          "sets": 3,
+          "rep_min": 15,
+          "rep_max": 25,
+          "rest_seconds": 60,
+          "is_main_lift": false,
+          "superset_group": "A"
+        },
+        {
+          "exercise": "farmer-carry",
+          "sets": 3,
+          "rep_min": 1,
+          "rep_max": 1,
+          "rest_seconds": 90,
+          "is_main_lift": false,
+          "note": "40 m per set; logged as done = 1"
+        }
+      ]
+    },
+    {
+      "code": "easy_cardio",
+      "name": "Easy Cardio",
+      "short": "Easy Cardio",
+      "kind": "conditioning",
+      "day_of_week": 6,
+      "gets_path_techniques": false,
+      "required_for_full_week": false,
+      "prescriptions": [
+        {
+          "exercise": "easy-rower-or-incline-treadmill-walk",
+          "sets": 1,
+          "rep_min": 1,
+          "rep_max": 1,
+          "rest_seconds": 0,
+          "is_main_lift": false,
+          "note": "20–30 min conversational pace; logged as done = 1"
+        }
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "type": "pullups_max",
+      "label": "Strict pull-ups",
+      "unit": "reps",
+      "how": "Max reps, dead hang, chin over bar"
+    },
+    {
+      "type": "pushups_max",
+      "label": "Push-ups",
+      "unit": "reps",
+      "how": "Max reps in one set, chest to a fist-height target"
+    },
+    {
+      "type": "row_2k_seconds",
+      "label": "2,000 m row",
+      "unit": "seconds",
+      "how": "Damper 4–6; 8:30 = 510"
+    },
+    {
+      "type": "press_5rm_lb",
+      "label": "Overhead press 5RM",
+      "unit": "lb",
+      "how": "Work up to a 5-rep max with good form, RIR 1"
+    },
+    {
+      "type": "squat_5rm_lb",
+      "label": "Back squat 5RM",
+      "unit": "lb",
+      "how": "Same"
+    },
+    {
+      "type": "deadlift_5rm_lb",
+      "label": "Deadlift 5RM",
+      "unit": "lb",
+      "how": "Same"
+    },
+    {
+      "type": "bodyweight_lb",
+      "label": "Bodyweight",
+      "unit": "lb",
+      "how": "Average of 3 mornings"
+    },
+    {
+      "type": "shoulders_in",
+      "label": "Shoulders",
+      "unit": "in",
+      "how": "Tape at the widest point of the delts, arms relaxed"
+    },
+    {
+      "type": "waist_in",
+      "label": "Waist",
+      "unit": "in",
+      "how": "Tape at the navel, relaxed, morning"
+    }
+  ],
+  "badges": [
+    {
+      "slug": "first-blood",
+      "name": "First Blood",
+      "description": "Clear a session",
+      "xp_reward": 75,
+      "rule": {
+        "metric": "sessions_cleared",
+        "gte": 1
+      }
+    },
+    {
+      "slug": "week-warrior",
+      "name": "Week Warrior",
+      "description": "Clear all 5 required quests in a week",
+      "xp_reward": 75,
+      "rule": {
+        "metric": "full_weeks",
+        "gte": 1
+      }
+    },
+    {
+      "slug": "garage-grinder",
+      "name": "Garage Grinder",
+      "description": "Clear a session in garage mode",
+      "xp_reward": 75,
+      "rule": {
+        "metric": "garage_sessions_cleared",
+        "gte": 1
+      }
+    },
+    {
+      "slug": "power-reading",
+      "name": "Power Reading",
+      "description": "Log a progress scan",
+      "xp_reward": 75,
+      "rule": {
+        "metric": "scans",
+        "gte": 1
+      }
+    },
+    {
+      "slug": "warrior-rank",
+      "name": "Warrior Rank",
+      "description": "Reach level 10",
+      "xp_reward": 75,
+      "rule": {
+        "metric": "level",
+        "gte": 10
+      }
+    },
+    {
+      "slug": "golden-frame",
+      "name": "Golden Frame",
+      "description": "Reach your path's frame target",
+      "xp_reward": 75,
+      "rule": {
+        "metric": "frame_ratio_vs_target",
+        "gte": 0
+      }
+    }
+  ],
+  "ranks": [
+    {
+      "from_level": 1,
+      "name": "Rookie"
+    },
+    {
+      "from_level": 5,
+      "name": "Fighter"
+    },
+    {
+      "from_level": 10,
+      "name": "Warrior"
+    },
+    {
+      "from_level": 15,
+      "name": "Elite"
+    },
+    {
+      "from_level": 20,
+      "name": "Ascended"
+    },
+    {
+      "from_level": 25,
+      "name": "Ascended II"
+    },
+    {
+      "from_level": 30,
+      "name": "Mythic"
+    }
+  ]
+}

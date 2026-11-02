@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  js:
+    name: Lint, typecheck, generated tokens
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -w lint
+      - run: pnpm -w typecheck
+      - name: Generated tokens are up to date
+        run: |
+          pnpm gen:tokens
+          git diff --exit-code -- apps/mobile/src/theme/tokens.ts
+
+  api:
+    name: Ruff, migrations, pytest
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: kiforge
+          POSTGRES_PASSWORD: kiforge
+          POSTGRES_DB: kiforge
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U kiforge -d kiforge"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+    env:
+      DATABASE_URL: postgresql+psycopg://kiforge:kiforge@localhost:5432/kiforge
+      APP_ENV: test
+    defaults:
+      run:
+        working-directory: services/api
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run alembic upgrade head
+      - run: uv run pytest
+      - name: Generated API types are up to date
+        working-directory: .
+        env:
+          KIFORGE_HOST_PYTHON: "1"
+        run: |
+          npm install -g pnpm@12
+          pnpm install --frozen-lockfile --filter @kiforge/api-types
+          pnpm gen:api
+          git diff --exit-code -- packages/api-types

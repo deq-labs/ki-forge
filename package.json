@@ -1,0 +1,15 @@
+{
+  "name": "ki-forge",
+  "private": true,
+  "packageManager": "pnpm@12.16.1",
+  "engines": {
+    "node": ">=26"
+  },
+  "scripts": {
+    "typecheck": "pnpm -r --if-present typecheck",
+    "lint": "pnpm -r --if-present lint",
+    "gen:tokens": "node scripts/gen-tokens.mjs",
+    "gen:api": "node scripts/gen-api.mjs",
+    "test:api": "cd services/api && uv run pytest"
+  }
+}
