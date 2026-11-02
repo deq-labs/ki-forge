@@ -61,6 +61,14 @@ pnpm -w typecheck
 
 **Day to day:** start Docker Desktop, run `docker compose up -d db`, then `pnpm start` from `apps/mobile`.
 
+## Workflow
+
+Every change starts from an issue (grouped by milestone).
+
+1. Branch from an up-to-date `main` as `<issue#>-<short-slug>`, e.g. `3-program-model-calendar`.
+2. Open a PR into `main`; the template asks for `Closes #N`, so merging closes the issue.
+3. Merge when CI is green, then `git checkout main && git pull`.
+
 ## What's here
 
 | Path | What |
