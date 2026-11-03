@@ -10,8 +10,14 @@ from sqlalchemy import Engine, create_engine, text
 from sqlalchemy.engine import make_url
 
 from app.config import settings
+from app.rules.program import Program, load_program
 
 API_DIR = Path(__file__).resolve().parents[1]
+
+
+@pytest.fixture(scope="session")
+def program() -> Program:
+    return load_program(settings.seed_path)
 
 
 def _test_url() -> str:
