@@ -21,6 +21,61 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/enrollments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Enrollment */
+        post: operations["create_enrollment_v1_enrollments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/enrollments/{enrollment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Enrollment
+         * @description Change path, start date or garage default. A new path applies to sessions not yet started.
+         */
+        patch: operations["update_enrollment_v1_enrollments__enrollment_id__patch"];
+        trace?: never;
+    };
+    "/v1/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Me */
+        get: operations["read_me_v1_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Me */
+        patch: operations["update_me_v1_me_patch"];
+        trace?: never;
+    };
     "/v1/program": {
         parameters: {
             query?: never;
@@ -64,6 +119,80 @@ export interface components {
             /** Metric */
             metric: string;
         };
+        /** EarnedBadgeOut */
+        EarnedBadgeOut: {
+            /** Description */
+            description: string;
+            /**
+             * Earned At
+             * Format: date-time
+             */
+            earned_at: string;
+            /** Name */
+            name: string;
+            /** Slug */
+            slug: string;
+        };
+        /** EnrollmentCreate */
+        EnrollmentCreate: {
+            /**
+             * Garage Mode Default
+             * @default false
+             */
+            garage_mode_default: boolean;
+            /** Path Slug */
+            path_slug: string;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+        };
+        /** EnrollmentOut */
+        EnrollmentOut: {
+            /** Cycle */
+            cycle: number;
+            /** Garage Mode Default */
+            garage_mode_default: boolean;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Path Slug */
+            path_slug: string;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+            /** Status */
+            status: string;
+        };
+        /** EnrollmentPatch */
+        EnrollmentPatch: {
+            /** Garage Mode Default */
+            garage_mode_default?: boolean | null;
+            /** Path Slug */
+            path_slug?: string | null;
+            /** Start Date */
+            start_date?: string | null;
+        };
+        /** ErrorBody */
+        ErrorBody: {
+            /** Code */
+            code: string;
+            /** Details */
+            details?: {
+                [key: string]: unknown;
+            }[] | null;
+            /** Message */
+            message: string;
+        };
+        /** ErrorResponse */
+        ErrorResponse: {
+            error: components["schemas"]["ErrorBody"];
+        };
         /** ExerciseOut */
         ExerciseOut: {
             /** Equipment */
@@ -80,6 +209,30 @@ export interface components {
             slug: string;
             /** Swap */
             swap: string | null;
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
+        /** MeOut */
+        MeOut: {
+            /** Badges */
+            badges: components["schemas"]["EarnedBadgeOut"][];
+            enrollment: components["schemas"]["EnrollmentOut"] | null;
+            stats: components["schemas"]["StatsOut"];
+            user: components["schemas"]["UserOut"];
+        };
+        /** MePatch */
+        MePatch: {
+            /** Display Name */
+            display_name?: string | null;
+            /** Keep Photos */
+            keep_photos?: boolean | null;
+            /** Timezone */
+            timezone?: string | null;
+            /** Units */
+            units?: string | null;
         };
         /** OptionalDayOut */
         OptionalDayOut: {
@@ -254,6 +407,25 @@ export interface components {
             /** Sets */
             sets: number;
         };
+        /** StatsOut */
+        StatsOut: {
+            /** Frame Ratio */
+            frame_ratio: number | null;
+            /** Level */
+            level: number;
+            /** Power Level */
+            power_level: number | null;
+            /** Rank */
+            rank: string;
+            /** Sessions Cleared */
+            sessions_cleared: number;
+            /** Total Xp */
+            total_xp: number;
+            /** Xp Into Level */
+            xp_into_level: number;
+            /** Xp To Next */
+            xp_to_next: number;
+        };
         /** TestDefOut */
         TestDefOut: {
             /** How */
@@ -264,6 +436,37 @@ export interface components {
             type: string;
             /** Unit */
             unit: string;
+        };
+        /** UserOut */
+        UserOut: {
+            /** Display Name */
+            display_name: string;
+            /** Email */
+            email: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Keep Photos */
+            keep_photos: boolean;
+            /** Timezone */
+            timezone: string;
+            /** Units */
+            units: string;
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Context */
+            ctx?: Record<string, never>;
+            /** Input */
+            input?: unknown;
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
         };
     };
     responses: never;
@@ -292,6 +495,180 @@ export interface operations {
                     "application/json": {
                         [key: string]: string;
                     };
+                };
+            };
+        };
+    };
+    create_enrollment_v1_enrollments_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EnrollmentCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnrollmentOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_enrollment_v1_enrollments__enrollment_id__patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path: {
+                enrollment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EnrollmentPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnrollmentOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_me_v1_me_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_me_v1_me_patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
