@@ -11,8 +11,10 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import io
 import sys
 import uuid
+import zipfile
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -113,9 +115,25 @@ class Workbook:
     formulas: openpyxl.Workbook
 
 
-def open_workbook(path: Path | str) -> Workbook:
-    values = openpyxl.load_workbook(path, data_only=True)
-    formulas = openpyxl.load_workbook(path, data_only=False)
+def has_cached_values(wb: Workbook) -> bool:
+    return wb.values["Start Here"]["F6"].value is not None and wb.values["Log"]["R2"].value is not None
+
+
+def open_workbook(source: Path | str | bytes, *, require_cached: bool = True) -> Workbook:
+    """Open a workbook from a path or the uploaded bytes.
+
+    `require_cached=False` allows a file without cached formula results (e.g. one written by a script):
+    it can still be imported, but there is nothing to compare parity against.
+    """
+
+    def load(data_only: bool) -> openpyxl.Workbook:
+        src = io.BytesIO(source) if isinstance(source, bytes) else source
+        try:
+            return openpyxl.load_workbook(src, data_only=data_only)
+        except (zipfile.BadZipFile, KeyError, OSError, ValueError) as exc:
+            raise WorkbookError(f"not a readable .xlsx workbook ({exc})") from exc
+
+    values, formulas = load(True), load(False)
     for sheet in ("Start Here", "Log", "Tests", "Sessions", "Weeks"):
         if sheet not in values.sheetnames:
             raise WorkbookError(f"missing sheet {sheet!r}")
@@ -123,12 +141,13 @@ def open_workbook(path: Path | str) -> Workbook:
         f = formulas[sheet][cell].value
         if not (isinstance(f, str) and f.startswith("=")):
             raise WorkbookError(f"{sheet}!{cell} should be a formula but is {f!r}; formulas were overwritten")
-    if values["Start Here"]["F6"].value is None or values["Log"]["R2"].value is None:
+    wb = Workbook(values=values, formulas=formulas)
+    if require_cached and not has_cached_values(wb):
         raise MissingCachedValues(
             "the workbook has no cached formula results; open it in Excel or Google Sheets, save it once, "
             "and import again"
         )
-    return Workbook(values=values, formulas=formulas)
+    return wb
 
 
 def _number(v: Any) -> float | None:

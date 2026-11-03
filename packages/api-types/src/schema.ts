@@ -78,6 +78,46 @@ export interface paths {
         patch: operations["update_enrollment_v1_enrollments__enrollment_id__patch"];
         trace?: never;
     };
+    "/v1/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export
+         * @description All of your data as JSON.
+         */
+        get: operations["export_v1_export_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/import/workbook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import Workbook Endpoint
+         * @description Import a Ki Forge Excel workbook. Dry run by default; `?commit=true` writes. Re-import is a no-op.
+         */
+        post: operations["import_workbook_endpoint_v1_import_workbook_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/me": {
         parameters: {
             query?: never;
@@ -89,7 +129,11 @@ export interface paths {
         get: operations["read_me_v1_me_get"];
         put?: never;
         post?: never;
-        delete?: never;
+        /**
+         * Delete Me
+         * @description Schedule deletion of your account and all your data. You are signed out immediately.
+         */
+        delete: operations["delete_me_v1_me_delete"];
         options?: never;
         head?: never;
         /** Update Me */
@@ -299,6 +343,21 @@ export interface components {
             /** Metric */
             metric: string;
         };
+        /** Body_import_workbook_endpoint_v1_import_workbook_post */
+        Body_import_workbook_endpoint_v1_import_workbook_post: {
+            /** File */
+            file: string;
+        };
+        /** DeleteOut */
+        DeleteOut: {
+            /**
+             * Expected Completion At
+             * Format: date-time
+             */
+            expected_completion_at: string;
+            /** Status */
+            status: string;
+        };
         /** EarnedBadgeOut */
         EarnedBadgeOut: {
             /** Description */
@@ -390,10 +449,58 @@ export interface components {
             /** Swap */
             swap: string | null;
         };
+        /** ExportOut */
+        ExportOut: {
+            /**
+             * Exported At
+             * Format: date-time
+             */
+            exported_at: string;
+            /** Format Version */
+            format_version: number;
+            /** Tables */
+            tables: {
+                [key: string]: {
+                    [key: string]: unknown;
+                }[];
+            };
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** ImportOut */
+        ImportOut: {
+            /** Committed */
+            committed: boolean;
+            computed: components["schemas"]["TotalsOut"];
+            /** Mismatches */
+            mismatches: components["schemas"]["MismatchOut"][];
+            /** Path Slug */
+            path_slug: string;
+            /** Sessions */
+            sessions: number;
+            /** Sets */
+            sets: number;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+            stats: components["schemas"]["StatsOut"] | null;
+            /** Trials Entered */
+            trials_entered: number;
+            /** Warnings */
+            warnings: string[];
+            workbook: components["schemas"]["TotalsOut"] | null;
+            /** Xp Awarded */
+            xp_awarded: components["schemas"]["AwardOut"][];
         };
         /** LevelUp */
         LevelUp: {
@@ -422,6 +529,17 @@ export interface components {
             timezone?: string | null;
             /** Units */
             units?: string | null;
+        };
+        /** MismatchOut */
+        MismatchOut: {
+            /** Engine */
+            engine: unknown;
+            /** Explained */
+            explained: string | null;
+            /** Location */
+            location: string;
+            /** Workbook */
+            workbook: unknown;
         };
         /** NewBadge */
         NewBadge: {
@@ -849,6 +967,23 @@ export interface components {
             /** Unit */
             unit: string;
         };
+        /** TotalsOut */
+        TotalsOut: {
+            /** Frame Ratio */
+            frame_ratio: number | string | null;
+            /** Level */
+            level: number | null;
+            /** Power Level */
+            power_level: number | null;
+            /** Rank */
+            rank: string | null;
+            /** Sessions Cleared */
+            sessions_cleared: number | null;
+            /** Total Xp */
+            total_xp: number | null;
+            /** Xp To Next */
+            xp_to_next: number | null;
+        };
         /** TrialIn */
         TrialIn: {
             /** Results */
@@ -1130,6 +1265,92 @@ export interface operations {
             };
         };
     };
+    export_v1_export_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExportOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    import_workbook_endpoint_v1_import_workbook_post: {
+        parameters: {
+            query?: {
+                commit?: boolean;
+            };
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_import_workbook_endpoint_v1_import_workbook_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     read_me_v1_me_get: {
         parameters: {
             query?: never;
@@ -1148,6 +1369,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_me_v1_me_delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeleteOut"];
                 };
             };
             /** @description Not signed in */

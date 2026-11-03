@@ -48,7 +48,11 @@ class SessionScore:
 
 
 def latest_sets(sets: Iterable[LoggedSet]) -> list[LoggedSet]:
-    """Collapse edit chains to their newest row (by `logged_at`, then id); input order is kept."""
+    """Collapse edit chains to their newest row; input order is kept.
+
+    The newest row is a tip of the chain (nothing supersedes it); between forked tips, the later
+    `logged_at` (then id) wins.
+    """
     return [s for s, _ in latest_with_roots(sets)]
 
 
@@ -72,9 +76,14 @@ def latest_with_roots(sets: Iterable[LoggedSet]) -> list[tuple[LoggedSet, str]]:
             s = parent
         return s.id
 
+    # A row that another row supersedes is never the newest, whatever its timestamp (device clocks
+    # differ). Among the remaining tips of a chain (a fork from two devices), the latest logged wins.
+    superseded = {s.supersedes for s in sets if s.supersedes is not None}
     newest: dict[str, LoggedSet] = {}
     for s in sets:
         r = root(s)
+        if s.id in superseded:
+            continue
         if r not in newest or (s.logged_at, s.id) > (newest[r].logged_at, newest[r].id):
             newest[r] = s
     keep = {s.id: r for r, s in newest.items()}
@@ -102,20 +111,27 @@ def score_row(item: SessionItem, sets: Iterable[LoggedSet], roots: Sequence[str]
 
 
 def score_session(session: BuiltSession, sets: Iterable[LoggedSet]) -> SessionScore:
-    """Score a session. Sets for exercises not in the session are ignored; extra sets earn nothing."""
-    slugs = [i.exercise for i in session.items]
-    if len(set(slugs)) != len(slugs):
-        raise ValueError(f"session {session.template!r} lists an exercise twice; sets cannot be matched")
-    by_exercise: dict[str, list[tuple[LoggedSet, str]]] = {slug: [] for slug in slugs}
+    """Score a session. Sets for exercises not in the session are ignored; extra sets earn nothing.
+
+    A garage-swapped row also accepts sets logged on the exercise it replaces, so a garage session where
+    some exercises were done as written still scores (the workbook marks garage per row).
+    """
+    row_for: dict[str, int] = {}
+    for i, item in enumerate(session.items):
+        for slug in (item.exercise, item.replaces):
+            if slug is None:
+                continue
+            if slug in row_for:
+                raise ValueError(f"session {session.template!r} lists {slug!r} twice; sets cannot be matched")
+            row_for[slug] = i
+    matched: list[list[tuple[LoggedSet, str]]] = [[] for _ in session.items]
     for s, root in latest_with_roots(sets):
-        if s.exercise in by_exercise:
-            by_exercise[s.exercise].append((s, root))
+        if s.exercise in row_for:
+            matched[row_for[s.exercise]].append((s, root))
 
     rows = tuple(
-        score_row(
-            item, [s for s, _ in by_exercise[item.exercise]], [r for _, r in by_exercise[item.exercise]]
-        )
-        for item in session.items
+        score_row(item, [s for s, _ in m], [r for _, r in m])
+        for item, m in zip(session.items, matched, strict=True)
     )
     needed = sum(r.item.sets for r in rows)
     logged = sum(r.sets_logged for r in rows)

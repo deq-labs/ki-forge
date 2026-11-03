@@ -7,15 +7,14 @@ import uuid
 
 from fastapi import APIRouter
 from pydantic import AwareDatetime, BaseModel, Field
-from sqlalchemy import delete, select
-from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.deps import CurrentUser, Db
 from app.api.errors import ERROR_RESPONSES, ApiError
 from app.api.me import StatsOut
 from app.api.sync import AwardOut, LevelUp, NewBadge
-from app.models import BodyScan, Enrollment, TestResult, User
+from app.models import BodyScan, Enrollment, User
 from app.rules.calendar import phase_display_name, session_date
 from app.rules.program import Program
 from app.rules.trials import frame_ratio, power_level, trial_awards, trial_complete
@@ -23,6 +22,7 @@ from app.rules.xp import Award, rank_for, scan_award
 from app.services.awards import award_badges, record_awards
 from app.services.program import get_program, program_ids
 from app.services.stats import active_enrollment, compute_stats, refresh_stats, trial_results
+from app.services.trials import upsert_trial_results
 
 router = APIRouter(tags=["trials"], responses=ERROR_RESPONSES)
 
@@ -137,35 +137,7 @@ def put_trial(phase_ord: int, body: TrialIn, db: Db, user: CurrentUser) -> Trial
         if body.taken_on
         else dt.datetime.now(dt.UTC)
     )
-    where = (
-        TestResult.user_id == user.id,
-        TestResult.enrollment_id == e.id,
-        TestResult.phase_id == ids.phases[phase_ord],
-    )
-    for test, value in body.results.items():
-        if value is None:
-            db.execute(delete(TestResult).where(*where, TestResult.test == test))
-            continue
-        db.execute(
-            insert(TestResult)
-            .values(
-                user_id=user.id,
-                enrollment_id=e.id,
-                phase_id=ids.phases[phase_ord],
-                test=test,
-                value=value,
-                taken_at=taken_at,
-            )
-            .on_conflict_do_update(
-                index_elements=[
-                    TestResult.user_id,
-                    TestResult.enrollment_id,
-                    TestResult.phase_id,
-                    TestResult.test,
-                ],
-                set_={"value": value, "taken_at": taken_at},
-            )
-        )
+    upsert_trial_results(db, user.id, e, phase_ord, body.results, taken_at)
     results = trial_results(db, user.id, e.id).get(phase_ord, {})
     rewards = _settle(db, user, e, program, trial_awards(str(e.id), phase_ord, results, program), before)
     db.commit()
