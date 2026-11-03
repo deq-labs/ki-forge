@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Request, Response
 
+from app.api.me import router as me_router
 from app.api.schemas import ProgramOut
 from app.services.program import get_program, program_etag
 
 router = APIRouter(prefix="/v1")
+router.include_router(me_router)
 
 
 @router.get("/program", response_model=ProgramOut, tags=["program"])
