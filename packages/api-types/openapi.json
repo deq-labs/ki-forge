@@ -1,4 +1,706 @@
 {
+  "components": {
+    "schemas": {
+      "BadgeOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "rule": {
+            "$ref": "#/components/schemas/BadgeRuleOut"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "xp_reward": {
+            "title": "Xp Reward",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "description",
+          "xp_reward",
+          "rule"
+        ],
+        "title": "BadgeOut",
+        "type": "object"
+      },
+      "BadgeRuleOut": {
+        "properties": {
+          "gte": {
+            "title": "Gte",
+            "type": "number"
+          },
+          "metric": {
+            "title": "Metric",
+            "type": "string"
+          }
+        },
+        "required": [
+          "metric",
+          "gte"
+        ],
+        "title": "BadgeRuleOut",
+        "type": "object"
+      },
+      "ExerciseOut": {
+        "properties": {
+          "equipment": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Equipment",
+            "type": "array"
+          },
+          "increment_lb": {
+            "title": "Increment Lb",
+            "type": "number"
+          },
+          "is_timed": {
+            "title": "Is Timed",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "needs_garage_space": {
+            "title": "Needs Garage Space",
+            "type": "boolean"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "swap": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Swap"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "equipment",
+          "increment_lb",
+          "is_timed",
+          "needs_garage_space",
+          "swap"
+        ],
+        "title": "ExerciseOut",
+        "type": "object"
+      },
+      "OptionalDayOut": {
+        "properties": {
+          "day_of_week": {
+            "title": "Day Of Week",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "prescriptions": {
+            "items": {
+              "$ref": "#/components/schemas/PrescriptionOut"
+            },
+            "title": "Prescriptions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "day_of_week",
+          "name",
+          "prescriptions"
+        ],
+        "title": "OptionalDayOut",
+        "type": "object"
+      },
+      "PathOut": {
+        "properties": {
+          "build": {
+            "title": "Build",
+            "type": "string"
+          },
+          "colors": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Colors",
+            "type": "object"
+          },
+          "conditioning": {
+            "title": "Conditioning",
+            "type": "string"
+          },
+          "conditioning_exercise": {
+            "title": "Conditioning Exercise",
+            "type": "string"
+          },
+          "emphasis": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Emphasis",
+            "type": "object"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ratio_target": {
+            "title": "Ratio Target",
+            "type": "number"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "tagline": {
+            "title": "Tagline",
+            "type": "string"
+          },
+          "techniques": {
+            "items": {
+              "$ref": "#/components/schemas/PathTechniqueOut"
+            },
+            "title": "Techniques",
+            "type": "array"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "tagline",
+          "build",
+          "ratio_target",
+          "colors",
+          "emphasis",
+          "techniques",
+          "conditioning",
+          "conditioning_exercise"
+        ],
+        "title": "PathOut",
+        "type": "object"
+      },
+      "PathTechniqueOut": {
+        "properties": {
+          "exercise": {
+            "title": "Exercise",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "rep_max": {
+            "title": "Rep Max",
+            "type": "integer"
+          },
+          "rep_min": {
+            "title": "Rep Min",
+            "type": "integer"
+          },
+          "sets": {
+            "title": "Sets",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "exercise",
+          "name",
+          "sets",
+          "rep_min",
+          "rep_max",
+          "note"
+        ],
+        "title": "PathTechniqueOut",
+        "type": "object"
+      },
+      "PhaseModifiersOut": {
+        "properties": {
+          "diet_break_week": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diet Break Week"
+          },
+          "extra_conditioning_sessions": {
+            "title": "Extra Conditioning Sessions",
+            "type": "integer"
+          },
+          "extra_sets": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Extra Sets",
+            "type": "object"
+          },
+          "main_lift_rir": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Main Lift Rir"
+          },
+          "main_lift_scheme": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SetSchemeOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "next": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next"
+          },
+          "optional_day": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OptionalDayOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "progression": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Progression"
+          }
+        },
+        "required": [
+          "main_lift_scheme",
+          "main_lift_rir",
+          "extra_sets",
+          "optional_day",
+          "extra_conditioning_sessions",
+          "diet_break_week",
+          "progression",
+          "next"
+        ],
+        "title": "PhaseModifiersOut",
+        "type": "object"
+      },
+      "PhaseOut": {
+        "properties": {
+          "calorie_mode": {
+            "title": "Calorie Mode",
+            "type": "string"
+          },
+          "deload_every": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deload Every"
+          },
+          "display_name_template": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name Template"
+          },
+          "end_week": {
+            "title": "End Week",
+            "type": "integer"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "modifiers": {
+            "$ref": "#/components/schemas/PhaseModifiersOut"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ord": {
+            "title": "Ord",
+            "type": "integer"
+          },
+          "rir_target": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rir Target"
+          },
+          "start_week": {
+            "title": "Start Week",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ord",
+          "name",
+          "kind",
+          "start_week",
+          "end_week",
+          "rir_target",
+          "calorie_mode",
+          "deload_every",
+          "display_name_template",
+          "modifiers"
+        ],
+        "title": "PhaseOut",
+        "type": "object"
+      },
+      "PrescriptionOut": {
+        "properties": {
+          "exercise": {
+            "title": "Exercise",
+            "type": "string"
+          },
+          "garage_swap": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Garage Swap"
+          },
+          "is_main_lift": {
+            "title": "Is Main Lift",
+            "type": "boolean"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "rep_max": {
+            "title": "Rep Max",
+            "type": "integer"
+          },
+          "rep_min": {
+            "title": "Rep Min",
+            "type": "integer"
+          },
+          "rest_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rest Seconds"
+          },
+          "sets": {
+            "title": "Sets",
+            "type": "integer"
+          },
+          "superset_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Superset Group"
+          }
+        },
+        "required": [
+          "exercise",
+          "sets",
+          "rep_min",
+          "rep_max",
+          "rest_seconds",
+          "is_main_lift",
+          "superset_group",
+          "note",
+          "garage_swap"
+        ],
+        "title": "PrescriptionOut",
+        "type": "object"
+      },
+      "ProgramOut": {
+        "properties": {
+          "badges": {
+            "items": {
+              "$ref": "#/components/schemas/BadgeOut"
+            },
+            "title": "Badges",
+            "type": "array"
+          },
+          "cycle_weeks": {
+            "title": "Cycle Weeks",
+            "type": "integer"
+          },
+          "exercises": {
+            "items": {
+              "$ref": "#/components/schemas/ExerciseOut"
+            },
+            "title": "Exercises",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "paths": {
+            "items": {
+              "$ref": "#/components/schemas/PathOut"
+            },
+            "title": "Paths",
+            "type": "array"
+          },
+          "phases": {
+            "items": {
+              "$ref": "#/components/schemas/PhaseOut"
+            },
+            "title": "Phases",
+            "type": "array"
+          },
+          "ranks": {
+            "items": {
+              "$ref": "#/components/schemas/RankOut"
+            },
+            "title": "Ranks",
+            "type": "array"
+          },
+          "session_templates": {
+            "items": {
+              "$ref": "#/components/schemas/SessionTemplateOut"
+            },
+            "title": "Session Templates",
+            "type": "array"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "tests": {
+            "items": {
+              "$ref": "#/components/schemas/TestDefOut"
+            },
+            "title": "Tests",
+            "type": "array"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "slug",
+          "version",
+          "name",
+          "cycle_weeks",
+          "exercises",
+          "phases",
+          "session_templates",
+          "paths",
+          "tests",
+          "badges",
+          "ranks"
+        ],
+        "title": "ProgramOut",
+        "type": "object"
+      },
+      "RankOut": {
+        "properties": {
+          "from_level": {
+            "title": "From Level",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "from_level",
+          "name"
+        ],
+        "title": "RankOut",
+        "type": "object"
+      },
+      "SessionTemplateOut": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "day_of_week": {
+            "title": "Day Of Week",
+            "type": "integer"
+          },
+          "gets_path_techniques": {
+            "title": "Gets Path Techniques",
+            "type": "boolean"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "prescriptions": {
+            "items": {
+              "$ref": "#/components/schemas/PrescriptionOut"
+            },
+            "title": "Prescriptions",
+            "type": "array"
+          },
+          "required_for_full_week": {
+            "title": "Required For Full Week",
+            "type": "boolean"
+          },
+          "short": {
+            "title": "Short",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "short",
+          "kind",
+          "day_of_week",
+          "gets_path_techniques",
+          "required_for_full_week",
+          "prescriptions"
+        ],
+        "title": "SessionTemplateOut",
+        "type": "object"
+      },
+      "SetSchemeOut": {
+        "properties": {
+          "rep_max": {
+            "title": "Rep Max",
+            "type": "integer"
+          },
+          "rep_min": {
+            "title": "Rep Min",
+            "type": "integer"
+          },
+          "sets": {
+            "title": "Sets",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "sets",
+          "rep_min",
+          "rep_max"
+        ],
+        "title": "SetSchemeOut",
+        "type": "object"
+      },
+      "TestDefOut": {
+        "properties": {
+          "how": {
+            "title": "How",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "label",
+          "unit",
+          "how"
+        ],
+        "title": "TestDefOut",
+        "type": "object"
+      }
+    }
+  },
   "info": {
     "title": "Ki Forge API",
     "version": "0.1.0"
@@ -27,6 +729,28 @@
         "summary": "Healthz",
         "tags": [
           "meta"
+        ]
+      }
+    },
+    "/v1/program": {
+      "get": {
+        "description": "Whole program content. Cacheable: send `If-None-Match` with the last ETag to get a 304.",
+        "operationId": "read_program_v1_program_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Read Program",
+        "tags": [
+          "program"
         ]
       }
     }
