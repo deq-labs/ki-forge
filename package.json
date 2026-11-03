@@ -11,6 +11,7 @@
     "gen:tokens": "node scripts/gen-tokens.mjs",
     "gen:api": "node scripts/gen-api.mjs",
     "test:api": "cd services/api && uv run pytest",
-    "test": "pnpm -r --if-present test"
+    "test": "pnpm -r --if-present test",
+    "check:lan": "node scripts/check-lan.mjs"
   }
 }
