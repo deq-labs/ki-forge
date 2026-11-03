@@ -33,6 +33,9 @@ function PathTheme({ children }: { children: ReactNode }) {
 function Navigator() {
   const { colors } = useTheme();
   const signedIn = useSettings((s) => !!s.devEmail);
+  const me = useMe();
+  // Onboarding only once we know there is no run; while loading or offline, assume there is one.
+  const hasRun = me.data ? !!me.data.enrollment : true;
   useSyncLoop();
   const navTheme = useMemo(
     () => ({
@@ -52,8 +55,14 @@ function Navigator() {
     <ThemeProvider value={navTheme}>
       <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.night900 } }}>
-        <Stack.Protected guard={signedIn}>
+        <Stack.Protected guard={signedIn && hasRun}>
           <Stack.Screen name="(tabs)" />
+        </Stack.Protected>
+        <Stack.Protected guard={signedIn && !hasRun}>
+          <Stack.Screen name="onboarding" />
+        </Stack.Protected>
+        <Stack.Protected guard={signedIn}>
+          <Stack.Screen name="paths" />
         </Stack.Protected>
         <Stack.Protected guard={!signedIn}>
           <Stack.Screen name="sign-in" />
