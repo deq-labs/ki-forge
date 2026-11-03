@@ -8,11 +8,13 @@ import { useEffect, useMemo, type ReactNode } from 'react';
 import { ApiError } from '@/lib/api';
 import { useMe } from '@/lib/queries';
 import { useSyncLoop } from '@/lib/use-sync-loop';
+import { configureNotifications } from '@/state/rest';
 import { useSettings } from '@/state/settings';
 import { fontAssets } from '@/theme/fonts';
 import { isPathSlug, PathThemeProvider, useTheme } from '@/theme/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+configureNotifications();
 
 const queryClient = new QueryClient({
   defaultOptions: {

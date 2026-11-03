@@ -1,15 +1,19 @@
 import { Tabs } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ArcIcon, BarbellIcon, PersonIcon, ScanIcon, StarIcon } from '@/components/icons';
 import { KText } from '@/components/k-text';
+import { RestTimer, Toasts } from '@/components/rest-timer';
 import { textStyle, useTheme } from '@/theme/theme';
 import { radius, spacing } from '@/theme/tokens';
 
 // Base, Arc, Train (raised center button), Scan, Profile.
 export default function TabLayout() {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   return (
+    <View style={styles.root}>
     <Tabs
       screenOptions={{
         headerShown: false,
@@ -52,10 +56,18 @@ export default function TabLayout() {
         options={{ title: 'Profile', tabBarIcon: ({ color }) => <PersonIcon color={color} /> }}
       />
     </Tabs>
+      {/* Global overlays sit just above the tab bar. */}
+      <View pointerEvents="box-none" style={[styles.overlay, { bottom: 72 + insets.bottom }]}>
+        <Toasts />
+        <RestTimer />
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: { flex: 1 },
+  overlay: { position: 'absolute', left: 0, right: 0, height: 0 },
   bar: { minHeight: 72, paddingTop: spacing[1] },
   item: { minHeight: 48 },
   label: { fontFamily: 'MPLUS1p_700Bold' },
