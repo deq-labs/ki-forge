@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { getDb } from '@/db/db';
 import { cacheGet, cachePut } from '@/db/repo';
-import { api, ApiError, type Me, type Program, type Week } from '@/lib/api';
+import { api, ApiError, type Arc, type Me, type Program, type Week } from '@/lib/api';
 import { useSettings } from '@/state/settings';
 
 /**
@@ -65,5 +65,15 @@ export function useWeek(week?: number, enabled = true) {
       return data;
     },
     enabled: !!owner && enabled,
+  });
+}
+
+/** Phases with dates and status, plus progress through the current week. */
+export function useArc() {
+  const owner = useSettings((s) => s.devEmail);
+  return useQuery<Arc>({
+    queryKey: ['arc', owner],
+    queryFn: () => cached(owner!, 'arc', () => api.get('/v1/arc')),
+    enabled: !!owner,
   });
 }

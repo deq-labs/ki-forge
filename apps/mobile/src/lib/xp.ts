@@ -39,3 +39,8 @@ export function rankFor(level: number, ranks: readonly { from_level: number; nam
   for (const r of ranks) if (r.from_level <= level && (!best || r.from_level > best.from_level)) best = r;
   return best?.name ?? '';
 }
+
+/** Most XP a session can earn (for the "up to N XP" line): every set, the clear, and the on-target bonus. */
+export function maxSessionXp(setsNeeded: number, kind: string): number {
+  return setsNeeded * SET_XP + (kind === 'lift' ? 100 + 25 : 50);
+}
