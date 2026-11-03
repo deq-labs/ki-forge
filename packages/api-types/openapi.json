@@ -1,6 +1,111 @@
 {
   "components": {
     "schemas": {
+      "ArcOut": {
+        "properties": {
+          "current_phase_ord": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Phase Ord"
+          },
+          "current_week": {
+            "title": "Current Week",
+            "type": "integer"
+          },
+          "phases": {
+            "items": {
+              "$ref": "#/components/schemas/ArcPhase"
+            },
+            "title": "Phases",
+            "type": "array"
+          },
+          "progress": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WeekProgress"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start_date",
+          "current_week",
+          "current_phase_ord",
+          "phases",
+          "progress"
+        ],
+        "title": "ArcOut",
+        "type": "object"
+      },
+      "ArcPhase": {
+        "properties": {
+          "end_date": {
+            "format": "date",
+            "title": "End Date",
+            "type": "string"
+          },
+          "end_week": {
+            "title": "End Week",
+            "type": "integer"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ord": {
+            "title": "Ord",
+            "type": "integer"
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          },
+          "start_week": {
+            "title": "Start Week",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "past",
+              "current",
+              "future"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ord",
+          "name",
+          "kind",
+          "start_week",
+          "end_week",
+          "start_date",
+          "end_date",
+          "status"
+        ],
+        "title": "ArcPhase",
+        "type": "object"
+      },
       "BadgeOut": {
         "properties": {
           "description": {
@@ -693,6 +798,41 @@
         "title": "PhaseOut",
         "type": "object"
       },
+      "PhaseSummary": {
+        "properties": {
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ord": {
+            "title": "Ord",
+            "type": "integer"
+          },
+          "rir_target": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rir Target"
+          }
+        },
+        "required": [
+          "ord",
+          "name",
+          "kind",
+          "rir_target"
+        ],
+        "title": "PhaseSummary",
+        "type": "object"
+      },
       "PrescriptionOut": {
         "properties": {
           "exercise": {
@@ -772,6 +912,114 @@
           "garage_swap"
         ],
         "title": "PrescriptionOut",
+        "type": "object"
+      },
+      "PrescriptionView": {
+        "properties": {
+          "exercise": {
+            "title": "Exercise",
+            "type": "string"
+          },
+          "is_main_lift": {
+            "title": "Is Main Lift",
+            "type": "boolean"
+          },
+          "is_path_technique": {
+            "title": "Is Path Technique",
+            "type": "boolean"
+          },
+          "is_swap": {
+            "title": "Is Swap",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "prefill_weight_lb": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prefill Weight Lb"
+          },
+          "rep_max": {
+            "title": "Rep Max",
+            "type": "integer"
+          },
+          "rep_min": {
+            "title": "Rep Min",
+            "type": "integer"
+          },
+          "rest_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rest Seconds"
+          },
+          "sets": {
+            "title": "Sets",
+            "type": "integer"
+          },
+          "superset_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Superset Group"
+          },
+          "swap": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Swap"
+          }
+        },
+        "required": [
+          "exercise",
+          "name",
+          "swap",
+          "is_swap",
+          "sets",
+          "rep_min",
+          "rep_max",
+          "rest_seconds",
+          "superset_group",
+          "is_main_lift",
+          "is_path_technique",
+          "note",
+          "prefill_weight_lb"
+        ],
+        "title": "PrescriptionView",
         "type": "object"
       },
       "ProgramOut": {
@@ -925,6 +1173,73 @@
           "prescriptions"
         ],
         "title": "SessionTemplateOut",
+        "type": "object"
+      },
+      "SessionView": {
+        "properties": {
+          "cleared": {
+            "title": "Cleared",
+            "type": "boolean"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "garage_mode": {
+            "title": "Garage Mode",
+            "type": "boolean"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "prescriptions": {
+            "items": {
+              "$ref": "#/components/schemas/PrescriptionView"
+            },
+            "title": "Prescriptions",
+            "type": "array"
+          },
+          "required_for_full_week": {
+            "title": "Required For Full Week",
+            "type": "boolean"
+          },
+          "sets_logged": {
+            "title": "Sets Logged",
+            "type": "integer"
+          },
+          "sets_needed": {
+            "title": "Sets Needed",
+            "type": "integer"
+          },
+          "short": {
+            "title": "Short",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "short",
+          "date",
+          "kind",
+          "required_for_full_week",
+          "garage_mode",
+          "cleared",
+          "sets_needed",
+          "sets_logged",
+          "prescriptions"
+        ],
+        "title": "SessionView",
         "type": "object"
       },
       "SetSchemeOut": {
@@ -1125,6 +1440,80 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "WeekOut": {
+        "properties": {
+          "current_week": {
+            "title": "Current Week",
+            "type": "integer"
+          },
+          "full_week": {
+            "title": "Full Week",
+            "type": "boolean"
+          },
+          "phase": {
+            "$ref": "#/components/schemas/PhaseSummary"
+          },
+          "sessions": {
+            "items": {
+              "$ref": "#/components/schemas/SessionView"
+            },
+            "title": "Sessions",
+            "type": "array"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          },
+          "week": {
+            "title": "Week",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "week",
+          "current_week",
+          "starts_on",
+          "phase",
+          "full_week",
+          "sessions"
+        ],
+        "title": "WeekOut",
+        "type": "object"
+      },
+      "WeekProgress": {
+        "properties": {
+          "sessions_cleared": {
+            "title": "Sessions Cleared",
+            "type": "integer"
+          },
+          "sessions_required": {
+            "title": "Sessions Required",
+            "type": "integer"
+          },
+          "week": {
+            "title": "Week",
+            "type": "integer"
+          },
+          "week_in_phase": {
+            "title": "Week In Phase",
+            "type": "integer"
+          },
+          "weeks_in_phase": {
+            "title": "Weeks In Phase",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "week",
+          "week_in_phase",
+          "weeks_in_phase",
+          "sessions_cleared",
+          "sessions_required"
+        ],
+        "title": "WeekProgress",
+        "type": "object"
       }
     }
   },
@@ -1156,6 +1545,66 @@
         "summary": "Healthz",
         "tags": [
           "meta"
+        ]
+      }
+    },
+    "/v1/arc": {
+      "get": {
+        "description": "Phases with dates and status, plus progress through the current week.",
+        "operationId": "read_arc_v1_arc_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-dev-user",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArcOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not signed in"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Arc",
+        "tags": [
+          "calendar"
         ]
       }
     },
@@ -1453,6 +1902,83 @@
         "summary": "Read Program",
         "tags": [
           "program"
+        ]
+      }
+    },
+    "/v1/week": {
+      "get": {
+        "description": "A week's sessions fully built for the user's path, phase and garage default. Default: current week.",
+        "operationId": "read_week_v1_week_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "week",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Week"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-dev-user",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeekOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not signed in"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Week",
+        "tags": [
+          "calendar"
         ]
       }
     }

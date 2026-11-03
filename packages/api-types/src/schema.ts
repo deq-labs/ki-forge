@@ -21,6 +21,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/arc": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Arc
+         * @description Phases with dates and status, plus progress through the current week.
+         */
+        get: operations["read_arc_v1_arc_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/enrollments": {
         parameters: {
             query?: never;
@@ -96,10 +116,73 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/week": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Week
+         * @description A week's sessions fully built for the user's path, phase and garage default. Default: current week.
+         */
+        get: operations["read_week_v1_week_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ArcOut */
+        ArcOut: {
+            /** Current Phase Ord */
+            current_phase_ord: number | null;
+            /** Current Week */
+            current_week: number;
+            /** Phases */
+            phases: components["schemas"]["ArcPhase"][];
+            progress: components["schemas"]["WeekProgress"] | null;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+        };
+        /** ArcPhase */
+        ArcPhase: {
+            /**
+             * End Date
+             * Format: date
+             */
+            end_date: string;
+            /** End Week */
+            end_week: number;
+            /** Kind */
+            kind: string;
+            /** Name */
+            name: string;
+            /** Ord */
+            ord: number;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+            /** Start Week */
+            start_week: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "past" | "current" | "future";
+        };
         /** BadgeOut */
         BadgeOut: {
             /** Description */
@@ -326,6 +409,17 @@ export interface components {
             /** Start Week */
             start_week: number;
         };
+        /** PhaseSummary */
+        PhaseSummary: {
+            /** Kind */
+            kind: string;
+            /** Name */
+            name: string;
+            /** Ord */
+            ord: number;
+            /** Rir Target */
+            rir_target: number | null;
+        };
         /** PrescriptionOut */
         PrescriptionOut: {
             /** Exercise */
@@ -346,6 +440,35 @@ export interface components {
             sets: number;
             /** Superset Group */
             superset_group: string | null;
+        };
+        /** PrescriptionView */
+        PrescriptionView: {
+            /** Exercise */
+            exercise: string;
+            /** Is Main Lift */
+            is_main_lift: boolean;
+            /** Is Path Technique */
+            is_path_technique: boolean;
+            /** Is Swap */
+            is_swap: boolean;
+            /** Name */
+            name: string;
+            /** Note */
+            note: string | null;
+            /** Prefill Weight Lb */
+            prefill_weight_lb: number | null;
+            /** Rep Max */
+            rep_max: number;
+            /** Rep Min */
+            rep_min: number;
+            /** Rest Seconds */
+            rest_seconds: number | null;
+            /** Sets */
+            sets: number;
+            /** Superset Group */
+            superset_group: string | null;
+            /** Swap */
+            swap: string | null;
         };
         /** ProgramOut */
         ProgramOut: {
@@ -395,6 +518,34 @@ export interface components {
             prescriptions: components["schemas"]["PrescriptionOut"][];
             /** Required For Full Week */
             required_for_full_week: boolean;
+            /** Short */
+            short: string;
+        };
+        /** SessionView */
+        SessionView: {
+            /** Cleared */
+            cleared: boolean;
+            /** Code */
+            code: string;
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Garage Mode */
+            garage_mode: boolean;
+            /** Kind */
+            kind: string;
+            /** Name */
+            name: string;
+            /** Prescriptions */
+            prescriptions: components["schemas"]["PrescriptionView"][];
+            /** Required For Full Week */
+            required_for_full_week: boolean;
+            /** Sets Logged */
+            sets_logged: number;
+            /** Sets Needed */
+            sets_needed: number;
             /** Short */
             short: string;
         };
@@ -468,6 +619,36 @@ export interface components {
             /** Error Type */
             type: string;
         };
+        /** WeekOut */
+        WeekOut: {
+            /** Current Week */
+            current_week: number;
+            /** Full Week */
+            full_week: boolean;
+            phase: components["schemas"]["PhaseSummary"];
+            /** Sessions */
+            sessions: components["schemas"]["SessionView"][];
+            /**
+             * Starts On
+             * Format: date
+             */
+            starts_on: string;
+            /** Week */
+            week: number;
+        };
+        /** WeekProgress */
+        WeekProgress: {
+            /** Sessions Cleared */
+            sessions_cleared: number;
+            /** Sessions Required */
+            sessions_required: number;
+            /** Week */
+            week: number;
+            /** Week In Phase */
+            week_in_phase: number;
+            /** Weeks In Phase */
+            weeks_in_phase: number;
+        };
     };
     responses: never;
     parameters: never;
@@ -495,6 +676,46 @@ export interface operations {
                     "application/json": {
                         [key: string]: string;
                     };
+                };
+            };
+        };
+    };
+    read_arc_v1_arc_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArcOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -689,6 +910,48 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProgramOut"];
+                };
+            };
+        };
+    };
+    read_week_v1_week_get: {
+        parameters: {
+            query?: {
+                week?: number | null;
+            };
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WeekOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
