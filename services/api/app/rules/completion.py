@@ -48,7 +48,11 @@ class SessionScore:
 
 
 def latest_sets(sets: Iterable[LoggedSet]) -> list[LoggedSet]:
-    """Collapse edit chains to their newest row (by `logged_at`, then id); input order is kept."""
+    """Collapse edit chains to their newest row; input order is kept.
+
+    The newest row is a tip of the chain (nothing supersedes it); between forked tips, the later
+    `logged_at` (then id) wins.
+    """
     return [s for s, _ in latest_with_roots(sets)]
 
 
@@ -72,9 +76,14 @@ def latest_with_roots(sets: Iterable[LoggedSet]) -> list[tuple[LoggedSet, str]]:
             s = parent
         return s.id
 
+    # A row that another row supersedes is never the newest, whatever its timestamp (device clocks
+    # differ). Among the remaining tips of a chain (a fork from two devices), the latest logged wins.
+    superseded = {s.supersedes for s in sets if s.supersedes is not None}
     newest: dict[str, LoggedSet] = {}
     for s in sets:
         r = root(s)
+        if s.id in superseded:
+            continue
         if r not in newest or (s.logged_at, s.id) > (newest[r].logged_at, newest[r].id):
             newest[r] = s
     keep = {s.id: r for r, s in newest.items()}
