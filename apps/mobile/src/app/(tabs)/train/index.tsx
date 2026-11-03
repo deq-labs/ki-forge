@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ExerciseCard, type LogInput } from '@/components/exercise-card';
 import { useGarage } from '@/components/hud';
 import { KText } from '@/components/k-text';
+import { useQuestName } from '@/components/rewards';
 import { GhostButton, Panel, PrimaryButton } from '@/components/ui';
 import { getDb } from '@/db/db';
 import { completeSession, currentSets, ensureSession, findSession, logSet, type LocalSet } from '@/db/repo';
@@ -137,6 +138,7 @@ function SessionView({ weekNo, session }: { weekNo: number; session: WeekSession
       input.supersedes?.client_id ?? null,
     );
     haptic.set();
+    useQuestName.getState().set(session.name); // the clear can arrive with the last set's sync
     await queryClient.invalidateQueries({ queryKey: localKey });
     requestSync(queryClient);
     if (!input.supersedes) {
@@ -155,6 +157,7 @@ function SessionView({ weekNo, session }: { weekNo: number; session: WeekSession
     const s = local.data?.session ?? (await findSession(db, owner, weekNo, session.code));
     if (s) await completeSession(db, s.client_id);
     haptic.cleared();
+    useQuestName.getState().set(session.name);
     useRest.getState().skip();
     void syncNow(queryClient); // the rewards overlay shows the server's result
     router.navigate('/');
