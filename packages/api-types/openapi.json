@@ -1,6 +1,32 @@
 {
   "components": {
     "schemas": {
+      "Accepted": {
+        "properties": {
+          "sessions": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Sessions",
+            "type": "array"
+          },
+          "sets": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Sets",
+            "type": "array"
+          }
+        },
+        "required": [
+          "sessions",
+          "sets"
+        ],
+        "title": "Accepted",
+        "type": "object"
+      },
       "ArcOut": {
         "properties": {
           "current_phase_ord": {
@@ -104,6 +130,29 @@
           "status"
         ],
         "title": "ArcPhase",
+        "type": "object"
+      },
+      "AwardOut": {
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "integer"
+          },
+          "source_id": {
+            "title": "Source Id",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "amount",
+          "source_id"
+        ],
+        "title": "AwardOut",
         "type": "object"
       },
       "BadgeOut": {
@@ -400,6 +449,29 @@
         "title": "HTTPValidationError",
         "type": "object"
       },
+      "LevelUp": {
+        "properties": {
+          "from": {
+            "title": "From",
+            "type": "integer"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "string"
+          },
+          "to": {
+            "title": "To",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "rank"
+        ],
+        "title": "LevelUp",
+        "type": "object"
+      },
       "MeOut": {
         "properties": {
           "badges": {
@@ -486,6 +558,34 @@
           }
         },
         "title": "MePatch",
+        "type": "object"
+      },
+      "NewBadge": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "xp_reward": {
+            "title": "Xp Reward",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "description",
+          "xp_reward"
+        ],
+        "title": "NewBadge",
         "type": "object"
       },
       "OptionalDayOut": {
@@ -1124,6 +1224,35 @@
         "title": "RankOut",
         "type": "object"
       },
+      "SessionOutcome": {
+        "properties": {
+          "all_on_target": {
+            "title": "All On Target",
+            "type": "boolean"
+          },
+          "cleared": {
+            "title": "Cleared",
+            "type": "boolean"
+          },
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "xp": {
+            "title": "Xp",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "client_id",
+          "cleared",
+          "all_on_target",
+          "xp"
+        ],
+        "title": "SessionOutcome",
+        "type": "object"
+      },
       "SessionTemplateOut": {
         "properties": {
           "code": {
@@ -1325,6 +1454,228 @@
           "sessions_cleared"
         ],
         "title": "StatsOut",
+        "type": "object"
+      },
+      "SyncIn": {
+        "properties": {
+          "sessions": {
+            "items": {
+              "$ref": "#/components/schemas/SyncSession"
+            },
+            "maxItems": 500,
+            "title": "Sessions",
+            "type": "array"
+          },
+          "sets": {
+            "items": {
+              "$ref": "#/components/schemas/SyncSet"
+            },
+            "maxItems": 500,
+            "title": "Sets",
+            "type": "array"
+          }
+        },
+        "title": "SyncIn",
+        "type": "object"
+      },
+      "SyncOut": {
+        "properties": {
+          "accepted": {
+            "$ref": "#/components/schemas/Accepted"
+          },
+          "level_up": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LevelUp"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "new_badges": {
+            "items": {
+              "$ref": "#/components/schemas/NewBadge"
+            },
+            "title": "New Badges",
+            "type": "array"
+          },
+          "sessions": {
+            "items": {
+              "$ref": "#/components/schemas/SessionOutcome"
+            },
+            "title": "Sessions",
+            "type": "array"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/StatsOut"
+          },
+          "xp_awarded": {
+            "items": {
+              "$ref": "#/components/schemas/AwardOut"
+            },
+            "title": "Xp Awarded",
+            "type": "array"
+          }
+        },
+        "required": [
+          "accepted",
+          "xp_awarded",
+          "stats",
+          "level_up",
+          "new_badges",
+          "sessions"
+        ],
+        "title": "SyncOut",
+        "type": "object"
+      },
+      "SyncSession": {
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "garage_mode": {
+            "default": false,
+            "title": "Garage Mode",
+            "type": "boolean"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          },
+          "template_code": {
+            "title": "Template Code",
+            "type": "string"
+          },
+          "week": {
+            "minimum": 0,
+            "title": "Week",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "client_id",
+          "template_code",
+          "week",
+          "started_at"
+        ],
+        "title": "SyncSession",
+        "type": "object"
+      },
+      "SyncSet": {
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "exercise_slug": {
+            "title": "Exercise Slug",
+            "type": "string"
+          },
+          "is_swap": {
+            "default": false,
+            "title": "Is Swap",
+            "type": "boolean"
+          },
+          "logged_at": {
+            "format": "date-time",
+            "title": "Logged At",
+            "type": "string"
+          },
+          "reps": {
+            "anyOf": [
+              {
+                "maximum": 1000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reps"
+          },
+          "rir": {
+            "anyOf": [
+              {
+                "maximum": 5,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rir"
+          },
+          "seconds": {
+            "anyOf": [
+              {
+                "maximum": 32767,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seconds"
+          },
+          "session_client_id": {
+            "format": "uuid",
+            "title": "Session Client Id",
+            "type": "string"
+          },
+          "set_no": {
+            "maximum": 50,
+            "minimum": 1,
+            "title": "Set No",
+            "type": "integer"
+          },
+          "supersedes_client_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supersedes Client Id"
+          },
+          "weight_lb": {
+            "default": 0,
+            "maximum": 2000,
+            "minimum": 0,
+            "title": "Weight Lb",
+            "type": "number"
+          }
+        },
+        "required": [
+          "client_id",
+          "session_client_id",
+          "exercise_slug",
+          "set_no",
+          "logged_at"
+        ],
+        "title": "SyncSet",
         "type": "object"
       },
       "TestDefOut": {
@@ -1902,6 +2253,76 @@
         "summary": "Read Program",
         "tags": [
           "program"
+        ]
+      }
+    },
+    "/v1/sync": {
+      "post": {
+        "description": "Upsert logged sessions and sets; returns authoritative stats. Idempotent: replays award nothing.",
+        "operationId": "sync_v1_sync_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-dev-user",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not signed in"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sync",
+        "tags": [
+          "sync"
         ]
       }
     },

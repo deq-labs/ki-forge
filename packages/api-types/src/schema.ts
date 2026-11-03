@@ -116,6 +116,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sync
+         * @description Upsert logged sessions and sets; returns authoritative stats. Idempotent: replays award nothing.
+         */
+        post: operations["sync_v1_sync_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/week": {
         parameters: {
             query?: never;
@@ -140,6 +160,13 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** Accepted */
+        Accepted: {
+            /** Sessions */
+            sessions: string[];
+            /** Sets */
+            sets: string[];
+        };
         /** ArcOut */
         ArcOut: {
             /** Current Phase Ord */
@@ -182,6 +209,15 @@ export interface components {
              * @enum {string}
              */
             status: "past" | "current" | "future";
+        };
+        /** AwardOut */
+        AwardOut: {
+            /** Amount */
+            amount: number;
+            /** Source Id */
+            source_id: string;
+            /** Type */
+            type: string;
         };
         /** BadgeOut */
         BadgeOut: {
@@ -298,6 +334,15 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** LevelUp */
+        LevelUp: {
+            /** From */
+            from: number;
+            /** Rank */
+            rank: string;
+            /** To */
+            to: number;
+        };
         /** MeOut */
         MeOut: {
             /** Badges */
@@ -316,6 +361,17 @@ export interface components {
             timezone?: string | null;
             /** Units */
             units?: string | null;
+        };
+        /** NewBadge */
+        NewBadge: {
+            /** Description */
+            description: string;
+            /** Name */
+            name: string;
+            /** Slug */
+            slug: string;
+            /** Xp Reward */
+            xp_reward: number;
         };
         /** OptionalDayOut */
         OptionalDayOut: {
@@ -502,6 +558,20 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** SessionOutcome */
+        SessionOutcome: {
+            /** All On Target */
+            all_on_target: boolean;
+            /** Cleared */
+            cleared: boolean;
+            /**
+             * Client Id
+             * Format: uuid
+             */
+            client_id: string;
+            /** Xp */
+            xp: number;
+        };
         /** SessionTemplateOut */
         SessionTemplateOut: {
             /** Code */
@@ -576,6 +646,89 @@ export interface components {
             xp_into_level: number;
             /** Xp To Next */
             xp_to_next: number;
+        };
+        /** SyncIn */
+        SyncIn: {
+            /** Sessions */
+            sessions?: components["schemas"]["SyncSession"][];
+            /** Sets */
+            sets?: components["schemas"]["SyncSet"][];
+        };
+        /** SyncOut */
+        SyncOut: {
+            accepted: components["schemas"]["Accepted"];
+            level_up: components["schemas"]["LevelUp"] | null;
+            /** New Badges */
+            new_badges: components["schemas"]["NewBadge"][];
+            /** Sessions */
+            sessions: components["schemas"]["SessionOutcome"][];
+            stats: components["schemas"]["StatsOut"];
+            /** Xp Awarded */
+            xp_awarded: components["schemas"]["AwardOut"][];
+        };
+        /** SyncSession */
+        SyncSession: {
+            /**
+             * Client Id
+             * Format: uuid
+             */
+            client_id: string;
+            /** Completed At */
+            completed_at?: string | null;
+            /**
+             * Garage Mode
+             * @default false
+             */
+            garage_mode: boolean;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /** Template Code */
+            template_code: string;
+            /** Week */
+            week: number;
+        };
+        /** SyncSet */
+        SyncSet: {
+            /**
+             * Client Id
+             * Format: uuid
+             */
+            client_id: string;
+            /** Exercise Slug */
+            exercise_slug: string;
+            /**
+             * Is Swap
+             * @default false
+             */
+            is_swap: boolean;
+            /**
+             * Logged At
+             * Format: date-time
+             */
+            logged_at: string;
+            /** Reps */
+            reps?: number | null;
+            /** Rir */
+            rir?: number | null;
+            /** Seconds */
+            seconds?: number | null;
+            /**
+             * Session Client Id
+             * Format: uuid
+             */
+            session_client_id: string;
+            /** Set No */
+            set_no: number;
+            /** Supersedes Client Id */
+            supersedes_client_id?: string | null;
+            /**
+             * Weight Lb
+             * @default 0
+             */
+            weight_lb: number;
         };
         /** TestDefOut */
         TestDefOut: {
@@ -910,6 +1063,50 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProgramOut"];
+                };
+            };
+        };
+    };
+    sync_v1_sync_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SyncIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SyncOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
