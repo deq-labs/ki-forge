@@ -78,6 +78,7 @@ class ImportedSession:
     client_id: str
     week: int
     code: str  # template code
+    name: str  # session name as the workbook writes it, e.g. "Upper A"
     date: dt.date
     garage_mode: bool
     built: BuiltSession  # per row: the garage item if that row is P = "Y", else the gym item
@@ -94,9 +95,14 @@ class WorkbookImport:
     start_date: dt.date
     path: str  # path slug
     bodyweight_lb: float | None
-    sessions: tuple[ImportedSession, ...]
+    blocks: tuple[ImportedSession, ...]  # every (week, session) block in the Log, logged or not
     trials: Mapping[int, TestResults]  # by phase ord
     warnings: tuple[str, ...] = ()
+
+    @property
+    def sessions(self) -> tuple[ImportedSession, ...]:
+        """Blocks with at least one logged set: the sessions an import creates."""
+        return tuple(b for b in self.blocks if b.sets)
 
 
 @dataclass(frozen=True)
@@ -237,18 +243,18 @@ def read_workbook(wb: Workbook, program: Program) -> WorkbookImport:
                 )
             imported_rows.append(ImportedRow(row=r, position=pos, garage=is_garage, sets=tuple(sets)))
 
-        if any(r.sets for r in imported_rows):
-            sessions.append(
-                ImportedSession(
-                    client_id=cid,
-                    week=week,
-                    code=template.code,
-                    date=day,
-                    garage_mode=any(r.garage for r in imported_rows),
-                    built=BuiltSession(template=template.code, items=tuple(items)),
-                    rows=tuple(imported_rows),
-                )
+        sessions.append(
+            ImportedSession(
+                client_id=cid,
+                week=week,
+                code=template.code,
+                name=name,
+                date=day,
+                garage_mode=any(r.garage for r in imported_rows),
+                built=BuiltSession(template=template.code, items=tuple(items)),
+                rows=tuple(imported_rows),
             )
+        )
 
     tests = wb.values["Tests"]
     trial_phases = [p for p in program.phases if p.is_trial]
@@ -272,7 +278,7 @@ def read_workbook(wb: Workbook, program: Program) -> WorkbookImport:
         start_date=start_date,
         path=path.slug,
         bodyweight_lb=bodyweight,
-        sessions=tuple(sessions),
+        blocks=tuple(sessions),
         trials=trials,
         warnings=tuple(warnings),
     )
