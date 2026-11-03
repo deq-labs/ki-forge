@@ -21,10 +21,251 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/program": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Program
+         * @description Whole program content. Cacheable: send `If-None-Match` with the last ETag to get a 304.
+         */
+        get: operations["read_program_v1_program_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: never;
+    schemas: {
+        /** BadgeOut */
+        BadgeOut: {
+            /** Description */
+            description: string;
+            /** Name */
+            name: string;
+            rule: components["schemas"]["BadgeRuleOut"];
+            /** Slug */
+            slug: string;
+            /** Xp Reward */
+            xp_reward: number;
+        };
+        /** BadgeRuleOut */
+        BadgeRuleOut: {
+            /** Gte */
+            gte: number;
+            /** Metric */
+            metric: string;
+        };
+        /** ExerciseOut */
+        ExerciseOut: {
+            /** Equipment */
+            equipment: string[];
+            /** Increment Lb */
+            increment_lb: number;
+            /** Is Timed */
+            is_timed: boolean;
+            /** Name */
+            name: string;
+            /** Needs Garage Space */
+            needs_garage_space: boolean;
+            /** Slug */
+            slug: string;
+            /** Swap */
+            swap: string | null;
+        };
+        /** OptionalDayOut */
+        OptionalDayOut: {
+            /** Day Of Week */
+            day_of_week: number;
+            /** Name */
+            name: string;
+            /** Prescriptions */
+            prescriptions: components["schemas"]["PrescriptionOut"][];
+        };
+        /** PathOut */
+        PathOut: {
+            /** Build */
+            build: string;
+            /** Colors */
+            colors: {
+                [key: string]: string;
+            };
+            /** Conditioning */
+            conditioning: string;
+            /** Conditioning Exercise */
+            conditioning_exercise: string;
+            /** Emphasis */
+            emphasis: {
+                [key: string]: number;
+            };
+            /** Name */
+            name: string;
+            /** Ratio Target */
+            ratio_target: number;
+            /** Slug */
+            slug: string;
+            /** Tagline */
+            tagline: string;
+            /** Techniques */
+            techniques: components["schemas"]["PathTechniqueOut"][];
+        };
+        /** PathTechniqueOut */
+        PathTechniqueOut: {
+            /** Exercise */
+            exercise: string;
+            /** Name */
+            name: string;
+            /** Note */
+            note: string | null;
+            /** Rep Max */
+            rep_max: number;
+            /** Rep Min */
+            rep_min: number;
+            /** Sets */
+            sets: number;
+        };
+        /** PhaseModifiersOut */
+        PhaseModifiersOut: {
+            /** Diet Break Week */
+            diet_break_week: number | null;
+            /** Extra Conditioning Sessions */
+            extra_conditioning_sessions: number;
+            /** Extra Sets */
+            extra_sets: {
+                [key: string]: number;
+            };
+            /** Main Lift Rir */
+            main_lift_rir: number[] | null;
+            main_lift_scheme: components["schemas"]["SetSchemeOut"] | null;
+            /** Next */
+            next: string | null;
+            optional_day: components["schemas"]["OptionalDayOut"] | null;
+            /** Progression */
+            progression: string | null;
+        };
+        /** PhaseOut */
+        PhaseOut: {
+            /** Calorie Mode */
+            calorie_mode: string;
+            /** Deload Every */
+            deload_every: number | null;
+            /** Display Name Template */
+            display_name_template: string | null;
+            /** End Week */
+            end_week: number;
+            /** Kind */
+            kind: string;
+            modifiers: components["schemas"]["PhaseModifiersOut"];
+            /** Name */
+            name: string;
+            /** Ord */
+            ord: number;
+            /** Rir Target */
+            rir_target: number | null;
+            /** Start Week */
+            start_week: number;
+        };
+        /** PrescriptionOut */
+        PrescriptionOut: {
+            /** Exercise */
+            exercise: string;
+            /** Garage Swap */
+            garage_swap: string | null;
+            /** Is Main Lift */
+            is_main_lift: boolean;
+            /** Note */
+            note: string | null;
+            /** Rep Max */
+            rep_max: number;
+            /** Rep Min */
+            rep_min: number;
+            /** Rest Seconds */
+            rest_seconds: number | null;
+            /** Sets */
+            sets: number;
+            /** Superset Group */
+            superset_group: string | null;
+        };
+        /** ProgramOut */
+        ProgramOut: {
+            /** Badges */
+            badges: components["schemas"]["BadgeOut"][];
+            /** Cycle Weeks */
+            cycle_weeks: number;
+            /** Exercises */
+            exercises: components["schemas"]["ExerciseOut"][];
+            /** Name */
+            name: string;
+            /** Paths */
+            paths: components["schemas"]["PathOut"][];
+            /** Phases */
+            phases: components["schemas"]["PhaseOut"][];
+            /** Ranks */
+            ranks: components["schemas"]["RankOut"][];
+            /** Session Templates */
+            session_templates: components["schemas"]["SessionTemplateOut"][];
+            /** Slug */
+            slug: string;
+            /** Tests */
+            tests: components["schemas"]["TestDefOut"][];
+            /** Version */
+            version: number;
+        };
+        /** RankOut */
+        RankOut: {
+            /** From Level */
+            from_level: number;
+            /** Name */
+            name: string;
+        };
+        /** SessionTemplateOut */
+        SessionTemplateOut: {
+            /** Code */
+            code: string;
+            /** Day Of Week */
+            day_of_week: number;
+            /** Gets Path Techniques */
+            gets_path_techniques: boolean;
+            /** Kind */
+            kind: string;
+            /** Name */
+            name: string;
+            /** Prescriptions */
+            prescriptions: components["schemas"]["PrescriptionOut"][];
+            /** Required For Full Week */
+            required_for_full_week: boolean;
+            /** Short */
+            short: string;
+        };
+        /** SetSchemeOut */
+        SetSchemeOut: {
+            /** Rep Max */
+            rep_max: number;
+            /** Rep Min */
+            rep_min: number;
+            /** Sets */
+            sets: number;
+        };
+        /** TestDefOut */
+        TestDefOut: {
+            /** How */
+            how: string;
+            /** Label */
+            label: string;
+            /** Type */
+            type: string;
+            /** Unit */
+            unit: string;
+        };
+    };
     responses: never;
     parameters: never;
     requestBodies: never;
@@ -51,6 +292,26 @@ export interface operations {
                     "application/json": {
                         [key: string]: string;
                     };
+                };
+            };
+        };
+    };
+    read_program_v1_program_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProgramOut"];
                 };
             };
         };
