@@ -10,6 +10,7 @@
     "lint": "pnpm -r --if-present lint",
     "gen:tokens": "node scripts/gen-tokens.mjs",
     "gen:api": "node scripts/gen-api.mjs",
-    "test:api": "cd services/api && uv run pytest"
+    "test:api": "cd services/api && uv run pytest",
+    "test": "pnpm -r --if-present test"
   }
 }
