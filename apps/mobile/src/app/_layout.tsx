@@ -7,6 +7,7 @@ import { useEffect, useMemo, type ReactNode } from 'react';
 
 import { ApiError } from '@/lib/api';
 import { useMe } from '@/lib/queries';
+import { useSyncLoop } from '@/lib/use-sync-loop';
 import { useSettings } from '@/state/settings';
 import { fontAssets } from '@/theme/fonts';
 import { isPathSlug, PathThemeProvider, useTheme } from '@/theme/theme';
@@ -32,6 +33,7 @@ function PathTheme({ children }: { children: ReactNode }) {
 function Navigator() {
   const { colors } = useTheme();
   const signedIn = useSettings((s) => !!s.devEmail);
+  useSyncLoop();
   const navTheme = useMemo(
     () => ({
       ...DarkTheme,

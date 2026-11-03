@@ -1,10 +1,12 @@
 import { KText } from '@/components/k-text';
 import { PlaceholderScreen } from '@/components/placeholder-screen';
 import { useMe } from '@/lib/queries';
+import { useSync } from '@/lib/sync';
 
 // Replaced by the HUD and Base screen in #37; for now it proves the API connection and identity.
 export default function BaseScreen() {
   const me = useMe();
+  const sync = useSync();
   const stats = me.data?.stats;
   return (
     <PlaceholderScreen title="Base" note="Power Level, next quest and this week arrive with the Base screen.">
@@ -16,6 +18,10 @@ export default function BaseScreen() {
       )}
       {me.data && (
         <>
+          <KText variant="caption" color="inkFaint">
+            Sync: {sync.status}
+            {sync.pending ? ` · ${sync.pending} waiting` : ''}
+          </KText>
           <KText variant="cardTitle">{me.data.user.display_name}</KText>
           <KText variant="dataSm" color="inkMuted">
             Lv {stats?.level} · {stats?.rank} · {stats?.total_xp.toLocaleString()} XP

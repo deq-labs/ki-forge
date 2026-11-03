@@ -23,6 +23,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm -w lint
       - run: pnpm -w typecheck
+      - run: pnpm -w test
       - name: Generated tokens are up to date
         run: |
           pnpm gen:tokens
