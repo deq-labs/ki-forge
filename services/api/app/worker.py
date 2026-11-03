@@ -12,6 +12,7 @@ from contextlib import contextmanager
 
 from sqlalchemy.orm import Session
 
+import app.services.deletion  # noqa: F401 - registers the delete_user handler
 import app.services.progression  # noqa: F401 - registers the run_progression handler
 from app.db import SessionLocal
 from app.jobs import HANDLERS, run_once

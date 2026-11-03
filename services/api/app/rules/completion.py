@@ -111,20 +111,27 @@ def score_row(item: SessionItem, sets: Iterable[LoggedSet], roots: Sequence[str]
 
 
 def score_session(session: BuiltSession, sets: Iterable[LoggedSet]) -> SessionScore:
-    """Score a session. Sets for exercises not in the session are ignored; extra sets earn nothing."""
-    slugs = [i.exercise for i in session.items]
-    if len(set(slugs)) != len(slugs):
-        raise ValueError(f"session {session.template!r} lists an exercise twice; sets cannot be matched")
-    by_exercise: dict[str, list[tuple[LoggedSet, str]]] = {slug: [] for slug in slugs}
+    """Score a session. Sets for exercises not in the session are ignored; extra sets earn nothing.
+
+    A garage-swapped row also accepts sets logged on the exercise it replaces, so a garage session where
+    some exercises were done as written still scores (the workbook marks garage per row).
+    """
+    row_for: dict[str, int] = {}
+    for i, item in enumerate(session.items):
+        for slug in (item.exercise, item.replaces):
+            if slug is None:
+                continue
+            if slug in row_for:
+                raise ValueError(f"session {session.template!r} lists {slug!r} twice; sets cannot be matched")
+            row_for[slug] = i
+    matched: list[list[tuple[LoggedSet, str]]] = [[] for _ in session.items]
     for s, root in latest_with_roots(sets):
-        if s.exercise in by_exercise:
-            by_exercise[s.exercise].append((s, root))
+        if s.exercise in row_for:
+            matched[row_for[s.exercise]].append((s, root))
 
     rows = tuple(
-        score_row(
-            item, [s for s, _ in by_exercise[item.exercise]], [r for _, r in by_exercise[item.exercise]]
-        )
-        for item in session.items
+        score_row(item, [s for s, _ in m], [r for _, r in m])
+        for item, m in zip(session.items, matched, strict=True)
     )
     needed = sum(r.item.sets for r in rows)
     logged = sum(r.sets_logged for r in rows)

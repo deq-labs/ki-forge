@@ -90,9 +90,11 @@ def progress_session(
         by_exercise.setdefault(s.exercise, []).append(s)
     out = dict(states)
     for item in session.items:
-        logged = by_exercise.get(item.exercise)
-        if logged:
-            out[item.exercise] = progress(
-                states.get(item.exercise), item, logged, phase, program.exercise(item.exercise).increment_lb
-            )
+        # A swapped row may have been done as written; each exercise performed keeps its own state.
+        for slug in (item.exercise, item.replaces):
+            logged = by_exercise.get(slug) if slug else None
+            if logged:
+                out[slug] = progress(
+                    states.get(slug), item, logged, phase, program.exercise(slug).increment_lb
+                )
     return out

@@ -128,7 +128,24 @@ def test_farmer_carry_done_style(program: Program) -> None:
 def test_garage_sets_score_against_swapped_exercise(program: Program) -> None:
     s = build(program, "engine", garage=True)
     assert score_session(s, [logged("jump-rope-or-burpee-intervals", 1)]).cleared
-    assert not score_session(s, [logged(program.path("storm").conditioning_exercise, 1)]).cleared
+    # A swapped row also accepts the exercise it replaces (done as written in a garage session).
+    assert score_session(s, [logged(program.path("storm").conditioning_exercise, 1)]).cleared
+    assert not score_session(s, [logged("farmer-carry", 1)]).cleared
+
+
+def test_mixed_garage_session_counts_both(program: Program) -> None:
+    s = build(program, "upper_a", garage=True)
+    sets = all_sets_at_top(s)
+    first = s.items[0]
+    assert first.is_swap and first.replaces == "standing-barbell-overhead-press"
+    sets = [
+        logged(first.replaces, x.reps) if x.exercise == first.exercise else x for x in sets
+    ]  # the press was done with the barbell after all
+    score = score_session(s, sets)
+    assert (score.sets_logged, score.cleared, score.all_on_target) == (23, True, True)
+    gym = build(program, "upper_a")  # gym mode does not accept swap slugs
+    swapped = [logged(first.exercise, 10) for _ in range(first.sets)]
+    assert score_session(gym, swapped).rows[0].sets_logged == 0
 
 
 def test_empty_session_is_not_cleared(program: Program) -> None:
