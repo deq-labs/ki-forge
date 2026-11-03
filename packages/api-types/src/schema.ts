@@ -116,6 +116,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/scans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Scans */
+        get: operations["list_scans_v1_scans_get"];
+        put?: never;
+        /**
+         * Create Scan
+         * @description Log a tape measurement. Photo scans arrive in M5.
+         */
+        post: operations["create_scan_v1_scans_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/sync": {
         parameters: {
             query?: never;
@@ -130,6 +151,46 @@ export interface paths {
          * @description Upsert logged sessions and sets; returns authoritative stats. Idempotent: replays award nothing.
          */
         post: operations["sync_v1_sync_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/trials": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Trials
+         * @description Every Trial of the active run, with whatever results are entered.
+         */
+        get: operations["list_trials_v1_trials_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/trials/{phase_ord}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Put Trial
+         * @description Enter Trial results (partial allowed). A complete Trial awards 500 XP once.
+         */
+        put: operations["put_trial_v1_trials__phase_ord__put"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -558,6 +619,53 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** ScanIn */
+        ScanIn: {
+            /** Shoulders In */
+            shoulders_in: number;
+            /** Taken At */
+            taken_at?: string | null;
+            /** Waist In */
+            waist_in: number;
+            /**
+             * With Photo
+             * @default false
+             */
+            with_photo: boolean;
+        };
+        /** ScanOut */
+        ScanOut: {
+            /** Frame Ratio */
+            frame_ratio: number | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Shoulders In */
+            shoulders_in: number | null;
+            /** Status */
+            status: string;
+            /**
+             * Taken At
+             * Format: date-time
+             */
+            taken_at: string;
+            /** Waist In */
+            waist_in: number | null;
+        };
+        /** ScanSaved */
+        ScanSaved: {
+            level_up: components["schemas"]["LevelUp"] | null;
+            /** New Badges */
+            new_badges: components["schemas"]["NewBadge"][];
+            scan: components["schemas"]["ScanOut"];
+            stats: components["schemas"]["StatsOut"];
+            /** Upload Url */
+            upload_url: string | null;
+            /** Xp Awarded */
+            xp_awarded: components["schemas"]["AwardOut"][];
+        };
         /** SessionOutcome */
         SessionOutcome: {
             /** All On Target */
@@ -740,6 +848,65 @@ export interface components {
             type: string;
             /** Unit */
             unit: string;
+        };
+        /** TrialIn */
+        TrialIn: {
+            /** Results */
+            results: {
+                [key: string]: number | null;
+            };
+            /** Taken On */
+            taken_on?: string | null;
+        };
+        /** TrialOut */
+        TrialOut: {
+            /** Complete */
+            complete: boolean;
+            /** Frame Ratio */
+            frame_ratio: number | null;
+            /** Name */
+            name: string;
+            /** Phase Ord */
+            phase_ord: number;
+            /** Power Level */
+            power_level: number | null;
+            /** Results */
+            results: {
+                [key: string]: number | null;
+            };
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+        };
+        /** TrialSaved */
+        TrialSaved: {
+            /** Complete */
+            complete: boolean;
+            /** Frame Ratio */
+            frame_ratio: number | null;
+            level_up: components["schemas"]["LevelUp"] | null;
+            /** Name */
+            name: string;
+            /** New Badges */
+            new_badges: components["schemas"]["NewBadge"][];
+            /** Phase Ord */
+            phase_ord: number;
+            /** Power Level */
+            power_level: number | null;
+            /** Results */
+            results: {
+                [key: string]: number | null;
+            };
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+            stats: components["schemas"]["StatsOut"];
+            /** Xp Awarded */
+            xp_awarded: components["schemas"]["AwardOut"][];
         };
         /** UserOut */
         UserOut: {
@@ -1067,6 +1234,90 @@ export interface operations {
             };
         };
     };
+    list_scans_v1_scans_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScanOut"][];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_scan_v1_scans_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScanIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScanSaved"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     sync_v1_sync_post: {
         parameters: {
             query?: never;
@@ -1089,6 +1340,92 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SyncOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_trials_v1_trials_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrialOut"][];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_trial_v1_trials__phase_ord__put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path: {
+                phase_ord: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TrialIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrialSaved"];
                 };
             };
             /** @description Not signed in */

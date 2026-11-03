@@ -4,12 +4,14 @@ from app.api.calendar import router as calendar_router
 from app.api.me import router as me_router
 from app.api.schemas import ProgramOut
 from app.api.sync import router as sync_router
+from app.api.trials import router as trials_router
 from app.services.program import get_program, program_etag
 
 router = APIRouter(prefix="/v1")
 router.include_router(me_router)
 router.include_router(calendar_router)
 router.include_router(sync_router)
+router.include_router(trials_router)
 
 
 @router.get("/program", response_model=ProgramOut, tags=["program"])
