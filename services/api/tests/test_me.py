@@ -173,3 +173,21 @@ def test_user_stats_rebuild_equals_cache(client: TestClient, db: Session) -> Non
     refresh_stats(db, uid)
     db.refresh(row)
     assert row.total_xp == 330
+
+
+def test_end_run_and_start_again(client: TestClient) -> None:
+    e = enroll(client)
+    r = client.post(f"/v1/enrollments/{e['id']}/end")
+    assert (r.status_code, r.json()["status"]) == (200, "abandoned")
+    assert client.get("/v1/me").json()["enrollment"] is None  # back to onboarding
+    assert client.post(f"/v1/enrollments/{e['id']}/end").status_code == 409
+    again = enroll(client, path="titan", start="2026-11-09")
+    assert (again["path_slug"], again["start_date"]) == ("titan", "2026-11-09")
+    assert client.get("/v1/me").json()["enrollment"]["id"] == again["id"]
+
+
+def test_end_someone_elses_run_is_404(client: TestClient) -> None:
+    e = enroll(client)
+    r = client.post(f"/v1/enrollments/{e['id']}/end", headers={"X-Dev-User": "x@y.io"})
+    assert r.status_code == 404
+    assert client.post(f"/v1/enrollments/{e['id']}/end", json={"status": "paused"}).status_code == 422

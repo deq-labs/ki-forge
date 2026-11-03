@@ -197,3 +197,22 @@ def update_enrollment(
         e.garage_mode_default = changes["garage_mode_default"]
     db.commit()
     return enrollment_out(db, e)
+
+
+class EnrollmentEnd(BaseModel):
+    status: str = Field(default="abandoned", pattern="^(abandoned|completed)$")
+
+
+@router.post("/enrollments/{enrollment_id}/end", response_model=EnrollmentOut)
+def end_enrollment(
+    enrollment_id: uuid.UUID, db: Db, user: CurrentUser, body: EnrollmentEnd | None = None
+) -> EnrollmentOut:
+    """End the active run (restart the program). Its sessions, Trials and XP are kept; a new run can start."""
+    e = db.get(Enrollment, enrollment_id)
+    if e is None or e.user_id != user.id:
+        raise ApiError(404, "not_found", "enrollment not found")
+    if e.status != "active":
+        raise ApiError(409, "conflict", f"this run is already {e.status}")
+    e.status = (body or EnrollmentEnd()).status
+    db.commit()
+    return enrollment_out(db, e)

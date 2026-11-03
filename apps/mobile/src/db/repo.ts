@@ -178,3 +178,12 @@ export async function cacheGet<T>(db: SQLiteDatabase, owner: string, key: string
   const row = await db.getFirstAsync<{ json: string }>('SELECT json FROM cache WHERE owner = ? AND key = ?', owner, key);
   return row ? (JSON.parse(row.json) as T) : null;
 }
+
+/** Remove everything stored on this device for one identity (account deletion). */
+export async function deleteOwner(db: SQLiteDatabase, owner: string): Promise<void> {
+  await db.withTransactionAsync(async () => {
+    await db.runAsync('DELETE FROM sets WHERE owner = ?', owner);
+    await db.runAsync('DELETE FROM sessions WHERE owner = ?', owner);
+    await db.runAsync('DELETE FROM cache WHERE owner = ?', owner);
+  });
+}

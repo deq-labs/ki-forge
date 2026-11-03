@@ -78,6 +78,26 @@ export interface paths {
         patch: operations["update_enrollment_v1_enrollments__enrollment_id__patch"];
         trace?: never;
     };
+    "/v1/enrollments/{enrollment_id}/end": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * End Enrollment
+         * @description End the active run (restart the program). Its sessions, Trials and XP are kept; a new run can start.
+         */
+        post: operations["end_enrollment_v1_enrollments__enrollment_id__end_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/export": {
         parameters: {
             query?: never;
@@ -386,6 +406,14 @@ export interface components {
              * Format: date
              */
             start_date: string;
+        };
+        /** EnrollmentEnd */
+        EnrollmentEnd: {
+            /**
+             * Status
+             * @default abandoned
+             */
+            status: string;
         };
         /** EnrollmentOut */
         EnrollmentOut: {
@@ -1233,6 +1261,52 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["EnrollmentPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnrollmentOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    end_enrollment_v1_enrollments__enrollment_id__end_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path: {
+                enrollment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["EnrollmentEnd"] | null;
             };
         };
         responses: {
