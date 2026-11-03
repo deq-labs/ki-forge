@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, type ReactNode } from 'react';
 
+import { Rewards } from '@/components/rewards';
 import { ApiError } from '@/lib/api';
 import { useMe } from '@/lib/queries';
 import { useSyncLoop } from '@/lib/use-sync-loop';
@@ -70,6 +71,7 @@ function Navigator() {
           <Stack.Screen name="sign-in" />
         </Stack.Protected>
       </Stack>
+      {signedIn && <Rewards />}
     </ThemeProvider>
   );
 }
