@@ -155,6 +155,15 @@ def test_latest_sets_fork_picks_newest() -> None:
     assert [s.id for s in latest_sets([a, x, y])] == ["x"]
 
 
+@pytest.mark.parametrize("edit_minute", [0, -5])
+def test_edit_wins_even_with_same_or_earlier_timestamp(edit_minute: int) -> None:
+    # Device clocks differ: an edit is newer than what it supersedes regardless of logged_at.
+    # Ids chosen so an id tie-break would pick the original: it must not matter.
+    a = logged("dips", 8, minute=0, id="zz-original")
+    edit = logged("dips", 12, minute=edit_minute, supersedes=a.id, id="aa-edit")
+    assert [s.id for s in latest_sets([a, edit])] == ["aa-edit"]
+
+
 def test_latest_sets_with_ancestor_outside_batch() -> None:
     x = logged("dips", 10, minute=7, id="x", supersedes="gone")
     y = logged("dips", 11, minute=8, id="y", supersedes="x")
