@@ -60,6 +60,7 @@ function Navigator() {
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.night900 } }}>
         <Stack.Protected guard={signedIn && hasRun}>
           <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="trial/[ord]" />
         </Stack.Protected>
         <Stack.Protected guard={signedIn && !hasRun}>
           <Stack.Screen name="onboarding" />

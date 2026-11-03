@@ -45,6 +45,12 @@ describe('rewards', () => {
     assert.equal(momentOf({ ...upperA, level_up: { from: 1, to: 2, rank: 'Rookie' } }), 'level_up');
   });
 
+  it('a completed Trial is a moment with its 500 XP line', () => {
+    const r = reward({ xp_awarded: [{ type: 'trial_completed', amount: 500, source_id: 'trial:e:0' }] });
+    assert.equal(momentOf(r), 'quest');
+    assert.deepEqual(breakdown(r).lines, [{ label: 'Trial complete', xp: 500 }]);
+  });
+
   it('says how far the next rank is', () => {
     assert.equal(nextRankLine(8, RANKS), 'Two levels to Warrior rank.');
     assert.equal(nextRankLine(2, RANKS), 'Three levels to Fighter rank.');

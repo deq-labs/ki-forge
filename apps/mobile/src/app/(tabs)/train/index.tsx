@@ -24,6 +24,7 @@ import { radius, spacing } from '@/theme/tokens';
 /** Train: log the week's sessions offline. Sets go to SQLite first; the sync queue sends them later. */
 export default function TrainScreen() {
   const { colors } = useTheme();
+  const router = useRouter();
   const params = useLocalSearchParams<{ code?: string }>();
   const week = useWeek();
   // A tab tap picks a session; a new ?code= from Base (Start quest) takes over again.
@@ -54,6 +55,8 @@ export default function TrainScreen() {
               A Trial week has no training sessions: it&apos;s for testing your lifts and measurements.
             </KText>
           </Panel>
+          <View style={styles.gap} />
+          <PrimaryButton label="Enter Trial results" onPress={() => router.push({ pathname: '/trial/[ord]', params: { ord: String(week.data.phase.ord) } })} />
         </View>
       ) : (
         <>
@@ -236,6 +239,7 @@ const styles = StyleSheet.create({
   safe: { flex: 1 },
   loading: { marginTop: spacing[6] },
   pad: { padding: spacing[4] },
+  gap: { height: spacing[3] },
   tabsWrap: { flexGrow: 0 },
   tabs: { paddingHorizontal: spacing[4], paddingVertical: spacing[3], gap: spacing[2] },
   tab: { minHeight: 44, paddingHorizontal: spacing[4], borderRadius: radius.pill, borderWidth: 1, justifyContent: 'center' },
