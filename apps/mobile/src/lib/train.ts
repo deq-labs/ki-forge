@@ -17,6 +17,10 @@ export type Prescription = {
   is_path_technique: boolean;
   note: string | null;
   prefill_weight_lb: number | null;
+  /** Technique progression steps (easiest first), the one you're on, and whether to try the next one. */
+  steps?: { exercise: string; name: string; prefill_weight_lb: number | null }[];
+  current_step?: string | null;
+  ready_to_advance?: boolean;
 };
 
 export type Row = Prescription & { index: number };
@@ -52,9 +56,30 @@ export function isDoneStyle(p: Pick<Prescription, 'rep_min' | 'rep_max'>): boole
 
 export type LoggedLike = { exercise_slug: string; reps: number | null; weight_lb: number; set_no: number };
 
-/** Logged sets for a row: matches the row's exercise or, for a swapped row, the one it replaces. */
-export function setsForRow<T extends LoggedLike>(row: Pick<Row, 'exercise' | 'swap' | 'is_swap'>, sets: T[]): T[] {
-  return sets.filter((s) => s.exercise_slug === row.exercise || (row.is_swap && s.exercise_slug === row.swap));
+/**
+ * Logged sets for a row: its exercise, the one a swapped row replaces, or any of a technique's progression
+ * steps (matches the server's scoring).
+ */
+export function setsForRow<T extends LoggedLike>(
+  row: Pick<Row, 'exercise' | 'swap' | 'is_swap' | 'steps'>,
+  sets: T[],
+): T[] {
+  const steps = new Set(row.steps?.map((s) => s.exercise));
+  return sets.filter(
+    (s) => s.exercise_slug === row.exercise || (row.is_swap && s.exercise_slug === row.swap) || steps.has(s.exercise_slug),
+  );
+}
+
+/** The step to log by default: the one you're on, else the first. */
+export function defaultStep(row: Pick<Row, 'steps' | 'current_step'>): string | null {
+  if (!row.steps?.length) return null;
+  return row.steps.some((s) => s.exercise === row.current_step) ? row.current_step! : row.steps[0].exercise;
+}
+
+/** The step after `slug`, or null at the last one. */
+export function nextStep(row: Pick<Row, 'steps'>, slug: string | null): { exercise: string; name: string } | null {
+  const i = row.steps?.findIndex((s) => s.exercise === slug) ?? -1;
+  return i >= 0 && row.steps && i < row.steps.length - 1 ? row.steps[i + 1] : null;
 }
 
 export type Progress = { done: number; needed: number; rowsDone: boolean[] };

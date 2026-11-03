@@ -117,6 +117,14 @@ class Phase:
 
 
 @dataclass(frozen=True, slots=True)
+class TechniqueStep:
+    """One step of a technique progression, e.g. "Box pistol" on the way to a full pistol squat."""
+
+    exercise: str
+    name: str
+
+
+@dataclass(frozen=True, slots=True)
 class PathTechnique:
     exercise: str
     name: str
@@ -124,6 +132,12 @@ class PathTechnique:
     rep_min: int
     rep_max: int
     note: str | None = None
+    # Progression steps, easiest first; the last is usually `exercise` itself. Empty = a single exercise.
+    steps: tuple[TechniqueStep, ...] = ()
+
+    @property
+    def step_slugs(self) -> tuple[str, ...]:
+        return tuple(s.exercise for s in self.steps)
 
 
 @dataclass(frozen=True, slots=True)
@@ -296,6 +310,9 @@ def _path(d: Mapping[str, Any]) -> TrainingPath:
                 rep_min=t["rep_min"],
                 rep_max=t["rep_max"],
                 note=t.get("note"),
+                steps=tuple(
+                    TechniqueStep(exercise=s["exercise"], name=s["name"]) for s in t.get("steps", [])
+                ),
             )
             for t in d["techniques"]
         ),
@@ -334,6 +351,8 @@ def _validate(p: Program) -> None:
         need(path.conditioning_exercise, f"path {path.slug!r} conditioning")
         for tech in path.techniques:
             need(tech.exercise, f"path {path.slug!r} technique")
+            for step in tech.steps:
+                need(step.exercise, f"path {path.slug!r} technique step")
     for ph in p.phases:
         for slug in ph.modifiers.extra_sets:
             need(slug, f"phase {ph.name!r} extra_sets")

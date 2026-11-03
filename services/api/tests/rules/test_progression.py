@@ -1,5 +1,6 @@
 """Progression (docs/03-program-rules.md section 5) over the synthetic fixtures."""
 
+import dataclasses
 import datetime as dt
 
 import pytest
@@ -130,3 +131,14 @@ def test_progress_uses_top_logged_weight_and_requires_sets(program: Program) -> 
     assert progress(None, item, heavier, log.phase, 5).next_weight_lb == 45
     with pytest.raises(ValueError):
         progress(None, item, [], log.phase, 5)
+
+
+def test_each_technique_step_progresses_on_its_own(program: Program) -> None:
+    log = log_session(program, "upper_a", BUILD, path="shadow", weight=lambda _: 0)
+    log.sets[:] = [
+        dataclasses.replace(s, exercise="box-pistol-squat") if s.exercise == "pistol-squat-progression" else s
+        for s in log.sets
+    ]
+    states = run_week(program, BUILD, [log]).states
+    assert states["box-pistol-squat"].next_weight_lb == 5  # bodyweight + its own increment
+    assert "pistol-squat-progression" not in states  # the full pistol has no history yet

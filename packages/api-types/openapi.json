@@ -917,6 +917,14 @@
           "sets": {
             "title": "Sets",
             "type": "integer"
+          },
+          "steps": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/TechniqueStepOut"
+            },
+            "title": "Steps",
+            "type": "array"
           }
         },
         "required": [
@@ -1220,6 +1228,17 @@
       },
       "PrescriptionView": {
         "properties": {
+          "current_step": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Step"
+          },
           "exercise": {
             "title": "Exercise",
             "type": "string"
@@ -1262,6 +1281,11 @@
             ],
             "title": "Prefill Weight Lb"
           },
+          "ready_to_advance": {
+            "default": false,
+            "title": "Ready To Advance",
+            "type": "boolean"
+          },
           "rep_max": {
             "title": "Rep Max",
             "type": "integer"
@@ -1284,6 +1308,14 @@
           "sets": {
             "title": "Sets",
             "type": "integer"
+          },
+          "steps": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/StepView"
+            },
+            "title": "Steps",
+            "type": "array"
           },
           "superset_group": {
             "anyOf": [
@@ -1835,6 +1867,36 @@
         "title": "StatsOut",
         "type": "object"
       },
+      "StepView": {
+        "properties": {
+          "exercise": {
+            "title": "Exercise",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "prefill_weight_lb": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prefill Weight Lb"
+          }
+        },
+        "required": [
+          "exercise",
+          "name",
+          "prefill_weight_lb"
+        ],
+        "title": "StepView",
+        "type": "object"
+      },
       "SyncIn": {
         "properties": {
           "sessions": {
@@ -2055,6 +2117,24 @@
           "logged_at"
         ],
         "title": "SyncSet",
+        "type": "object"
+      },
+      "TechniqueStepOut": {
+        "properties": {
+          "exercise": {
+            "title": "Exercise",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "exercise",
+          "name"
+        ],
+        "title": "TechniqueStepOut",
         "type": "object"
       },
       "TestDefOut": {

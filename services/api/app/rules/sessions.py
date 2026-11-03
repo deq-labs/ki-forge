@@ -27,6 +27,8 @@ class SessionItem:
     is_technique: bool = False  # appended path technique (never evaluated for on-target in v1)
     is_swap: bool = False  # garage-mode replacement
     replaces: str | None = None  # original slug when is_swap
+    # Other exercises whose sets also count for this row: a technique's progression steps.
+    alternatives: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -86,6 +88,7 @@ def build_session(
                 rep_max=t.rep_max,
                 note=t.note,
                 is_technique=True,
+                alternatives=tuple(s for s in t.step_slugs if s != t.exercise),
             )
             for t in path.techniques
         )

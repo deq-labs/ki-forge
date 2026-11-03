@@ -118,7 +118,7 @@ def score_session(session: BuiltSession, sets: Iterable[LoggedSet]) -> SessionSc
     """
     row_for: dict[str, int] = {}
     for i, item in enumerate(session.items):
-        for slug in (item.exercise, item.replaces):
+        for slug in (item.exercise, item.replaces, *item.alternatives):
             if slug is None:
                 continue
             if slug in row_for:

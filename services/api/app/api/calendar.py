@@ -11,12 +11,13 @@ from sqlalchemy import select
 
 from app.api.deps import CurrentUser, Db
 from app.api.errors import ERROR_RESPONSES, ApiError
-from app.models import Enrollment, ProgressionStateRow, User, WorkoutSession
+from app.models import Enrollment, ProgressionStateRow, SetLog, User, WorkoutSession
 from app.rules.calendar import phase_display_name, phase_for, session_date
-from app.rules.completion import is_full_week
+from app.rules.completion import is_full_week, latest_sets
 from app.rules.program import Phase, Program
+from app.rules.progression import hit_target
 from app.services.program import get_program, program_ids
-from app.services.sessions import built_for, current_week, score_stored
+from app.services.sessions import built_for, current_week, logged_sets, score_stored
 from app.services.stats import active_enrollment
 
 router = APIRouter(tags=["calendar"], responses=ERROR_RESPONSES)
@@ -27,6 +28,12 @@ class PhaseSummary(BaseModel):
     name: str  # display name, e.g. "Storm Fighter Specialization"
     kind: str
     rir_target: int | None
+
+
+class StepView(BaseModel):
+    exercise: str
+    name: str
+    prefill_weight_lb: float | None
 
 
 class PrescriptionView(BaseModel):
@@ -43,6 +50,11 @@ class PrescriptionView(BaseModel):
     is_path_technique: bool
     note: str | None
     prefill_weight_lb: float | None
+    # Technique progressions: the steps, the one you're on (last logged, else the first), and whether your
+    # last session on it hit the top of the range on every set (time to try the next step).
+    steps: list[StepView] = []
+    current_step: str | None = None
+    ready_to_advance: bool = False
 
 
 class SessionView(BaseModel):
@@ -123,6 +135,46 @@ def _week_sessions(db: Db, user: User, e: Enrollment, week: int) -> list[Workout
     )
 
 
+def _steps(db: Db, user: User, program: Program, path_slug: str, item, prefill: dict[str, float]) -> dict:
+    """Step fields for a technique row with a progression; empty for every other row."""
+    tech = next(
+        (t for t in program.path(path_slug).techniques if t.exercise == item.exercise and t.steps), None
+    )
+    if not item.is_technique or tech is None:
+        return {}
+    ids = program_ids(db)
+    step_ids = [ids.exercises[s] for s in tech.step_slugs]
+    last = db.execute(
+        select(SetLog.exercise_id, SetLog.workout_session_id)
+        .join(WorkoutSession, WorkoutSession.id == SetLog.workout_session_id)
+        .where(WorkoutSession.user_id == user.id, SetLog.exercise_id.in_(step_ids))
+        .order_by(SetLog.logged_at.desc())
+        .limit(1)
+    ).first()
+    current = ids.exercise_slug(last.exercise_id) if last else tech.steps[0].exercise
+    ready = False
+    if last:
+        ws = db.get(WorkoutSession, last.workout_session_id)
+        phase = phase_for(ws.week, program) if ws else None
+        logged = [
+            s
+            for s in logged_sets(db, [last.workout_session_id])[last.workout_session_id]
+            if s.exercise == current
+        ]
+        ready = (
+            bool(phase and logged and hit_target(item, latest_sets(logged), phase))
+            and current != tech.steps[-1].exercise
+        )
+    return {
+        "steps": [
+            StepView(exercise=s.exercise, name=s.name, prefill_weight_lb=prefill.get(s.exercise))
+            for s in tech.steps
+        ],
+        "current_step": current,
+        "ready_to_advance": ready,
+    }
+
+
 @router.get("/week", response_model=WeekOut)
 def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, ge=0)) -> WeekOut:
     """A week's sessions fully built for the user's path, phase and garage default. Default: current week."""
@@ -195,6 +247,7 @@ def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, 
                             is_path_technique=item.is_technique,
                             note=item.note,
                             prefill_weight_lb=prefill.get(item.exercise),
+                            **_steps(db, user, program, sess_path, item, prefill),
                         )
                         for item, alt in zip(built.items, other.items, strict=True)
                     ],

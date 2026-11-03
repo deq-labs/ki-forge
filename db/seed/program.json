@@ -7,6 +7,17 @@
   },
   "exercises": [
     {
+      "slug": "assisted-pistol-squat",
+      "name": "Assisted pistol squat",
+      "equipment": [
+        "band"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
       "slug": "band-face-pull",
       "name": "Band face pull",
       "equipment": [
@@ -105,6 +116,17 @@
       "swap": null
     },
     {
+      "slug": "box-pistol-squat",
+      "name": "Box pistol squat",
+      "equipment": [
+        "bench"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
       "slug": "brisk-outdoor-walk",
       "name": "Brisk outdoor walk",
       "equipment": [],
@@ -164,6 +186,17 @@
       "is_timed": false,
       "needs_garage_space": false,
       "swap": "x3-bar-deadlift"
+    },
+    {
+      "slug": "counterweight-pistol-squat",
+      "name": "Counterweight pistol squat",
+      "equipment": [
+        "plate"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
     },
     {
       "slug": "deficit-push-ups",
@@ -380,6 +413,15 @@
       "swap": null
     },
     {
+      "slug": "one-leg-l-sit-hold",
+      "name": "One-leg L-sit hold",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
       "slug": "overhead-cable-triceps-extension",
       "name": "Overhead cable triceps extension",
       "equipment": [
@@ -524,6 +566,15 @@
       "swap": null
     },
     {
+      "slug": "tuck-l-sit-hold",
+      "name": "Tuck L-sit hold",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null
+    },
+    {
       "slug": "walking-lunge",
       "name": "Walking lunge",
       "equipment": [
@@ -619,7 +670,25 @@
           "sets": 3,
           "rep_min": 5,
           "rep_max": 5,
-          "note": "per leg"
+          "note": "per leg",
+          "steps": [
+            {
+              "exercise": "box-pistol-squat",
+              "name": "Box pistol"
+            },
+            {
+              "exercise": "assisted-pistol-squat",
+              "name": "Assisted pistol"
+            },
+            {
+              "exercise": "counterweight-pistol-squat",
+              "name": "Counterweight pistol"
+            },
+            {
+              "exercise": "pistol-squat-progression",
+              "name": "Full pistol"
+            }
+          ]
         },
         {
           "exercise": "l-sit-hold",
@@ -627,7 +696,21 @@
           "sets": 3,
           "rep_min": 1,
           "rep_max": 1,
-          "note": "15–30 s hold; done = 1"
+          "note": "15–30 s hold; done = 1",
+          "steps": [
+            {
+              "exercise": "tuck-l-sit-hold",
+              "name": "Tuck L-sit"
+            },
+            {
+              "exercise": "one-leg-l-sit-hold",
+              "name": "One-leg L-sit"
+            },
+            {
+              "exercise": "l-sit-hold",
+              "name": "Full L-sit"
+            }
+          ]
         }
       ],
       "conditioning": "Treadmill hill sprints 10 × 20 s",
