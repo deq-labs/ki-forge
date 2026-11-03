@@ -87,3 +87,13 @@ export function useTrials() {
     enabled: !!owner,
   });
 }
+
+/** Tape scans, newest first. */
+export function useScans() {
+  const owner = useSettings((s) => s.devEmail);
+  return useQuery({
+    queryKey: ['scans', owner],
+    queryFn: () => cached(owner!, 'scans', () => api.get('/v1/scans')),
+    enabled: !!owner,
+  });
+}
