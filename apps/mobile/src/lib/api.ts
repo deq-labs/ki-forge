@@ -85,5 +85,6 @@ export const api = {
 export type Me = ResponseOf<'/v1/me', 'get'>;
 export type Program = ResponseOf<'/v1/program', 'get'>;
 export type Week = ResponseOf<'/v1/week', 'get'>;
+export type Arc = ResponseOf<'/v1/arc', 'get'>;
 export type SyncResponse = ResponseOf<'/v1/sync', 'post'>;
 export type SyncRequest = BodyOf<'/v1/sync', 'post'>;

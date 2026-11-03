@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { levelFor, levelProgress, rankFor, SET_XP, xpForLevel } from './xp.ts';
+import { levelFor, levelProgress, maxSessionXp, rankFor, SET_XP, xpForLevel } from './xp.ts';
 
 const RANKS = [
   { from_level: 1, name: 'Rookie' },
@@ -59,4 +59,9 @@ describe('progress and ranks (golden)', () => {
   });
 
   it('a logged set is 5 XP; Upper A logs 23 sets = 115', () => assert.equal(23 * SET_XP, 115));
+});
+
+describe('session XP ceiling (golden)', () => {
+  it('Upper A: 115 + 125 = 240', () => assert.equal(maxSessionXp(23, 'lift'), 240));
+  it('Engine: 5 + 50 = 55, never the +25', () => assert.equal(maxSessionXp(1, 'conditioning'), 55));
 });
