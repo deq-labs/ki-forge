@@ -163,8 +163,10 @@ def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, 
             # The best logged attempt for this template this week; otherwise the user's garage default.
             best = max(logged, key=lambda p: (p[1].cleared, p[1].sets_logged), default=None)
             garage = best[0].garage_mode if best else e.garage_mode_default
-            built = built_for(program, path_slug, t.code, week, garage)
-            other = built_for(program, path_slug, t.code, week, not garage)
+            # A logged session keeps the path it was done on; an unstarted one uses the run's current path.
+            sess_path = ids.path_slug(best[0].path_id) if best and best[0].path_id else path_slug
+            built = built_for(program, sess_path, t.code, week, garage)
+            other = built_for(program, sess_path, t.code, week, not garage)
             assert built is not None and other is not None
             sessions.append(
                 SessionView(

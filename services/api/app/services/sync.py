@@ -94,6 +94,7 @@ def _upsert_sessions(
                 enrollment_id=e.id,
                 session_template_id=ids.templates[s.template_code],
                 phase_id=ids.phases[phase.ord],
+                path_id=e.path_id,
                 week=s.week,
                 garage_mode=s.garage_mode,
                 started_at=s.started_at,

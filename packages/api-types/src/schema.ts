@@ -118,6 +118,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/import/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import Export
+         * @description Re-create an export (`GET /v1/export`) in a fresh account. Awards are recomputed.
+         */
+        post: operations["import_export_v1_import_export_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/import/workbook": {
         parameters: {
             query?: never;
@@ -765,6 +785,12 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** RestoreOut */
+        RestoreOut: {
+            stats: components["schemas"]["StatsOut"];
+            /** Xp Awarded */
+            xp_awarded: components["schemas"]["AwardOut"][];
+        };
         /** ScanIn */
         ScanIn: {
             /** Shoulders In */
@@ -1357,6 +1383,50 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ExportOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    import_export_v1_import_export_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExportOut"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RestoreOut"];
                 };
             };
             /** @description Not signed in */

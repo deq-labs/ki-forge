@@ -1428,6 +1428,26 @@
         "title": "RankOut",
         "type": "object"
       },
+      "RestoreOut": {
+        "properties": {
+          "stats": {
+            "$ref": "#/components/schemas/StatsOut"
+          },
+          "xp_awarded": {
+            "items": {
+              "$ref": "#/components/schemas/AwardOut"
+            },
+            "title": "Xp Awarded",
+            "type": "array"
+          }
+        },
+        "required": [
+          "xp_awarded",
+          "stats"
+        ],
+        "title": "RestoreOut",
+        "type": "object"
+      },
       "ScanIn": {
         "properties": {
           "shoulders_in": {
@@ -2906,6 +2926,76 @@
           }
         },
         "summary": "Export",
+        "tags": [
+          "account"
+        ]
+      }
+    },
+    "/v1/import/export": {
+      "post": {
+        "description": "Re-create an export (`GET /v1/export`) in a fresh account. Awards are recomputed.",
+        "operationId": "import_export_v1_import_export_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-dev-user",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportOut"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestoreOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not signed in"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Import Export",
         "tags": [
           "account"
         ]
