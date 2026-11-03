@@ -3,10 +3,14 @@ import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
 type IconProps = { color: ColorValue; size?: number; strokeWidth?: number };
 
-/** Simple geometric line icons (no third-party icon set). 24-unit grid, round caps. */
+/**
+ * Simple geometric line icons (no third-party icon set). 24-unit grid, round caps. Decorative: the button or
+ * tab around each icon carries the label. `aria-hidden` works on native and web (`accessible` is native-only
+ * and leaks onto the DOM <svg> on web).
+ */
 function Icon({ size = 26, children }: { size?: number; children: React.ReactNode }) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" accessible={false}>
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
       {children}
     </Svg>
   );

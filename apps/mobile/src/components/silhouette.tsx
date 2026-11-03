@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import Svg, { Circle, Defs, Path, RadialGradient, Rect, Stop } from 'react-native-svg';
 
 /**
@@ -17,6 +18,8 @@ export function Silhouette({
   size?: number;
   label?: string;
 }) {
+  // Unique per instance: on web, gradient ids are document-wide, so a shared id would give every card one color.
+  const auraId = `aura-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const w = 100;
   const h = 120;
   const cx = w / 2;
@@ -42,17 +45,16 @@ export function Silhouette({
       width={size}
       height={(size * h) / w}
       viewBox={`0 0 ${w} ${h}`}
-      accessible={!!label}
-      accessibilityLabel={label}>
+      {...(label ? { role: 'img' as const, 'aria-label': label } : { 'aria-hidden': true })}>
       {glow && (
         <>
           <Defs>
-            <RadialGradient id="aura" cx="50%" cy="78%" r="55%">
+            <RadialGradient id={auraId} cx="50%" cy="78%" r="55%">
               <Stop offset="0" stopColor={glow} stopOpacity={0.55} />
               <Stop offset="1" stopColor={glow} stopOpacity={0} />
             </RadialGradient>
           </Defs>
-          <Rect x={0} y={0} width={w} height={h} fill="url(#aura)" />
+          <Rect x={0} y={0} width={w} height={h} fill={`url(#${auraId})`} />
         </>
       )}
       <Circle cx={cx} cy={sTop - 13} r={7} fill={color} />
