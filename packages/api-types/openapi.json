@@ -1224,6 +1224,161 @@
         "title": "RankOut",
         "type": "object"
       },
+      "ScanIn": {
+        "properties": {
+          "shoulders_in": {
+            "exclusiveMinimum": 0,
+            "maximum": 99.9,
+            "title": "Shoulders In",
+            "type": "number"
+          },
+          "taken_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Taken At"
+          },
+          "waist_in": {
+            "exclusiveMinimum": 0,
+            "maximum": 99.9,
+            "title": "Waist In",
+            "type": "number"
+          },
+          "with_photo": {
+            "default": false,
+            "title": "With Photo",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "shoulders_in",
+          "waist_in"
+        ],
+        "title": "ScanIn",
+        "type": "object"
+      },
+      "ScanOut": {
+        "properties": {
+          "frame_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frame Ratio"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "shoulders_in": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shoulders In"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "taken_at": {
+            "format": "date-time",
+            "title": "Taken At",
+            "type": "string"
+          },
+          "waist_in": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Waist In"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "shoulders_in",
+          "waist_in",
+          "frame_ratio",
+          "taken_at"
+        ],
+        "title": "ScanOut",
+        "type": "object"
+      },
+      "ScanSaved": {
+        "properties": {
+          "level_up": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LevelUp"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "new_badges": {
+            "items": {
+              "$ref": "#/components/schemas/NewBadge"
+            },
+            "title": "New Badges",
+            "type": "array"
+          },
+          "scan": {
+            "$ref": "#/components/schemas/ScanOut"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/StatsOut"
+          },
+          "upload_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Upload Url"
+          },
+          "xp_awarded": {
+            "items": {
+              "$ref": "#/components/schemas/AwardOut"
+            },
+            "title": "Xp Awarded",
+            "type": "array"
+          }
+        },
+        "required": [
+          "xp_awarded",
+          "stats",
+          "level_up",
+          "new_badges",
+          "scan",
+          "upload_url"
+        ],
+        "title": "ScanSaved",
+        "type": "object"
+      },
       "SessionOutcome": {
         "properties": {
           "all_on_target": {
@@ -1704,6 +1859,208 @@
           "how"
         ],
         "title": "TestDefOut",
+        "type": "object"
+      },
+      "TrialIn": {
+        "properties": {
+          "results": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Results",
+            "type": "object"
+          },
+          "taken_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Taken On"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "title": "TrialIn",
+        "type": "object"
+      },
+      "TrialOut": {
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "frame_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frame Ratio"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "phase_ord": {
+            "title": "Phase Ord",
+            "type": "integer"
+          },
+          "power_level": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Power Level"
+          },
+          "results": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Results",
+            "type": "object"
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "phase_ord",
+          "name",
+          "start_date",
+          "results",
+          "frame_ratio",
+          "power_level",
+          "complete"
+        ],
+        "title": "TrialOut",
+        "type": "object"
+      },
+      "TrialSaved": {
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "frame_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frame Ratio"
+          },
+          "level_up": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LevelUp"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "new_badges": {
+            "items": {
+              "$ref": "#/components/schemas/NewBadge"
+            },
+            "title": "New Badges",
+            "type": "array"
+          },
+          "phase_ord": {
+            "title": "Phase Ord",
+            "type": "integer"
+          },
+          "power_level": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Power Level"
+          },
+          "results": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Results",
+            "type": "object"
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/StatsOut"
+          },
+          "xp_awarded": {
+            "items": {
+              "$ref": "#/components/schemas/AwardOut"
+            },
+            "title": "Xp Awarded",
+            "type": "array"
+          }
+        },
+        "required": [
+          "xp_awarded",
+          "stats",
+          "level_up",
+          "new_badges",
+          "phase_ord",
+          "name",
+          "start_date",
+          "results",
+          "frame_ratio",
+          "power_level",
+          "complete"
+        ],
+        "title": "TrialSaved",
         "type": "object"
       },
       "UserOut": {
@@ -2256,6 +2613,137 @@
         ]
       }
     },
+    "/v1/scans": {
+      "get": {
+        "operationId": "list_scans_v1_scans_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-dev-user",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ScanOut"
+                  },
+                  "title": "Response List Scans V1 Scans Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not signed in"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Scans",
+        "tags": [
+          "trials"
+        ]
+      },
+      "post": {
+        "description": "Log a tape measurement. Photo scans arrive in M5.",
+        "operationId": "create_scan_v1_scans_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-dev-user",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScanIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScanSaved"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not signed in"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Scan",
+        "tags": [
+          "trials"
+        ]
+      }
+    },
     "/v1/sync": {
       "post": {
         "description": "Upsert logged sessions and sets; returns authoritative stats. Idempotent: replays award nothing.",
@@ -2323,6 +2811,149 @@
         "summary": "Sync",
         "tags": [
           "sync"
+        ]
+      }
+    },
+    "/v1/trials": {
+      "get": {
+        "description": "Every Trial of the active run, with whatever results are entered.",
+        "operationId": "list_trials_v1_trials_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-dev-user",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TrialOut"
+                  },
+                  "title": "Response List Trials V1 Trials Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not signed in"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Trials",
+        "tags": [
+          "trials"
+        ]
+      }
+    },
+    "/v1/trials/{phase_ord}": {
+      "put": {
+        "description": "Enter Trial results (partial allowed). A complete Trial awards 500 XP once.",
+        "operationId": "put_trial_v1_trials__phase_ord__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "phase_ord",
+            "required": true,
+            "schema": {
+              "title": "Phase Ord",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-dev-user",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrialIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrialSaved"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not signed in"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Trial",
+        "tags": [
+          "trials"
         ]
       }
     },
