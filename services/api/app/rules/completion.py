@@ -11,7 +11,7 @@ newest row in each chain counts (see `latest_sets`).
 from __future__ import annotations
 
 import datetime as dt
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 
 from app.rules.program import Program
@@ -35,6 +35,7 @@ class RowScore:
     item: SessionItem
     sets_logged: int
     on_target: bool | None  # None = not evaluated (fewer sets logged than prescribed)
+    counted: tuple[str, ...] = ()  # chain root ids of the sets that count toward sets_logged
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,6 +49,14 @@ class SessionScore:
 
 def latest_sets(sets: Iterable[LoggedSet]) -> list[LoggedSet]:
     """Collapse edit chains to their newest row (by `logged_at`, then id); input order is kept."""
+    return [s for s, _ in latest_with_roots(sets)]
+
+
+def latest_with_roots(sets: Iterable[LoggedSet]) -> list[tuple[LoggedSet, str]]:
+    """Like `latest_sets`, paired with each chain's root id (the original row's client_id).
+
+    The root id is stable across edits, so it is the idempotency key for the set's XP award.
+    """
     sets = list(sets)
     by_id = {s.id: s for s in sets}
 
@@ -68,21 +77,28 @@ def latest_sets(sets: Iterable[LoggedSet]) -> list[LoggedSet]:
         r = root(s)
         if r not in newest or (s.logged_at, s.id) > (newest[r].logged_at, newest[r].id):
             newest[r] = s
-    keep = {s.id for s in newest.values()}
-    return [s for s in sets if s.id in keep]
+    keep = {s.id: r for r, s in newest.items()}
+    return [(s, keep[s.id]) for s in sets if s.id in keep]
 
 
-def score_row(item: SessionItem, sets: Iterable[LoggedSet]) -> RowScore:
-    """Score one row against its already de-duplicated logged sets."""
+def score_row(item: SessionItem, sets: Iterable[LoggedSet], roots: Sequence[str] | None = None) -> RowScore:
+    """Score one row against its already de-duplicated logged sets.
+
+    `roots` are the sets' chain root ids (defaults to their own ids). The first `sets_logged` sets in
+    log order are the ones that count; their roots are returned in `counted`.
+    """
     sets = list(sets)
+    roots = list(roots) if roots is not None else [s.id for s in sets]
+    order = sorted(range(len(sets)), key=lambda i: (sets[i].logged_at, sets[i].set_no, sets[i].id))
     sets_logged = min(item.sets, len(sets))
+    counted = tuple(roots[i] for i in order[:sets_logged])
     if sets_logged < item.sets:
         on_target = None
     elif item.is_technique:
         on_target = True  # v1: technique rows are never evaluated for target
     else:
         on_target = sum(1 for s in sets if (s.reps or 0) >= item.rep_max) >= item.sets
-    return RowScore(item=item, sets_logged=sets_logged, on_target=on_target)
+    return RowScore(item=item, sets_logged=sets_logged, on_target=on_target, counted=counted)
 
 
 def score_session(session: BuiltSession, sets: Iterable[LoggedSet]) -> SessionScore:
@@ -90,12 +106,17 @@ def score_session(session: BuiltSession, sets: Iterable[LoggedSet]) -> SessionSc
     slugs = [i.exercise for i in session.items]
     if len(set(slugs)) != len(slugs):
         raise ValueError(f"session {session.template!r} lists an exercise twice; sets cannot be matched")
-    by_exercise: dict[str, list[LoggedSet]] = {slug: [] for slug in slugs}
-    for s in latest_sets(sets):
+    by_exercise: dict[str, list[tuple[LoggedSet, str]]] = {slug: [] for slug in slugs}
+    for s, root in latest_with_roots(sets):
         if s.exercise in by_exercise:
-            by_exercise[s.exercise].append(s)
+            by_exercise[s.exercise].append((s, root))
 
-    rows = tuple(score_row(item, by_exercise[item.exercise]) for item in session.items)
+    rows = tuple(
+        score_row(
+            item, [s for s, _ in by_exercise[item.exercise]], [r for _, r in by_exercise[item.exercise]]
+        )
+        for item in session.items
+    )
     needed = sum(r.item.sets for r in rows)
     logged = sum(r.sets_logged for r in rows)
     cleared = needed > 0 and logged >= needed
