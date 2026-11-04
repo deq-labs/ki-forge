@@ -90,3 +90,26 @@ describe('labels and rest', () => {
     assert.equal(restSeconds({ rest_seconds: 0, sets: 3 }, 1), 90);
   });
 });
+
+describe('technique steps', async () => {
+  const { defaultStep, nextStep } = await import('./train.ts');
+  const steps = [
+    { exercise: 'box-pistol-squat', name: 'Box pistol', prefill_weight_lb: null },
+    { exercise: 'assisted-pistol-squat', name: 'Assisted pistol', prefill_weight_lb: null },
+    { exercise: 'pistol-squat-progression', name: 'Full pistol', prefill_weight_lb: null },
+  ];
+  const tech = p({ exercise: 'pistol-squat-progression', swap: null, is_path_technique: true, steps, current_step: 'assisted-pistol-squat' });
+
+  it('counts sets on any step for the technique row', () => {
+    const [row] = rowsFor([tech], false, false, () => undefined);
+    assert.equal(setsForRow(row, [set('box-pistol-squat'), set('assisted-pistol-squat'), set('dips')]).length, 2);
+  });
+
+  it('defaults to the current step, else the first, and knows the next one', () => {
+    assert.equal(defaultStep(tech), 'assisted-pistol-squat');
+    assert.equal(defaultStep({ ...tech, current_step: null }), 'box-pistol-squat');
+    assert.equal(defaultStep({ steps: [], current_step: null }), null);
+    assert.equal(nextStep(tech, 'assisted-pistol-squat')?.name, 'Full pistol');
+    assert.equal(nextStep(tech, 'pistol-squat-progression'), null);
+  });
+});

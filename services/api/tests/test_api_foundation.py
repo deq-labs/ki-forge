@@ -33,7 +33,7 @@ def test_program_returns_seed_counts(client: TestClient) -> None:
         sum(len(p["techniques"]) for p in body["paths"]),
         len(body["badges"]),
     )
-    assert counts == (52, 25, 11, 4, 8, 6)
+    assert counts == (57, 25, 11, 4, 8, 6)
     assert (body["slug"], body["version"], body["cycle_weeks"]) == ("ki-forge-core", 1, 84)
 
 

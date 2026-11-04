@@ -131,7 +131,7 @@ function SessionView({ weekNo, session }: { weekNo: number; session: WeekSession
       owner,
       s.client_id,
       {
-        exercise_slug: input.supersedes?.exercise_slug ?? row.exercise,
+        exercise_slug: input.supersedes?.exercise_slug ?? input.exercise ?? row.exercise,
         set_no: input.supersedes?.set_no ?? mine.length + 1,
         weight_lb: input.weight_lb,
         reps: input.reps,

@@ -84,6 +84,11 @@ class PhaseOut(Model):
     modifiers: PhaseModifiersOut
 
 
+class TechniqueStepOut(Model):
+    exercise: str
+    name: str
+
+
 class PathTechniqueOut(Model):
     exercise: str
     name: str
@@ -91,6 +96,7 @@ class PathTechniqueOut(Model):
     rep_min: int
     rep_max: int
     note: str | None
+    steps: list[TechniqueStepOut] = []  # progression steps, easiest first
 
 
 class PathOut(Model):

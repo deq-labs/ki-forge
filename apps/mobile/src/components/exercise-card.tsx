@@ -4,12 +4,13 @@ import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withSeque
 
 import { KText } from '@/components/k-text';
 import type { LocalSet } from '@/db/repo';
-import { isDoneStyle, prescriptionLine, setsForRow, type Row } from '@/lib/train';
+import { defaultStep, isDoneStyle, nextStep, prescriptionLine, setsForRow, type Row } from '@/lib/train';
 import { SET_XP } from '@/lib/xp';
 import { useTheme } from '@/theme/theme';
 import { radius, spacing } from '@/theme/tokens';
 
-export type LogInput = { weight_lb: number; reps: number; supersedes?: LocalSet };
+/** `exercise` is the technique step picked (else the row's exercise is logged). */
+export type LogInput = { weight_lb: number; reps: number; supersedes?: LocalSet; exercise?: string };
 
 type Props = {
   row: Row;
@@ -31,7 +32,16 @@ export function ExerciseCard({ row, number, sets, expanded, increment, garage, o
   const doneStyle = isDoneStyle(row);
   const last = mine[mine.length - 1];
 
-  const [weight, setWeight] = useState(last?.weight_lb ?? row.prefill_weight_lb ?? 0);
+  // Technique progressions: pick the step for today (defaults to the one you're on).
+  const [step, setStepState] = useState<string | null>(() => defaultStep(row));
+  const stepInfo = row.steps?.find((s) => s.exercise === step);
+  const upNext = row.ready_to_advance && step === row.current_step ? nextStep(row, step) : null;
+  const [weight, setWeight] = useState(last?.weight_lb ?? stepInfo?.prefill_weight_lb ?? row.prefill_weight_lb ?? 0);
+  const setStep = (slug: string) => {
+    setStepState(slug);
+    const lastOnStep = [...mine].reverse().find((s) => s.exercise_slug === slug);
+    setWeight(lastOnStep?.weight_lb ?? row.steps?.find((s) => s.exercise === slug)?.prefill_weight_lb ?? 0);
+  };
   const [reps, setReps] = useState(last?.reps ?? row.rep_max);
   const [editing, setEditingState] = useState<LocalSet | null>(null);
   const setEditing = (s: LocalSet | null) => {
@@ -59,7 +69,7 @@ export function ExerciseCard({ row, number, sets, expanded, increment, garage, o
       : `Log set ${nextSetNo}${nextSetNo > row.sets ? ' (extra)' : ` · +${SET_XP} XP`}`;
 
   function log() {
-    onLog({ weight_lb: weight, reps: doneStyle ? 1 : reps, supersedes: editing ?? undefined });
+    onLog({ weight_lb: weight, reps: doneStyle ? 1 : reps, supersedes: editing ?? undefined, exercise: step ?? undefined });
     setEditing(null);
   }
 
@@ -84,6 +94,7 @@ export function ExerciseCard({ row, number, sets, expanded, increment, garage, o
           <View style={styles.nameRow}>
             <KText variant="bodyStrong" style={styles.name}>
               {row.name}
+              {stepInfo ? <KText variant="bodyStrong" color="kiHot">{` · ${stepInfo.name}`}</KText> : null}
             </KText>
             {row.is_path_technique && (
               <View style={[styles.tag, { borderColor: colors.kiHot }]}>
@@ -105,6 +116,50 @@ export function ExerciseCard({ row, number, sets, expanded, increment, garage, o
 
       {expanded && (
         <View style={styles.body}>
+          {row.steps && row.steps.length > 0 && (
+            <View style={styles.stepBlock}>
+              <KText variant="label" color="inkMuted">
+                Progression step
+              </KText>
+              <View style={styles.chips} accessibilityRole="radiogroup">
+                {row.steps.map((s, i) => {
+                  const on = s.exercise === step;
+                  const current = s.exercise === row.current_step;
+                  return (
+                    <Pressable
+                      key={s.exercise}
+                      onPress={() => setStep(s.exercise)}
+                      accessibilityRole="radio"
+                      accessibilityState={{ checked: on }}
+                      accessibilityLabel={`Step ${i + 1}: ${s.name}${current ? ', your current step' : ''}`}
+                      style={[
+                        styles.stepChip,
+                        { borderColor: on ? colors.kiHot : colors.line, backgroundColor: on ? colors.panelRaised : 'transparent' },
+                      ]}>
+                      <KText variant="caption" color={on ? 'kiHot' : 'ink'}>
+                        {i + 1}. {s.name}
+                      </KText>
+                      {current && (
+                        <KText variant="label" color="inkMuted" style={styles.tagText}>
+                          You
+                        </KText>
+                      )}
+                    </Pressable>
+                  );
+                })}
+              </View>
+              {upNext && (
+                <Pressable
+                  onPress={() => setStep(upNext.exercise)}
+                  accessibilityRole="button"
+                  style={[styles.advance, { borderColor: colors.good }]}>
+                  <KText variant="caption" color="good">
+                    ✓ Every set at the top last time. Ready for {upNext.name}? Tap to switch.
+                  </KText>
+                </Pressable>
+              )}
+            </View>
+          )}
           <View style={styles.chips}>
             {Array.from({ length: Math.max(row.sets, mine.length) }, (_, i) => {
               const s = mine[i];
@@ -245,6 +300,9 @@ const styles = StyleSheet.create({
   name: { flexShrink: 1 },
   tag: { borderWidth: 1, borderRadius: radius.sm, paddingHorizontal: 6, paddingVertical: 1 },
   tagText: { fontSize: 9, lineHeight: 12 },
+  stepBlock: { gap: spacing[2] },
+  stepChip: { minHeight: 44, paddingHorizontal: spacing[3], borderRadius: radius.md, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
+  advance: { borderWidth: 1, borderRadius: radius.md, padding: spacing[2], minHeight: 44, justifyContent: 'center' },
   body: { paddingHorizontal: spacing[4], paddingBottom: spacing[4], gap: spacing[3] },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] },
   chip: { minWidth: 76, minHeight: 44, paddingHorizontal: spacing[3], borderRadius: radius.md, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },

@@ -650,6 +650,11 @@ export interface components {
             rep_min: number;
             /** Sets */
             sets: number;
+            /**
+             * Steps
+             * @default []
+             */
+            steps: components["schemas"]["TechniqueStepOut"][];
         };
         /** PhaseModifiersOut */
         PhaseModifiersOut: {
@@ -726,6 +731,8 @@ export interface components {
         };
         /** PrescriptionView */
         PrescriptionView: {
+            /** Current Step */
+            current_step?: string | null;
             /** Exercise */
             exercise: string;
             /** Is Main Lift */
@@ -740,6 +747,11 @@ export interface components {
             note: string | null;
             /** Prefill Weight Lb */
             prefill_weight_lb: number | null;
+            /**
+             * Ready To Advance
+             * @default false
+             */
+            ready_to_advance: boolean;
             /** Rep Max */
             rep_max: number;
             /** Rep Min */
@@ -748,6 +760,11 @@ export interface components {
             rest_seconds: number | null;
             /** Sets */
             sets: number;
+            /**
+             * Steps
+             * @default []
+             */
+            steps: components["schemas"]["StepView"][];
             /** Superset Group */
             superset_group: string | null;
             /** Swap */
@@ -927,6 +944,15 @@ export interface components {
             /** Xp To Next */
             xp_to_next: number;
         };
+        /** StepView */
+        StepView: {
+            /** Exercise */
+            exercise: string;
+            /** Name */
+            name: string;
+            /** Prefill Weight Lb */
+            prefill_weight_lb: number | null;
+        };
         /** SyncIn */
         SyncIn: {
             /** Sessions */
@@ -1009,6 +1035,13 @@ export interface components {
              * @default 0
              */
             weight_lb: number;
+        };
+        /** TechniqueStepOut */
+        TechniqueStepOut: {
+            /** Exercise */
+            exercise: string;
+            /** Name */
+            name: string;
         };
         /** TestDefOut */
         TestDefOut: {

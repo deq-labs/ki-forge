@@ -232,3 +232,12 @@ def test_required_templates_from_seed(program: Program) -> None:
 )
 def test_full_week(program: Program, cleared: list[str], full: bool) -> None:
     assert is_full_week(program, cleared) is full
+
+
+def test_technique_row_accepts_any_progression_step(program: Program) -> None:
+    s = build(program, "upper_a", path="shadow")
+    pistol = next(i for i in s.items if i.exercise == "pistol-squat-progression")
+    assert pistol.alternatives == ("box-pistol-squat", "assisted-pistol-squat", "counterweight-pistol-squat")
+    sets = [logged("box-pistol-squat", 5) if x.exercise == pistol.exercise else x for x in all_sets_at_top(s)]
+    score = score_session(s, sets)
+    assert (score.sets_logged, score.cleared) == (s.sets_needed, True)

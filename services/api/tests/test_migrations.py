@@ -33,7 +33,7 @@ def test_migration_0001_matches_reference_sql() -> None:
 @pytest.mark.parametrize(
     ("table", "expected"),
     [
-        ("exercises", 52),
+        ("exercises", 57),
         ("prescriptions", 25),
         ("phases", 11),
         ("paths", 4),
@@ -79,4 +79,4 @@ def test_downgrade_and_upgrade_round_trip(db_url: str, db_engine: Engine) -> Non
     assert tables == 0
     command.upgrade(cfg, "head")
     with db_engine.connect() as conn:
-        assert conn.execute(text("SELECT count(*) FROM exercises")).scalar_one() == 52
+        assert conn.execute(text("SELECT count(*) FROM exercises")).scalar_one() == 57

@@ -285,3 +285,42 @@ def test_path_change_only_affects_sessions_not_yet_started(client: TestClient, d
     assert techniques(week1) == ["cable-lateral-raise-drop-set", "behind-the-back-shrug"]  # storm, as logged
     assert techniques(week2) == ["pistol-squat-progression", "l-sit-hold"]  # shadow from now on
     assert client.get("/v1/me").json()["stats"]["sessions_cleared"] == 1
+
+
+def test_technique_steps_current_step_and_ready_to_advance(client: TestClient) -> None:
+    enroll(client, dt.date(2026, 10, 26), path="shadow")
+    view = session_view(client.get("/v1/week", params={"week": 1}).json(), "upper_a")
+    pistol = next(r for r in view["prescriptions"] if r["exercise"] == "pistol-squat-progression")
+    assert [s["name"] for s in pistol["steps"]] == [
+        "Box pistol",
+        "Assisted pistol",
+        "Counterweight pistol",
+        "Full pistol",
+    ]
+    assert (pistol["current_step"], pistol["ready_to_advance"]) == ("box-pistol-squat", False)
+    plain = next(r for r in view["prescriptions"] if r["exercise"] == "incline-dumbbell-press")
+    assert (plain["steps"], plain["current_step"]) == ([], None)
+
+    # Log the whole session with box pistols at the top of the range (3 x 5): ready for the next step.
+    sid = str(uuid.uuid4())
+    rows = [(r, n) for r in view["prescriptions"] for n in range(1, r["sets"] + 1)]
+    sets = [
+        {
+            "client_id": str(uuid.uuid4()),
+            "session_client_id": sid,
+            "exercise_slug": "box-pistol-squat"
+            if r["exercise"] == "pistol-squat-progression"
+            else r["exercise"],
+            "set_no": n,
+            "weight_lb": 0,
+            "reps": r["rep_max"],
+            "logged_at": f"2026-11-02T07:{i:02d}:00Z",
+        }
+        for i, (r, n) in enumerate(rows)
+    ]
+    session = {"client_id": sid, "template_code": "upper_a", "week": 1, "started_at": "2026-11-02T07:00:00Z"}
+    out = client.post("/v1/sync", json={"sessions": [session], "sets": sets}).json()
+    assert out["sessions"][0]["cleared"] is True  # sets on a step clear the technique row
+    after = session_view(client.get("/v1/week", params={"week": 2}).json(), "upper_a")
+    pistol = next(r for r in after["prescriptions"] if r["exercise"] == "pistol-squat-progression")
+    assert (pistol["current_step"], pistol["ready_to_advance"]) == ("box-pistol-squat", True)
