@@ -38,6 +38,8 @@ class Exercise:
     is_timed: bool
     needs_garage_space: bool
     swap: str | None  # slug of the garage-mode replacement
+    setup: str | None = None  # how to set up, one line
+    cues: tuple[str, ...] = ()  # form cues shown in Train
 
 
 @dataclass(frozen=True, slots=True)
@@ -395,6 +397,8 @@ def parse_program(data: Mapping[str, Any]) -> Program:
                     is_timed=e["is_timed"],
                     needs_garage_space=e["needs_garage_space"],
                     swap=e["swap"],
+                    setup=e.get("setup"),
+                    cues=tuple(e.get("cues", [])),
                 )
                 for e in data["exercises"]
             ],

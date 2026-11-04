@@ -216,6 +216,10 @@ function SessionView({ weekNo, session }: { weekNo: number; session: WeekSession
           sets={sets}
           expanded={expanded === i}
           increment={exercises.get(row.exercise)?.increment_lb ?? 5}
+          formOf={(slug) => {
+            const e = exercises.get(slug);
+            return e ? { name: e.name, setup: e.setup, cues: e.cues } : undefined;
+          }}
           garage={garage}
           onToggle={() => setOpen(expanded === i ? -1 : i)}
           onLog={(input) => void onLog(row, input)}

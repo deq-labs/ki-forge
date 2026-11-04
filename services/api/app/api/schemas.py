@@ -23,6 +23,8 @@ class ExerciseOut(Model):
     is_timed: bool
     needs_garage_space: bool
     swap: str | None
+    setup: str | None = None
+    cues: list[str] = []
 
 
 class PrescriptionOut(Model):

@@ -482,6 +482,11 @@ export interface components {
         };
         /** ExerciseOut */
         ExerciseOut: {
+            /**
+             * Cues
+             * @default []
+             */
+            cues: string[];
             /** Equipment */
             equipment: string[];
             /** Increment Lb */
@@ -492,6 +497,8 @@ export interface components {
             name: string;
             /** Needs Garage Space */
             needs_garage_space: boolean;
+            /** Setup */
+            setup?: string | null;
             /** Slug */
             slug: string;
             /** Swap */

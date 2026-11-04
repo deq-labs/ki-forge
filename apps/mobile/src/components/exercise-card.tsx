@@ -13,8 +13,12 @@ import { radius, spacing } from '@/theme/tokens';
 /** `exercise` is the technique step picked (else the row's exercise is logged). */
 export type LogInput = { weight_lb: number; reps: number; supersedes?: LocalSet; exercise?: string };
 
+export type FormInfo = { name: string; setup?: string | null; cues?: string[] };
+
 type Props = {
   row: Row;
+  /** Setup and form cues for an exercise slug (from the cached program). */
+  formOf?: (slug: string) => FormInfo | undefined;
   number: number;
   sets: LocalSet[]; // current (latest) sets of this session
   expanded: boolean;
@@ -25,7 +29,7 @@ type Props = {
 };
 
 /** One exercise: tap the header to expand; chips, weight and rep steppers, and the Log set button. */
-export function ExerciseCard({ row, number, sets, expanded, increment, garage, onToggle, onLog }: Props) {
+export function ExerciseCard({ row, number, sets, expanded, increment, garage, onToggle, onLog, formOf }: Props) {
   const { colors } = useTheme();
   const mine = setsForRow(row, sets);
   const done = Math.min(mine.length, row.sets);
@@ -44,6 +48,7 @@ export function ExerciseCard({ row, number, sets, expanded, increment, garage, o
     setWeight(lastOnStep?.weight_lb ?? row.steps?.find((s) => s.exercise === slug)?.prefill_weight_lb ?? 0);
   };
   const [reps, setReps] = useState(last?.reps ?? row.rep_max);
+  const [showForm, setShowForm] = useState(false);
   const [editing, setEditingState] = useState<LocalSet | null>(null);
   const setEditing = (s: LocalSet | null) => {
     setEditingState(s);
@@ -117,6 +122,7 @@ export function ExerciseCard({ row, number, sets, expanded, increment, garage, o
 
       {expanded && (
         <View style={styles.body}>
+          <FormCues info={formOf?.(step ?? row.exercise)} open={showForm} onToggle={() => setShowForm((v) => !v)} />
           {row.steps && row.steps.length > 0 && (
             <View style={styles.stepBlock}>
               <KText variant="label" color="inkMuted">
@@ -217,6 +223,48 @@ export function ExerciseCard({ row, number, sets, expanded, increment, garage, o
   );
 }
 
+/** "Form" toggle and the cue bubble for the exercise being done. */
+function FormCues({ info, open, onToggle }: { info?: FormInfo; open: boolean; onToggle: () => void }) {
+  const { colors } = useTheme();
+  if (!info?.cues?.length && !info?.setup) return null;
+  return (
+    <View>
+      <Pressable
+        onPress={onToggle}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: open }}
+        accessibilityLabel={`Form cues for ${info.name}`}
+        style={[styles.formBtn, { borderColor: open ? colors.volt : colors.line }]}>
+        <KText variant="caption" color="volt">
+          {open ? 'Hide form' : 'ⓘ Form'}
+        </KText>
+      </Pressable>
+      {open && (
+        <View style={[styles.bubble, { backgroundColor: colors.night800, borderColor: colors.volt }]}>
+          <KText variant="label" color="volt">
+            {info.name}
+          </KText>
+          {info.setup ? (
+            <KText variant="caption" color="inkMuted">
+              {info.setup}
+            </KText>
+          ) : null}
+          {info.cues?.map((c) => (
+            <View key={c} style={styles.cueRow}>
+              <KText variant="caption" color="volt">
+                •
+              </KText>
+              <KText variant="caption" style={styles.cueText}>
+                {c}
+              </KText>
+            </View>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+}
+
 function Stepper({
   value,
   unit,
@@ -303,6 +351,10 @@ const styles = StyleSheet.create({
   tag: { borderWidth: 1, borderRadius: radius.sm, paddingHorizontal: 6, paddingVertical: 1 },
   tagText: { fontSize: 9, lineHeight: 12 },
   stepBlock: { gap: spacing[2] },
+  formBtn: { alignSelf: 'flex-start', minHeight: 36, paddingHorizontal: spacing[3], borderRadius: radius.pill, borderWidth: 1, justifyContent: 'center' },
+  bubble: { marginTop: spacing[2], borderWidth: 1, borderRadius: radius.md, padding: spacing[3], gap: spacing[2] },
+  cueRow: { flexDirection: 'row', gap: spacing[2] },
+  cueText: { flex: 1 },
   stepChip: { minHeight: 44, paddingHorizontal: spacing[3], borderRadius: radius.md, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
   advance: { borderWidth: 1, borderRadius: radius.md, padding: spacing[2], minHeight: 44, justifyContent: 'center' },
   body: { paddingHorizontal: spacing[4], paddingBottom: spacing[4], gap: spacing[3] },
