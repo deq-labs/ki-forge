@@ -914,6 +914,17 @@
             "title": "Rep Min",
             "type": "integer"
           },
+          "rest_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rest Seconds"
+          },
           "sets": {
             "title": "Sets",
             "type": "integer"
@@ -1791,6 +1802,17 @@
           "rep_min": {
             "title": "Rep Min",
             "type": "integer"
+          },
+          "rest_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rest Seconds"
           },
           "sets": {
             "title": "Sets",

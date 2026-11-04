@@ -6,7 +6,8 @@ import {
   nextOpenRow,
   prescriptionLine,
   progress,
-  restSeconds,
+  afterSet,
+  baseRest,
   rowsFor,
   setsForRow,
   type Prescription,
@@ -83,12 +84,6 @@ describe('labels and rest', () => {
     assert.ok(!isDoneStyle({ rep_min: 1, rep_max: 5 }));
   });
 
-  it('rests the prescription time, 120 s after the last set, 90 s by default', () => {
-    assert.equal(restSeconds({ rest_seconds: 150, sets: 3 }, 1), 150);
-    assert.equal(restSeconds({ rest_seconds: 150, sets: 3 }, 3), 120);
-    assert.equal(restSeconds({ rest_seconds: null, sets: 3 }, 1), 90);
-    assert.equal(restSeconds({ rest_seconds: 0, sets: 3 }, 1), 90);
-  });
 });
 
 describe('technique steps', async () => {
@@ -111,5 +106,46 @@ describe('technique steps', async () => {
     assert.equal(defaultStep({ steps: [], current_step: null }), null);
     assert.equal(nextStep(tech, 'assisted-pistol-squat')?.name, 'Full pistol');
     assert.equal(nextStep(tech, 'pistol-squat-progression'), null);
+  });
+});
+
+describe('rest and supersets after a set', () => {
+  const prefs = { restEnabled: true, restAdjust: 0, supersetTransition: 0, perExercise: {} as Record<string, number> };
+  // Upper A (Foundation): press, incline, [lateral raise 4 + face pull 3 = superset A], dips.
+  const rows = rowsFor(
+    [
+      p({ exercise: 'press', swap: null, sets: 3, rest_seconds: 120 }),
+      p({ exercise: 'incline', swap: null, sets: 3, rest_seconds: 90 }),
+      p({ exercise: 'lateral', swap: null, sets: 4, rest_seconds: 60, superset_group: 'A' }),
+      p({ exercise: 'facepull', swap: null, sets: 3, rest_seconds: 60, superset_group: 'A' }),
+      p({ exercise: 'dips', swap: null, sets: 3, rest_seconds: 75 }),
+    ],
+    false,
+    false,
+    () => undefined,
+  );
+
+  it("rests between sets, then the next exercise's rest after the last set", () => {
+    assert.deepEqual(afterSet(rows, 0, [1, 0, 0, 0, 0], prefs), { rest: 120, open: 0 });
+    assert.deepEqual(afterSet(rows, 0, [3, 0, 0, 0, 0], prefs), { rest: 90, open: 1 }); // not a flat 2:00
+  });
+
+  it('alternates superset partners with no rest between them, the pair rest after the round', () => {
+    assert.deepEqual(afterSet(rows, 2, [3, 3, 1, 0, 0], prefs), { rest: null, open: 3 }); // lateral → face pull
+    assert.deepEqual(afterSet(rows, 3, [3, 3, 1, 1, 0], prefs), { rest: 60, open: 2 }); // round done → rest
+    assert.deepEqual(afterSet(rows, 3, [3, 3, 3, 3, 0], prefs), { rest: 60, open: 2 }); // lateral raise has a 4th set left
+    assert.deepEqual(afterSet(rows, 2, [3, 3, 4, 3, 0], prefs), { rest: 75, open: 4 }); // pair done → dips
+  });
+
+  it('applies your settings', () => {
+    assert.deepEqual(afterSet(rows, 2, [3, 3, 1, 0, 0], { ...prefs, supersetTransition: 15 }), { rest: 15, open: 3 });
+    assert.equal(afterSet(rows, 0, [1, 0, 0, 0, 0], { ...prefs, restAdjust: -30 }).rest, 90);
+    assert.equal(afterSet(rows, 0, [1, 0, 0, 0, 0], { ...prefs, perExercise: { press: 100 } }).rest, 100);
+    assert.equal(afterSet(rows, 0, [1, 0, 0, 0, 0], { ...prefs, restEnabled: false }).rest, null);
+    assert.equal(baseRest({ exercise: 'x', rest_seconds: 30 }, { ...prefs, restAdjust: -30 }), 15); // floor
+  });
+
+  it('ends with no timer when everything is logged', () => {
+    assert.deepEqual(afterSet(rows, 4, [3, 3, 4, 3, 3], prefs), { rest: null, open: null });
   });
 });

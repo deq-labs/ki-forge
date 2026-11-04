@@ -633,6 +633,7 @@
           "sets": 2,
           "rep_min": 12,
           "rep_max": 12,
+          "rest_seconds": 60,
           "note": "12 + 12 drop set"
         },
         {
@@ -640,7 +641,8 @@
           "name": "Behind-the-back shrug",
           "sets": 2,
           "rep_min": 12,
-          "rep_max": 15
+          "rep_max": 15,
+          "rest_seconds": 45
         }
       ],
       "conditioning": "Rower intervals 8 × 250 m",
@@ -670,6 +672,7 @@
           "sets": 3,
           "rep_min": 5,
           "rep_max": 5,
+          "rest_seconds": 60,
           "note": "per leg",
           "steps": [
             {
@@ -696,6 +699,7 @@
           "sets": 3,
           "rep_min": 1,
           "rep_max": 1,
+          "rest_seconds": 45,
           "note": "15–30 s hold; done = 1",
           "steps": [
             {
@@ -739,7 +743,8 @@
           "name": "Paused back squat",
           "sets": 3,
           "rep_min": 3,
-          "rep_max": 3
+          "rep_max": 3,
+          "rest_seconds": 120
         },
         {
           "exercise": "heavy-farmer-hold",
@@ -747,6 +752,7 @@
           "sets": 3,
           "rep_min": 1,
           "rep_max": 1,
+          "rest_seconds": 60,
           "note": "30 s hold; done = 1"
         }
       ],
@@ -777,6 +783,7 @@
           "sets": 3,
           "rep_min": 12,
           "rep_max": 12,
+          "rest_seconds": 45,
           "note": "per side"
         },
         {
@@ -785,6 +792,7 @@
           "sets": 3,
           "rep_min": 1,
           "rep_max": 1,
+          "rest_seconds": 60,
           "note": "max hold; done = 1"
         }
       ],
@@ -817,7 +825,8 @@
         "main_lift_scheme": {
           "sets": 3,
           "rep_min": 8,
-          "rep_max": 10
+          "rep_max": 10,
+          "rest_seconds": 120
         }
       }
     },
@@ -867,7 +876,8 @@
         "main_lift_scheme": {
           "sets": 5,
           "rep_min": 3,
-          "rep_max": 5
+          "rep_max": 5,
+          "rest_seconds": 180
         },
         "main_lift_rir": [
           1,
@@ -1007,7 +1017,7 @@
           "sets": 3,
           "rep_min": 8,
           "rep_max": 12,
-          "rest_seconds": 120,
+          "rest_seconds": 90,
           "is_main_lift": false
         },
         {
@@ -1033,7 +1043,7 @@
           "sets": 3,
           "rep_min": 8,
           "rep_max": 12,
-          "rest_seconds": 90,
+          "rest_seconds": 75,
           "is_main_lift": false,
           "note": "max reps, stop 1–2 short of failure; top reps 12 for on-target"
         },
@@ -1061,7 +1071,7 @@
           "sets": 4,
           "rep_min": 6,
           "rep_max": 8,
-          "rest_seconds": 180,
+          "rest_seconds": 150,
           "is_main_lift": true
         },
         {
@@ -1069,7 +1079,7 @@
           "sets": 3,
           "rep_min": 8,
           "rep_max": 10,
-          "rest_seconds": 120,
+          "rest_seconds": 90,
           "is_main_lift": false
         },
         {
@@ -1136,7 +1146,7 @@
           "sets": 4,
           "rep_min": 5,
           "rep_max": 8,
-          "rest_seconds": 150,
+          "rest_seconds": 120,
           "is_main_lift": true,
           "note": "add weight once 10+ strict reps"
         },
@@ -1145,7 +1155,7 @@
           "sets": 3,
           "rep_min": 8,
           "rep_max": 10,
-          "rest_seconds": 120,
+          "rest_seconds": 90,
           "is_main_lift": false
         },
         {
@@ -1153,7 +1163,7 @@
           "sets": 3,
           "rep_min": 10,
           "rep_max": 12,
-          "rest_seconds": 90,
+          "rest_seconds": 75,
           "is_main_lift": false
         },
         {
@@ -1214,7 +1224,7 @@
           "sets": 3,
           "rep_min": 8,
           "rep_max": 10,
-          "rest_seconds": 120,
+          "rest_seconds": 90,
           "is_main_lift": false
         },
         {
@@ -1222,7 +1232,7 @@
           "sets": 2,
           "rep_min": 10,
           "rep_max": 10,
-          "rest_seconds": 90,
+          "rest_seconds": 75,
           "is_main_lift": false,
           "note": "per leg"
         },
@@ -1249,7 +1259,7 @@
           "sets": 3,
           "rep_min": 1,
           "rep_max": 1,
-          "rest_seconds": 90,
+          "rest_seconds": 75,
           "is_main_lift": false,
           "note": "40 m per set; logged as done = 1"
         }

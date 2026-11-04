@@ -52,6 +52,7 @@ class SetSchemeOut(Model):
     sets: int
     rep_min: int
     rep_max: int
+    rest_seconds: int | None = None
 
 
 class OptionalDayOut(Model):
@@ -96,6 +97,7 @@ class PathTechniqueOut(Model):
     rep_min: int
     rep_max: int
     note: str | None
+    rest_seconds: int | None = None
     steps: list[TechniqueStepOut] = []  # progression steps, easiest first
 
 

@@ -91,10 +91,52 @@ export function progress<T extends LoggedLike>(rows: Row[], sets: T[]): Progress
   return { done, needed: rows.reduce((n, r) => n + r.sets, 0), rowsDone };
 }
 
-/** Rest after a set: the prescription's rest (90 s default), or 120 s after an exercise's last set. */
-export function restSeconds(row: Pick<Row, 'rest_seconds' | 'sets'>, setsDoneAfter: number): number {
-  if (setsDoneAfter >= row.sets) return 120;
-  return row.rest_seconds && row.rest_seconds > 0 ? row.rest_seconds : 90;
+export type RestPrefs = {
+  restEnabled: boolean;
+  restAdjust: number; // seconds added to every program rest
+  supersetTransition: number; // between superset partners; 0 = none
+  perExercise: Record<string, number>; // your own rest per exercise slug
+};
+
+/** A row's rest between its sets: your override, else the program's (60 s if unset) plus your adjustment. */
+export function baseRest(row: Pick<Row, 'exercise' | 'rest_seconds'>, prefs: RestPrefs): number {
+  const own = prefs.perExercise[row.exercise];
+  if (own != null) return own;
+  const program = row.rest_seconds && row.rest_seconds > 0 ? row.rest_seconds : 60;
+  return Math.max(15, program + prefs.restAdjust);
+}
+
+/**
+ * What happens after a set: how long to rest (null = no timer) and which card to open (null = all done).
+ * - Superset partners alternate (A1 → A2 → A1 …) with only the transition between them, and the pair's rest
+ *   after the last partner of each round.
+ * - Within an exercise: its rest. After its last set: the next exercise's rest (setup time for what's next).
+ */
+export function afterSet(rows: Row[], index: number, setsDone: number[], prefs: RestPrefs): { rest: number | null; open: number | null } {
+  const isDone = (i: number) => setsDone[i] >= rows[i].sets;
+  const timer = (seconds: number | null) => (prefs.restEnabled && seconds && seconds > 0 ? seconds : null);
+  const row = rows[index];
+  const group = row.superset_group
+    ? rows.filter((r) => r.superset_group === row.superset_group).map((r) => r.index)
+    : [];
+
+  if (group.length > 1) {
+    const pos = group.indexOf(index);
+    const pairRest = Math.max(...group.map((i) => baseRest(rows[i], prefs)));
+    for (let k = 1; k < group.length; k++) {
+      const j = group[(pos + k) % group.length];
+      if (!isDone(j)) {
+        const sameRound = group.indexOf(j) > pos; // moving on within the round, not wrapping to a new one
+        return { rest: timer(sameRound ? prefs.supersetTransition : pairRest), open: j };
+      }
+    }
+    if (!isDone(index)) return { rest: timer(pairRest), open: index }; // partners done; finish this one
+  } else if (!isDone(index)) {
+    return { rest: timer(baseRest(row, prefs)), open: index };
+  }
+
+  const next = nextOpenRow(rows.map((_, i) => isDone(i)), index);
+  return { rest: next === null ? null : timer(baseRest(rows[next], prefs)), open: next };
 }
 
 /** "4 × 6–8 · superset A" */

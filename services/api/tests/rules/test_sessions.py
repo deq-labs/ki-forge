@@ -149,3 +149,16 @@ def test_garage_keeps_specialization_extra_sets(program: Program) -> None:
 
 def test_trial_weeks_build_templates_as_written(program: Program) -> None:
     assert build(program, "upper_a", 0).sets_needed == build(program, "upper_a", BUILD).sets_needed
+
+
+def test_rest_by_phase_and_technique(program: Program) -> None:
+    foundation = build(program, "upper_a", FOUNDATION)
+    assert foundation.items[0].rest_seconds == 120  # Foundation main lift: 3 x 8-10 at RIR 3
+    assert build(program, "upper_a", BUILD).items[0].rest_seconds == 150  # as written
+    assert build(program, "upper_a", STRENGTH).items[0].rest_seconds == 180  # 5 x 3-5
+    techniques = [i for i in build(program, "upper_a", FOUNDATION, "shadow").items if i.is_technique]
+    assert [(i.exercise, i.rest_seconds) for i in techniques] == [
+        ("pistol-squat-progression", 60),
+        ("l-sit-hold", 45),
+    ]
+    assert foundation.sets_needed == 23

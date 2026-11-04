@@ -16,8 +16,9 @@ import { dayName, parseIsoDate } from '@/lib/dates';
 import { haptic } from '@/lib/feedback';
 import { useMe, useProgram, useWeek } from '@/lib/queries';
 import { requestSync, syncNow } from '@/lib/sync';
-import { nextOpenRow, progress, restSeconds, rowsFor, setsForRow, type Row } from '@/lib/train';
+import { afterSet, nextOpenRow, progress, rowsFor, setsForRow, type Row } from '@/lib/train';
 import { useRest } from '@/state/rest';
+import { useTrainingPrefs } from '@/state/training-prefs';
 import { useSettings } from '@/state/settings';
 import { useTheme } from '@/theme/theme';
 import { radius, spacing } from '@/theme/tokens';
@@ -145,13 +146,11 @@ function SessionView({ weekNo, session }: { weekNo: number; session: WeekSession
     await queryClient.invalidateQueries({ queryKey: localKey });
     requestSync(queryClient);
     if (!input.supersedes) {
-      const doneAfter = mine.length + 1;
-      startRest(restSeconds(row, doneAfter));
-      if (doneAfter >= row.sets) {
-        const after = [...prog.rowsDone];
-        after[row.index] = true;
-        setOpen(nextOpenRow(after, row.index));
-      }
+      // Sets done per row after this one; then rest and move on (supersets alternate partners).
+      const setsDone = rows.map((r) => setsForRow(r, sets).length + (r.index === row.index ? 1 : 0));
+      const next = afterSet(rows, row.index, setsDone, useTrainingPrefs.getState());
+      if (next.rest) startRest(next.rest);
+      setOpen(next.open ?? -1);
     }
   }
 
