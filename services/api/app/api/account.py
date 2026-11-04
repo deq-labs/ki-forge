@@ -19,6 +19,7 @@ from app.jobs import enqueue
 from app.models import Base, SetLog, User, WorkoutSession
 from app.services.importer import Totals, import_workbook
 from app.services.program import get_program
+from app.services.restore import restore_export
 from app.tools.import_workbook import WorkbookError, open_workbook
 
 router = APIRouter(tags=["account"], responses=ERROR_RESPONSES)
@@ -100,6 +101,11 @@ async def import_workbook_endpoint(
     )
 
 
+class RestoreOut(BaseModel):
+    xp_awarded: list[AwardOut]
+    stats: StatsOut
+
+
 class ExportOut(BaseModel):
     format_version: int
     exported_at: dt.datetime
@@ -143,3 +149,14 @@ def delete_me(db: Db, user: CurrentUser) -> DeleteOut:
     enqueue(db, "delete_user", {"user_id": str(user.id)})
     db.commit()
     return DeleteOut(status="scheduled", expected_completion_at=dt.datetime.now(dt.UTC) + DELETE_EXPECTED)
+
+
+@router.post("/import/export", response_model=RestoreOut)
+def import_export(body: ExportOut, db: Db, user: CurrentUser) -> RestoreOut:
+    """Re-create an export (`GET /v1/export`) in a fresh account. Awards are recomputed."""
+    awards, stats = restore_export(db, user, jsonable_encoder(body), get_program())
+    db.commit()
+    return RestoreOut(
+        xp_awarded=[AwardOut(type=a.type, amount=a.amount, source_id=a.source_id) for a in awards],
+        stats=StatsOut.of(stats),
+    )

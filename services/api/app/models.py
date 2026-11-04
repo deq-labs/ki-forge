@@ -227,6 +227,8 @@ class WorkoutSession(Base):
     enrollment_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("enrollments.id", ondelete="CASCADE"))
     session_template_id: Mapped[int] = mapped_column(SmallInteger, ForeignKey("session_templates.id"))
     phase_id: Mapped[int] = mapped_column(SmallInteger, ForeignKey("phases.id"))
+    # The path the session was done on (migration 0003); null = the run's path.
+    path_id: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("paths.id"))
     week: Mapped[int] = mapped_column(SmallInteger)
     garage_mode: Mapped[bool] = mapped_column(Boolean, server_default=text("false"))
     started_at: Mapped[dt.datetime] = mapped_column(TZ)

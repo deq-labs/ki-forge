@@ -36,7 +36,7 @@ def recompute_progression(db: Session, user_id: uuid.UUID) -> dict[str, Progress
         phase = phase_for(ws.week, program)
         built = built_for(
             program,
-            ids.path_slug(path_id),
+            ids.path_slug(ws.path_id or path_id),  # the path the session was done on
             ids.template_code(ws.session_template_id),
             ws.week,
             ws.garage_mode,

@@ -166,3 +166,23 @@ def test_delete_account(client: TestClient, db: Session, scope) -> None:
     assert db.get(User, uid) is None
     fresh = client.get("/v1/me").json()  # the same email can start over afterwards
     assert fresh["stats"]["total_xp"] == 0
+
+
+def test_m4_acceptance_export_round_trips_through_import(client: TestClient) -> None:
+    """M4 acceptance: export JSON round-trips through import on a fresh user with equal totals."""
+    upload(client, filled_workbook(), commit=True)  # a cleared Upper A + a complete Trial 0
+    client.post("/v1/scans", json={"shoulders_in": 46, "waist_in": 33, "taken_at": "2026-11-20T08:00:00Z"})
+    original = client.get("/v1/me").json()
+    export = client.get("/v1/export").json()
+
+    fresh = {"X-Dev-User": "restored@example.com"}
+    r = client.post("/v1/import/export", json=export, headers=fresh)
+    assert r.status_code == 200, r.text
+    restored = client.get("/v1/me", headers=fresh).json()
+    assert restored["stats"] == original["stats"]
+    assert sorted(b["slug"] for b in restored["badges"]) == sorted(b["slug"] for b in original["badges"])
+    assert restored["enrollment"]["path_slug"] == original["enrollment"]["path_slug"]
+
+    # Idempotent and only into a fresh account.
+    assert client.post("/v1/import/export", json=export, headers=fresh).status_code == 409
+    assert client.post("/v1/import/export", json=export).status_code == 409

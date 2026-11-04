@@ -250,3 +250,38 @@ def test_other_users_sessions_are_not_counted(client: TestClient, db: Session) -
     body = client.get("/v1/week", params={"week": 1}, headers={"X-Dev-User": "o@x.io"}).json()
     assert session_view(body, "upper_a")["cleared"] is False
     assert db.scalar(select(Enrollment.id).where(Enrollment.id == uuid.UUID(other.json()["id"])))
+
+
+def test_path_change_only_affects_sessions_not_yet_started(client: TestClient, db: Session) -> None:
+    """M4 acceptance: a logged Upper A keeps its old path's techniques; next week uses the new path."""
+    e = enroll(client, dt.date(2026, 10, 26))  # storm
+    batch_week = client.get("/v1/week", params={"week": 1}).json()
+    upper_a = session_view(batch_week, "upper_a")
+    sid = str(uuid.uuid4())
+    sets = [
+        {
+            "client_id": str(uuid.uuid4()),
+            "session_client_id": sid,
+            "exercise_slug": row["exercise"],
+            "set_no": n,
+            "weight_lb": 50,
+            "reps": row["rep_max"],
+            "logged_at": f"2026-11-02T07:{i:02d}:00Z",
+        }
+        for i, (row, n) in enumerate(
+            (r, n) for r in upper_a["prescriptions"] for n in range(1, r["sets"] + 1)
+        )
+    ]
+    session = {"client_id": sid, "template_code": "upper_a", "week": 1, "started_at": "2026-11-02T07:00:00Z"}
+    assert client.post("/v1/sync", json={"sessions": [session], "sets": sets}).json()["sessions"][0][
+        "cleared"
+    ]
+
+    client.patch(f"/v1/enrollments/{e['id']}", json={"path_slug": "shadow"})
+    week1 = session_view(client.get("/v1/week", params={"week": 1}).json(), "upper_a")
+    week2 = session_view(client.get("/v1/week", params={"week": 2}).json(), "upper_a")
+    techniques = lambda s: [r["exercise"] for r in s["prescriptions"] if r["is_path_technique"]]  # noqa: E731
+    assert week1["cleared"] is True
+    assert techniques(week1) == ["cable-lateral-raise-drop-set", "behind-the-back-shrug"]  # storm, as logged
+    assert techniques(week2) == ["pistol-squat-progression", "l-sit-hold"]  # shadow from now on
+    assert client.get("/v1/me").json()["stats"]["sessions_cleared"] == 1

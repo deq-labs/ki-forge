@@ -75,15 +75,17 @@ def logged_sets(db: Session, session_ids: Iterable[uuid.UUID]) -> dict[uuid.UUID
 def score_stored(
     db: Session, program: Program, path_slug: str, sessions: Iterable[WorkoutSession]
 ) -> dict[uuid.UUID, tuple[BuiltSession, SessionScore]]:
-    """Build and score stored sessions with the enrollment's current path. Keyed by workout session id."""
+    """Build and score stored sessions, each with the path it was done on (else `path_slug`, the run's path).
+
+    Keyed by workout session id.
+    """
     sessions = list(sessions)
     ids = program_ids(db)
     sets = logged_sets(db, (s.id for s in sessions))
     out = {}
     for ws in sessions:
-        built = built_for(
-            program, path_slug, ids.template_code(ws.session_template_id), ws.week, ws.garage_mode
-        )
+        slug = ids.path_slug(ws.path_id) if ws.path_id else path_slug
+        built = built_for(program, slug, ids.template_code(ws.session_template_id), ws.week, ws.garage_mode)
         if built is not None:
             out[ws.id] = (built, score_session(built, sets[ws.id]))
     return out
