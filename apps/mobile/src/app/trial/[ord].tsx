@@ -11,7 +11,7 @@ import { api, ApiError } from '@/lib/api';
 import { shortDate, parseIsoDate } from '@/lib/dates';
 import { useTrials } from '@/lib/queries';
 import { useSync } from '@/lib/sync';
-import { ALL_TESTS, formatField, GROUPS, parseField } from '@/lib/trial-form';
+import { ALL_TESTS, formatField, GROUPS, parseField, TRIAL_DAYS } from '@/lib/trial-form';
 import { useSettings } from '@/state/settings';
 import { textStyle, useTheme } from '@/theme/theme';
 import { radius, spacing } from '@/theme/tokens';
@@ -19,18 +19,10 @@ import { radius, spacing } from '@/theme/tokens';
 type TrialOut = components['schemas']['TrialOut'];
 type TrialSaved = components['schemas']['TrialSaved'];
 
-const WEEK0 = [
-  ['Mon', 'Morning: bodyweight, shoulders, waist. Evening: max pull-ups, then max push-ups.'],
-  ['Tue', 'Back squat: work up to a 5-rep max with good form, 1 rep left in the tank.'],
-  ['Wed', 'Rest or easy walk. Weigh in again.'],
-  ['Thu', 'Overhead press 5RM, then 2,000 m row (damper 4–6).'],
-  ['Fri', 'Deadlift 5RM. Weigh in again; enter the 3-morning average.'],
-] as const;
-
 /** Trial entry: the 9 tests, saved as you go. Power Level, frame ratio and completion come from the server. */
 export default function TrialScreen() {
   const { colors } = useTheme();
-  const { ord } = useLocalSearchParams<{ ord: string }>();
+  const { ord, day } = useLocalSearchParams<{ ord: string; day?: string }>();
   const trials = useTrials();
   const trial = trials.data?.find((t) => String(t.phase_ord) === ord);
 
@@ -48,13 +40,13 @@ export default function TrialScreen() {
         </View>
       ) : (
         // Keyed so the form starts from the server's values once they arrive.
-        <TrialForm key={trial.phase_ord} trial={trial} />
+        <TrialForm key={trial.phase_ord} trial={trial} day={day} />
       )}
     </SafeAreaView>
   );
 }
 
-function TrialForm({ trial }: { trial: TrialOut }) {
+function TrialForm({ trial, day }: { trial: TrialOut; day?: string }) {
   const { colors } = useTheme();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -111,6 +103,11 @@ function TrialForm({ trial }: { trial: TrialOut }) {
     timers.current[type] = setTimeout(() => void save(type, parsed), 700);
   }
 
+  const plan = TRIAL_DAYS.find((d) => d.key === day);
+  // With ?day=, show only that day's tests (Train links here from its Trial-week day tabs).
+  const groups = plan
+    ? GROUPS.map((g) => ({ ...g, fields: g.fields.filter((f) => plan.tests.includes(f.type)) })).filter((g) => g.fields.length)
+    : GROUPS;
   const start = parseIsoDate(trial.start_date);
   const toGo = 9 - entered;
 
@@ -145,7 +142,20 @@ function TrialForm({ trial }: { trial: TrialOut }) {
           </View>
         </Panel>
 
-        {GROUPS.map((g) => (
+        {plan && (
+          <Panel style={[styles.group, { borderColor: colors.volt }]}>
+            <KText variant="label" color="volt">
+              {plan.day}
+            </KText>
+            <KText>{plan.what}</KText>
+            {!plan.tests.length && (
+              <KText variant="caption" color="inkMuted">
+                Nothing to enter today.
+              </KText>
+            )}
+          </Panel>
+        )}
+        {groups.map((g) => (
           <Panel key={g.title} style={styles.group}>
             <KText variant="cardTitle">{g.title}</KText>
             {g.fields.map((f) => {
@@ -186,16 +196,16 @@ function TrialForm({ trial }: { trial: TrialOut }) {
           </KText>
         )}
 
-        {trial.phase_ord === 0 && (
+        {!plan && (
           <Panel style={styles.group}>
-            <KText variant="cardTitle">Week 0 schedule</KText>
-            {WEEK0.map(([day, what]) => (
-              <View key={day} style={styles.schedule}>
+            <KText variant="cardTitle">Test week schedule</KText>
+            {TRIAL_DAYS.map((d) => (
+              <View key={d.key} style={styles.schedule}>
                 <KText variant="bodyStrong" style={styles.day}>
-                  {day}
+                  {d.day}
                 </KText>
                 <KText variant="caption" color="inkMuted" style={styles.flex}>
-                  {what}
+                  {d.what}
                 </KText>
               </View>
             ))}

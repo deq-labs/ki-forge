@@ -67,3 +67,28 @@ export function formatField(type: string, value: number | null | undefined): str
   if (value == null) return '';
   return type === 'row_2k_seconds' ? formatRow(value) : String(value);
 }
+
+/** The Trial week schedule (docs/06-screens.md, Trial entry; the workbook's Week 0 schedule). */
+export type TrialDay = { key: string; day: string; what: string; tests: string[] };
+
+export const TRIAL_DAYS: TrialDay[] = [
+  {
+    key: 'mon',
+    day: 'Mon',
+    what: 'Morning: bodyweight, shoulders, waist. Evening: max pull-ups, then max push-ups.',
+    tests: ['bodyweight_lb', 'shoulders_in', 'waist_in', 'pullups_max', 'pushups_max'],
+  },
+  { key: 'tue', day: 'Tue', what: 'Back squat: work up to a 5-rep max with good form, 1 rep left in the tank.', tests: ['squat_5rm_lb'] },
+  { key: 'wed', day: 'Wed', what: 'Rest or an easy walk. Weigh in again.', tests: [] },
+  { key: 'thu', day: 'Thu', what: 'Overhead press 5RM, then the 2,000 m row (damper 4–6).', tests: ['press_5rm_lb', 'row_2k_seconds'] },
+  {
+    key: 'fri',
+    day: 'Fri',
+    what: 'Deadlift 5RM. Weigh in again and enter the 3-morning bodyweight average.',
+    tests: ['deadlift_5rm_lb', 'bodyweight_lb'],
+  },
+];
+
+export function fieldOf(type: string): TestField | undefined {
+  return GROUPS.flatMap((g) => g.fields).find((f) => f.type === type);
+}

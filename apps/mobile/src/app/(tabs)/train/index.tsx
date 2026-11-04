@@ -8,6 +8,7 @@ import { ExerciseCard, type LogInput } from '@/components/exercise-card';
 import { useGarage } from '@/components/hud';
 import { KText } from '@/components/k-text';
 import { useQuestName } from '@/components/rewards';
+import { TrialWeek } from '@/components/trial-week';
 import { GhostButton, Panel, PrimaryButton } from '@/components/ui';
 import { getDb } from '@/db/db';
 import { completeSession, currentSets, ensureSession, findSession, logSet, type LocalSet } from '@/db/repo';
@@ -24,7 +25,6 @@ import { radius, spacing } from '@/theme/tokens';
 /** Train: log the week's sessions offline. Sets go to SQLite first; the sync queue sends them later. */
 export default function TrainScreen() {
   const { colors } = useTheme();
-  const router = useRouter();
   const params = useLocalSearchParams<{ code?: string }>();
   const week = useWeek();
   // A tab tap picks a session; a new ?code= from Base (Start quest) takes over again.
@@ -48,16 +48,16 @@ export default function TrainScreen() {
           </Panel>
         </View>
       ) : !active ? (
-        <View style={styles.pad}>
-          <Panel>
-            <KText variant="cardTitle">{week.data.phase.name}</KText>
-            <KText color="inkMuted">
-              A Trial week has no training sessions: it&apos;s for testing your lifts and measurements.
-            </KText>
-          </Panel>
-          <View style={styles.gap} />
-          <PrimaryButton label="Enter Trial results" onPress={() => router.push({ pathname: '/trial/[ord]', params: { ord: String(week.data.phase.ord) } })} />
-        </View>
+        week.data.phase.kind === 'trial' ? (
+          <TrialWeek phaseOrd={week.data.phase.ord} name={week.data.phase.name} />
+        ) : (
+          <View style={styles.pad}>
+            <Panel>
+              <KText variant="cardTitle">{week.data.phase.name}</KText>
+              <KText color="inkMuted">No sessions this week.</KText>
+            </Panel>
+          </View>
+        )
       ) : (
         <>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs} style={styles.tabsWrap}>

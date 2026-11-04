@@ -35,3 +35,13 @@ describe('trial form', () => {
     assert.equal(formatField('waist_in', null), '');
   });
 });
+
+describe('trial days', () => {
+  it('every test has a day, and only known tests are scheduled', async () => {
+    const { TRIAL_DAYS, fieldOf } = await import('./trial-form.ts');
+    const scheduled = new Set(TRIAL_DAYS.flatMap((d) => d.tests));
+    assert.deepEqual([...ALL_TESTS].filter((t) => !scheduled.has(t)), []);
+    for (const t of scheduled) assert.ok(fieldOf(t), t);
+    assert.deepEqual(TRIAL_DAYS.map((d) => d.day), ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
+  });
+});
