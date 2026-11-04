@@ -77,3 +77,13 @@ export function useArc() {
     enabled: !!owner,
   });
 }
+
+/** Every Trial of the active run with whatever results are entered. */
+export function useTrials() {
+  const owner = useSettings((s) => s.devEmail);
+  return useQuery({
+    queryKey: ['trials', owner],
+    queryFn: () => cached(owner!, 'trials', () => api.get('/v1/trials')),
+    enabled: !!owner,
+  });
+}

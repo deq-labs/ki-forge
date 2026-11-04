@@ -18,7 +18,7 @@ export type Breakdown = { lines: Line[]; total: number; questCleared: boolean };
 /** Kind of moment: a level up (full overlay), a cleared quest (sheet), a badge only (toast), or nothing. */
 export function momentOf(r: Reward): 'level_up' | 'quest' | 'badge' | null {
   if (r.level_up) return 'level_up';
-  if (r.xp_awarded.some((a) => a.type === 'session_cleared' || a.type === 'full_week')) return 'quest';
+  if (r.xp_awarded.some((a) => ['session_cleared', 'full_week', 'trial_completed'].includes(a.type))) return 'quest';
   if (r.new_badges.length) return 'badge';
   return null;
 }
