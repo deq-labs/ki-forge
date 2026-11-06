@@ -4,6 +4,9 @@ Scores logged sets against a `BuiltSession`: per-row sets logged and on-target, 
 all-on-target, and the full-week check. Timed or done-style work is logged as `reps = 1` against
 `rep_max = 1`, so it needs no special case.
 
+A block row (EMOM, interval, for-time, circuit) counts **rounds**: round `r` is complete when every movement
+has a set logged with `set_no = r`, and each complete round counts as one set (Joe, 2026-11-06).
+
 Sets are append-only: an edit is a new row whose `supersedes` points at the row it replaces. Only the
 newest row in each chain counts (see `latest_sets`).
 """
@@ -28,6 +31,7 @@ class LoggedSet:
     weight_lb: float = 0
     rir: int | None = None
     supersedes: str | None = None  # id of the row this edit replaces
+    slot: str | None = None  # SessionItem.key of the row this set was logged on (same exercise in two rows)
 
 
 @dataclass(frozen=True, slots=True)
@@ -103,10 +107,36 @@ def score_row(item: SessionItem, sets: Iterable[LoggedSet], roots: Sequence[str]
     counted = tuple(roots[i] for i in order[:sets_logged])
     if sets_logged < item.sets:
         on_target = None
-    elif item.is_technique:
-        on_target = True  # v1: technique rows are never evaluated for target
+    elif not item.evaluate_target:
+        on_target = True  # v1: technique rows, blocks and X3 sets are never evaluated for target
     else:
         on_target = sum(1 for s in sets if (s.reps or 0) >= item.rep_max) >= item.sets
+    return RowScore(item=item, sets_logged=sets_logged, on_target=on_target, counted=counted)
+
+
+def score_block(item: SessionItem, sets: Sequence[LoggedSet], roots: Sequence[str]) -> RowScore:
+    """Score a block row: complete rounds count as sets.
+
+    The round's award id is the chain root of its first movement's set, so editing a set in that round
+    never pays the round twice.
+    """
+    assert item.block is not None
+    movements = item.block.movements
+    # (round, movement index) -> root id of the earliest set logged for it
+    found: dict[tuple[int, int], tuple[tuple, str]] = {}
+    for s, r in zip(sets, roots, strict=True):
+        for mi, m in enumerate(movements):
+            if s.exercise in m.accepts and 1 <= s.set_no <= item.block.rounds:
+                k = (s.set_no, mi)
+                order = (s.logged_at, s.id)
+                if k not in found or order < found[k][0]:
+                    found[k] = (order, r)
+    complete = [
+        n for n in range(1, item.block.rounds + 1) if all((n, mi) in found for mi in range(len(movements)))
+    ]
+    counted = tuple(found[(n, 0)][1] for n in complete[: item.sets])
+    sets_logged = len(counted)
+    on_target = None if sets_logged < item.sets else True
     return RowScore(item=item, sets_logged=sets_logged, on_target=on_target, counted=counted)
 
 
@@ -117,20 +147,23 @@ def score_session(session: BuiltSession, sets: Iterable[LoggedSet]) -> SessionSc
     some exercises were done as written still scores (the workbook marks garage per row).
     """
     row_for: dict[str, int] = {}
+    slot_for = {item.key: i for i, item in enumerate(session.items) if item.key}
     for i, item in enumerate(session.items):
-        for slug in (item.exercise, item.replaces, *item.alternatives):
-            if slug is None:
-                continue
-            if slug in row_for:
-                raise ValueError(f"session {session.template!r} lists {slug!r} twice; sets cannot be matched")
+        movements = sorted(set().union(*(m.accepts for m in item.block.movements))) if item.block else []
+        for slug in (item.exercise, item.replaces, *item.alternatives, *movements):
+            if slug is None or slug in row_for:
+                continue  # the same exercise in two rows: sets without a slot go to the first row
             row_for[slug] = i
     matched: list[list[tuple[LoggedSet, str]]] = [[] for _ in session.items]
     for s, root in latest_with_roots(sets):
-        if s.exercise in row_for:
-            matched[row_for[s.exercise]].append((s, root))
+        i = slot_for.get(s.slot) if s.slot is not None else None
+        if i is None:
+            i = row_for.get(s.exercise)
+        if i is not None:
+            matched[i].append((s, root))
 
     rows = tuple(
-        score_row(item, [s for s, _ in m], [r for _, r in m])
+        (score_block if item.block else score_row)(item, [s for s, _ in m], [r for _, r in m])
         for item, m in zip(session.items, matched, strict=True)
     )
     needed = sum(r.item.sets for r in rows)
@@ -151,4 +184,10 @@ def is_full_week(program: Program, cleared_templates: Iterable[str]) -> bool:
     `cleared_templates` are the template codes of the week's cleared sessions (repeats are fine).
     """
     cleared = set(cleared_templates)
-    return all(t.code in cleared for t in program.session_templates if t.required_for_full_week)
+    for t in program.session_templates:
+        if not t.required_for_full_week or t.garage_only:
+            continue
+        twin = t.garage_template
+        if t.code not in cleared and (twin is None or twin not in cleared):
+            return False
+    return True

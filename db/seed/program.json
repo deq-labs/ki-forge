@@ -25,6 +25,24 @@
       ]
     },
     {
+      "slug": "australian-row",
+      "name": "Australian row",
+      "equipment": [
+        "rack"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Bar set low in the rack; lie under it with heels on the floor and body straight.",
+      "cues": [
+        "Body in one line from heels to shoulders",
+        "Pull the chest to the bar",
+        "Squeeze the shoulder blades at the top",
+        "Lower the bar height to make it harder"
+      ]
+    },
+    {
       "slug": "band-face-pull",
       "name": "Band face pull",
       "equipment": [
@@ -134,6 +152,25 @@
       ]
     },
     {
+      "slug": "barbell-push-press",
+      "name": "Barbell push press",
+      "equipment": [
+        "barbell",
+        "rack"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": true,
+      "swap": null,
+      "setup": "Bar on the front of the shoulders from the rack, grip just outside the shoulders.",
+      "cues": [
+        "Short, straight dip, heels down",
+        "Explode up with the legs, then press",
+        "Head through at lockout",
+        "Catch the bar back on the shoulders softly"
+      ]
+    },
+    {
       "slug": "barbell-row",
       "name": "Barbell row",
       "equipment": [
@@ -239,6 +276,22 @@
       ]
     },
     {
+      "slug": "burpee",
+      "name": "Burpees",
+      "equipment": [],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Clear floor space; start standing.",
+      "cues": [
+        "Hands down, jump the feet back to a plank",
+        "Chest to the floor, then up",
+        "Jump the feet in and jump up",
+        "Steady pace for the whole interval"
+      ]
+    },
+    {
       "slug": "cable-face-pull",
       "name": "Cable face pull",
       "equipment": [
@@ -289,6 +342,60 @@
       ]
     },
     {
+      "slug": "calorie-row",
+      "name": "Calorie row",
+      "equipment": [
+        "rower"
+      ],
+      "increment_lb": 0,
+      "is_timed": false,
+      "needs_garage_space": true,
+      "swap": null,
+      "setup": "Rower monitor on calories, feet strapped at the widest part of the foot.",
+      "cues": [
+        "Legs, then body, then arms on the drive",
+        "Arms, then body, then legs on the way back",
+        "Push hard with the legs; the arms just finish",
+        "Keep the damper around 5–7"
+      ]
+    },
+    {
+      "slug": "chest-to-bar-pull-up",
+      "name": "Chest-to-bar pull-up",
+      "equipment": [
+        "pull-up-bar"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": true,
+      "swap": null,
+      "setup": "Hang from the bar, hands just wider than the shoulders.",
+      "cues": [
+        "Pull until the chest touches the bar",
+        "Drive the elbows down and back",
+        "Lean back slightly at the top",
+        "Lower under control to a full hang"
+      ]
+    },
+    {
+      "slug": "chin-up",
+      "name": "Chin-up",
+      "equipment": [
+        "pull-up-bar"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": true,
+      "swap": null,
+      "setup": "Hands shoulder-width, palms facing you.",
+      "cues": [
+        "Start from a dead hang",
+        "Pull the elbows down to the ribs",
+        "Chin over the bar without craning the neck",
+        "Lower all the way under control"
+      ]
+    },
+    {
       "slug": "conventional-deadlift",
       "name": "Conventional deadlift",
       "equipment": [
@@ -325,6 +432,40 @@
       ]
     },
     {
+      "slug": "dead-bug",
+      "name": "Dead bug",
+      "equipment": [],
+      "increment_lb": 0,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "On your back, arms up, knees bent at 90° over the hips.",
+      "cues": [
+        "Press the low back into the floor",
+        "Reach the opposite arm and leg away slowly",
+        "Exhale as you reach",
+        "Return and switch sides; 6 per side"
+      ]
+    },
+    {
+      "slug": "dead-hang",
+      "name": "Dead hang",
+      "equipment": [
+        "pull-up-bar"
+      ],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Hang from the bar with a full grip, shoulder-width.",
+      "cues": [
+        "Arms straight, body still",
+        "Shoulders gently pulled down, not shrugged to the ears",
+        "Breathe steadily",
+        "Scap pulls: lift the body a little using only the shoulder blades"
+      ]
+    },
+    {
       "slug": "deficit-push-ups",
       "name": "Deficit push-ups",
       "equipment": [
@@ -343,6 +484,22 @@
       ]
     },
     {
+      "slug": "diamond-push-up",
+      "name": "Diamond push-up",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Hands together under the chest, thumbs and index fingers in a diamond.",
+      "cues": [
+        "Elbows close to the ribs",
+        "Chest to the hands",
+        "Body stays straight",
+        "As many good reps as you can"
+      ]
+    },
+    {
       "slug": "dips",
       "name": "Dips",
       "equipment": [
@@ -358,6 +515,79 @@
         "Lean slightly forward and keep the elbows tracking back",
         "Press up to locked arms",
         "Max reps, stopping 1–2 short of failure; 12 counts as top of range"
+      ]
+    },
+    {
+      "slug": "dragon-flag",
+      "name": "Dragon flag or leg raise",
+      "equipment": [
+        "bench"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Lie on a bench and hold it behind the head.",
+      "cues": [
+        "Body straight from the shoulders to the toes",
+        "Lower slowly as one piece",
+        "Bend the knees or do leg raises to make it easier",
+        "Stop before the low back arches"
+      ]
+    },
+    {
+      "slug": "dumbbell-bench-press",
+      "name": "Dumbbell bench press",
+      "equipment": [
+        "dumbbell",
+        "bench"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "On a flat bench, dumbbells over the chest, feet flat.",
+      "cues": [
+        "Shoulder blades pinned back",
+        "Lower for 2 s and pause for 1 s at the chest",
+        "Elbows about 45° from the body",
+        "Press up and slightly together"
+      ]
+    },
+    {
+      "slug": "dumbbell-curl",
+      "name": "Dumbbell curl",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 2.5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Stand tall, dumbbells at the sides, palms forward.",
+      "cues": [
+        "Elbows pinned to the sides",
+        "Curl up and squeeze",
+        "Lower slowly to straight arms",
+        "No swinging"
+      ]
+    },
+    {
+      "slug": "dumbbell-push-press",
+      "name": "Dumbbell push press",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Dumbbells at the shoulders, feet hip-width.",
+      "cues": [
+        "Short dip at the knees, torso upright",
+        "Drive up with the legs and press",
+        "Lock out with the biceps by the ears",
+        "Lower back to the shoulders under control"
       ]
     },
     {
@@ -394,6 +624,25 @@
         "One-second hold at the top",
         "Arms stay straight; no curling",
         "Full lowering between reps"
+      ]
+    },
+    {
+      "slug": "dumbbell-skull-crusher",
+      "name": "Dumbbell skull crusher",
+      "equipment": [
+        "dumbbell",
+        "bench"
+      ],
+      "increment_lb": 2.5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "On a bench, dumbbells straight up over the shoulders, palms facing.",
+      "cues": [
+        "Elbows point up and stay still",
+        "Lower beside the head slowly",
+        "Extend back to straight arms",
+        "Keep the upper arms vertical"
       ]
     },
     {
@@ -468,6 +717,25 @@
       ]
     },
     {
+      "slug": "front-squat",
+      "name": "Front squat",
+      "equipment": [
+        "barbell",
+        "rack"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": true,
+      "swap": null,
+      "setup": "Bar on the front of the shoulders in a rack, elbows high, feet shoulder-width.",
+      "cues": [
+        "Elbows up the whole rep so the bar stays on the shoulders",
+        "Sit straight down between the heels",
+        "Chest tall; knees track over the toes",
+        "Drive up leading with the elbows"
+      ]
+    },
+    {
       "slug": "goblet-squat",
       "name": "Goblet squat",
       "equipment": [
@@ -504,6 +772,22 @@
       ]
     },
     {
+      "slug": "handstand-hold",
+      "name": "Wall handstand hold",
+      "equipment": [],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Hands a hand-width from a wall; kick up or walk the feet up the wall.",
+      "cues": [
+        "Push the floor away, arms locked",
+        "Ribs in, body in a straight line",
+        "Look between the hands",
+        "Come down before the form fades"
+      ]
+    },
+    {
       "slug": "hanging-knee-or-leg-raise",
       "name": "Hanging knee or leg raise",
       "equipment": [
@@ -535,6 +819,22 @@
         "Squeeze the handles as hard as you can",
         "Breathe and brace for 30 seconds",
         "Set the weights down under control"
+      ]
+    },
+    {
+      "slug": "hollow-hold",
+      "name": "Hollow body hold",
+      "equipment": [],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "On your back, arms overhead, legs straight.",
+      "cues": [
+        "Low back pressed into the floor",
+        "Lift the shoulders and legs a few inches",
+        "Bend the knees or bring the arms in to make it easier",
+        "Breathe without losing the low back"
       ]
     },
     {
@@ -576,6 +876,24 @@
       ]
     },
     {
+      "slug": "jump-rope",
+      "name": "Jump rope",
+      "equipment": [
+        "jump-rope"
+      ],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Rope handles at hip height; clear space overhead.",
+      "cues": [
+        "Small hops on the balls of the feet",
+        "Turn the rope with the wrists, not the arms",
+        "Elbows close to the sides",
+        "Steady rhythm for the interval"
+      ]
+    },
+    {
       "slug": "jump-rope-or-burpee-intervals",
       "name": "Jump rope or burpee intervals",
       "equipment": [],
@@ -589,6 +907,24 @@
         "Jump rope: light, quick bounces",
         "Burpees: chest to the floor, jump at the top",
         "Log done = 1"
+      ]
+    },
+    {
+      "slug": "kettlebell-swing",
+      "name": "Kettlebell swing",
+      "equipment": [
+        "kettlebell"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": true,
+      "swap": null,
+      "setup": "Bell a foot in front of you, feet just wider than the hips.",
+      "cues": [
+        "Hike the bell back between the legs",
+        "Snap the hips forward; the arms just guide",
+        "Stand tall and squeeze the glutes at the top",
+        "Flat back the whole time"
       ]
     },
     {
@@ -661,6 +997,40 @@
       ]
     },
     {
+      "slug": "mountain-climber",
+      "name": "Mountain climbers",
+      "equipment": [],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "High plank, hands under the shoulders.",
+      "cues": [
+        "Hips level with the shoulders",
+        "Drive the knees to the chest, fast",
+        "Keep the hands planted",
+        "Steady breathing for the full 30 s"
+      ]
+    },
+    {
+      "slug": "nordic-curl-negative",
+      "name": "Nordic curl negative or weighted glute bridge",
+      "equipment": [
+        "bench"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Nordic: kneel with heels anchored under a bench or couch. Bridge: back on a bench, dumbbell on the hips.",
+      "cues": [
+        "Nordic: lower the body as slowly as you can, hips straight",
+        "Catch yourself with the hands and push back up",
+        "Bridge: drive through the heels and squeeze the glutes at the top",
+        "Ribs down; no arching the low back"
+      ]
+    },
+    {
       "slug": "one-arm-dumbbell-row",
       "name": "One-arm dumbbell row",
       "equipment": [
@@ -713,6 +1083,24 @@
       ]
     },
     {
+      "slug": "pallof-press",
+      "name": "Pallof press",
+      "equipment": [
+        "band"
+      ],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Band anchored at chest height to your side; stand side-on, hands at the chest.",
+      "cues": [
+        "Press the hands straight out and hold",
+        "Do not let the band twist you",
+        "Ribs down, glutes tight",
+        "30 s each side"
+      ]
+    },
+    {
       "slug": "paused-back-squat",
       "name": "Paused back squat",
       "equipment": [],
@@ -726,6 +1114,22 @@
         "Stay tight in the pause: no relaxing at the bottom",
         "Drive up out of the pause without bouncing",
         "Keep the chest up as you stand"
+      ]
+    },
+    {
+      "slug": "pike-push-up",
+      "name": "Pike push-up",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Hips high in an inverted V, hands shoulder-width.",
+      "cues": [
+        "Lower the head toward the hands, between them",
+        "Elbows track back, not flared",
+        "Press back up through the shoulders",
+        "Raise the feet on a box to make it harder"
       ]
     },
     {
@@ -745,6 +1149,38 @@
       ]
     },
     {
+      "slug": "plank",
+      "name": "Plank",
+      "equipment": [],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Forearms under the shoulders, body straight from head to heels.",
+      "cues": [
+        "Squeeze the glutes and brace the abs",
+        "Do not let the hips sag or pike",
+        "Push the floor away with the forearms",
+        "Breathe behind the brace"
+      ]
+    },
+    {
+      "slug": "pseudo-planche-push-up",
+      "name": "Pseudo planche or archer push-up",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Pseudo planche: hands by the hips, fingers turned out. Archer: wide hands, shift to one side.",
+      "cues": [
+        "Lean the shoulders forward past the hands (pseudo planche)",
+        "Or shift the weight to one arm, other arm straight (archer)",
+        "Body stays in one line",
+        "Slow lowering"
+      ]
+    },
+    {
       "slug": "pull-up",
       "name": "Pull-up",
       "equipment": [
@@ -760,6 +1196,22 @@
         "Pull the elbows down toward the ribs",
         "Chin clearly over the bar",
         "Lower all the way under control; add weight once 10+ strict reps"
+      ]
+    },
+    {
+      "slug": "push-up",
+      "name": "Push-up",
+      "equipment": [],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Hands just wider than the shoulders, body straight.",
+      "cues": [
+        "Elbows about 45° from the body",
+        "Chest to a fist-height from the floor",
+        "Glutes and abs tight; no sagging",
+        "Lock out at the top"
       ]
     },
     {
@@ -868,6 +1320,22 @@
       ]
     },
     {
+      "slug": "side-plank",
+      "name": "Side plank",
+      "equipment": [],
+      "increment_lb": 0,
+      "is_timed": true,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "On one forearm, elbow under the shoulder, feet stacked.",
+      "cues": [
+        "Hips up in a straight line",
+        "Do not let the top shoulder roll forward",
+        "Squeeze the glutes",
+        "Hold each side"
+      ]
+    },
+    {
       "slug": "standing-barbell-overhead-press",
       "name": "Standing barbell overhead press",
       "equipment": [
@@ -971,6 +1439,115 @@
       ]
     },
     {
+      "slug": "weighted-pull-up",
+      "name": "Weighted pull-up",
+      "equipment": [
+        "pull-up-bar",
+        "dip-belt"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": true,
+      "swap": null,
+      "setup": "Dip belt or a dumbbell between the feet; hands slightly wider than the shoulders.",
+      "cues": [
+        "Start from a dead hang every rep",
+        "Squeeze the weight so it does not swing",
+        "Chin clearly over the bar",
+        "Add load once 10+ strict reps are easy"
+      ]
+    },
+    {
+      "slug": "weighted-push-up",
+      "name": "Weighted push-up",
+      "equipment": [
+        "vest"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Vest on, or a partner places a plate or dumbbell high on the back.",
+      "cues": [
+        "Same line as a strict push-up",
+        "Keep the load over the shoulder blades",
+        "Full range every rep",
+        "Drop the load before form breaks"
+      ]
+    },
+    {
+      "slug": "weighted-sit-up",
+      "name": "Weighted sit-up",
+      "equipment": [
+        "dumbbell"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "On your back, knees bent, a dumbbell or plate held at the chest.",
+      "cues": [
+        "Feet anchored or flat",
+        "Curl up through the spine",
+        "Lower slowly",
+        "Keep the weight close to the chest"
+      ]
+    },
+    {
+      "slug": "x3-bar-calf-raise",
+      "name": "X3 bar calf raise",
+      "equipment": [
+        "x3"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Stand on the band, bar at the shoulders as in a squat.",
+      "cues": [
+        "Rise as high as possible on the toes",
+        "Pause at the top",
+        "Lower slowly to a full stretch",
+        "One set to full failure, 15–40 reps"
+      ]
+    },
+    {
+      "slug": "x3-bar-chest-press",
+      "name": "X3 bar chest press",
+      "equipment": [
+        "x3"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Band behind the back, bar at chest height, staggered stance.",
+      "cues": [
+        "Press straight forward to locked arms",
+        "Shoulders down and back",
+        "Slow return to the chest",
+        "One set to full failure, 15–40 reps"
+      ]
+    },
+    {
+      "slug": "x3-bar-curl",
+      "name": "X3 bar curl",
+      "equipment": [
+        "x3"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Stand on the band, bar in an underhand grip at the thighs.",
+      "cues": [
+        "Elbows pinned to the sides",
+        "Curl to the shoulders and squeeze",
+        "No swinging from the hips",
+        "One set to full failure, 15–40 reps"
+      ]
+    },
+    {
       "slug": "x3-bar-deadlift",
       "name": "X3 bar deadlift",
       "equipment": [
@@ -989,6 +1566,42 @@
       ]
     },
     {
+      "slug": "x3-bar-front-raise",
+      "name": "X3 bar front raise",
+      "equipment": [
+        "x3"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Stand on the band, bar at the thighs, overhand grip.",
+      "cues": [
+        "Arms nearly straight",
+        "Raise to eye level",
+        "No swinging from the hips",
+        "One set to full failure, 15–40 reps"
+      ]
+    },
+    {
+      "slug": "x3-bar-overhead-press",
+      "name": "X3 bar overhead press",
+      "equipment": [
+        "x3"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Stand on the band, bar at the shoulders.",
+      "cues": [
+        "Brace the abs and squeeze the glutes",
+        "Press straight up, head through at the top",
+        "No leaning back",
+        "One set to full failure, 15–40 reps"
+      ]
+    },
+    {
       "slug": "x3-bar-squat",
       "name": "X3 bar squat",
       "equipment": [
@@ -1004,6 +1617,24 @@
         "Knees out over the toes",
         "Drive up hard: the band gets heavier at the top",
         "Pause briefly at the bottom to keep reps honest"
+      ]
+    },
+    {
+      "slug": "x3-bar-triceps-extension",
+      "name": "X3 bar triceps extension",
+      "equipment": [
+        "x3"
+      ],
+      "increment_lb": 5,
+      "is_timed": false,
+      "needs_garage_space": false,
+      "swap": null,
+      "setup": "Band anchored behind you under the feet, bar behind the head.",
+      "cues": [
+        "Elbows point up and stay still",
+        "Extend to straight arms overhead",
+        "Slow lowering behind the head",
+        "One set to full failure, 15–40 reps"
       ]
     }
   ],
@@ -1197,6 +1828,1294 @@
       ],
       "conditioning": "Rower 5 × 500 m",
       "conditioning_exercise": "rower-5-500-m"
+    },
+    {
+      "slug": "iron-tempo",
+      "name": "Iron Tempo",
+      "tagline": "EMOM engine builder",
+      "build": "Dense, athletic and conditioned; strong on the clock.",
+      "ratio_target": 1.5,
+      "colors": {
+        "primary": "#b8c7dc",
+        "secondary": "#6f9bff"
+      },
+      "emphasis": {
+        "delts": 70,
+        "back": 85,
+        "arms": 65,
+        "legs": 75,
+        "engine": 95
+      },
+      "techniques": [],
+      "conditioning": "Calorie rows in every EMOM; Zone 2 row on Saturday",
+      "conditioning_exercise": "easy-rower-20-min",
+      "program": "iron-tempo"
+    }
+  ],
+  "programs": [
+    {
+      "slug": "iron-tempo",
+      "version": 1,
+      "name": "Iron Tempo Block",
+      "cycle_weeks": 5,
+      "repeats": true,
+      "one_rm_lifts": [
+        "conventional-deadlift",
+        "standing-barbell-overhead-press",
+        "barbell-back-squat",
+        "front-squat"
+      ],
+      "phases": [
+        {
+          "ord": 1,
+          "name": "Build",
+          "kind": "phase",
+          "start_week": 0,
+          "end_week": 3,
+          "rir_target": 1,
+          "calorie_mode": "maintenance",
+          "deload_every": 5,
+          "modifiers": {}
+        },
+        {
+          "ord": 2,
+          "name": "Deload",
+          "kind": "phase",
+          "start_week": 4,
+          "end_week": 4,
+          "rir_target": 3,
+          "calorie_mode": "maintenance",
+          "deload_every": 5,
+          "modifiers": {
+            "deload": {
+              "percent": 60,
+              "round_factor": 0.6,
+              "skip_roles": [
+                "finisher",
+                "x3"
+              ],
+              "note": "60–65% flat, about 40% fewer EMOM rounds, no finishers or X3 sets. Calisthenics: stop 3–4 reps short of failure. Conditioning at an easy, conversational pace. Then update your 1RMs."
+            }
+          }
+        }
+      ],
+      "session_templates": [
+        {
+          "code": "it_pull",
+          "name": "Pull + Posterior Chain",
+          "short": "Pull",
+          "kind": "lift",
+          "day_of_week": 1,
+          "gets_path_techniques": false,
+          "required_for_full_week": true,
+          "prescriptions": [
+            {
+              "role": "main",
+              "block": {
+                "kind": "emom",
+                "name": "21:00 Alt EMOM",
+                "rounds": 7,
+                "interval_seconds": 60,
+                "movements": [
+                  {
+                    "exercise": "conventional-deadlift",
+                    "levels": [
+                      {
+                        "amount": 3,
+                        "unit": "reps",
+                        "percent": 75
+                      },
+                      {
+                        "amount": 3,
+                        "unit": "reps",
+                        "percent": 80
+                      },
+                      {
+                        "amount": 3,
+                        "unit": "reps",
+                        "percent": 85
+                      }
+                    ],
+                    "note": "Build across sets"
+                  },
+                  {
+                    "exercise": "chest-to-bar-pull-up",
+                    "levels": [
+                      {
+                        "amount": 8,
+                        "unit": "reps"
+                      },
+                      {
+                        "amount": 10,
+                        "unit": "reps"
+                      },
+                      {
+                        "amount": 12,
+                        "unit": "reps"
+                      }
+                    ]
+                  },
+                  {
+                    "exercise": "calorie-row",
+                    "levels": [
+                      {
+                        "amount": 12,
+                        "unit": "cal"
+                      },
+                      {
+                        "amount": 15,
+                        "unit": "cal"
+                      },
+                      {
+                        "amount": 18,
+                        "unit": "cal"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "role": "finisher",
+              "block": {
+                "kind": "interval",
+                "name": "Every 2:30 × 6",
+                "rounds": 6,
+                "interval_seconds": 150,
+                "movements": [
+                  {
+                    "exercise": "conventional-deadlift",
+                    "target": {
+                      "amount": 5,
+                      "unit": "reps",
+                      "percent": 60
+                    },
+                    "note": "~60–65%: speed and technique"
+                  },
+                  {
+                    "exercise": "barbell-row",
+                    "target": {
+                      "amount": 8,
+                      "unit": "reps"
+                    },
+                    "note": "Same bar; strict, no hip drive"
+                  }
+                ]
+              }
+            },
+            {
+              "exercise": "one-arm-dumbbell-row",
+              "sets": 4,
+              "rep_min": 10,
+              "rep_max": 10,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "accessory",
+              "note": "Each side; 3 s lowering, full stretch at the bottom"
+            },
+            {
+              "role": "core",
+              "block": {
+                "kind": "circuit",
+                "name": "Core: plank, dead bugs, Pallof press",
+                "rounds": 3,
+                "movements": [
+                  {
+                    "exercise": "plank",
+                    "target": {
+                      "amount": 30,
+                      "unit": "seconds"
+                    }
+                  },
+                  {
+                    "exercise": "dead-bug",
+                    "target": {
+                      "amount": 12,
+                      "unit": "reps"
+                    },
+                    "note": "6 per side"
+                  },
+                  {
+                    "exercise": "pallof-press",
+                    "target": {
+                      "amount": 30,
+                      "unit": "seconds"
+                    },
+                    "note": "each side"
+                  }
+                ],
+                "rest_seconds": 30
+              }
+            },
+            {
+              "exercise": "x3-bar-deadlift",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            },
+            {
+              "exercise": "x3-bar-curl",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            }
+          ],
+          "garage_template": "it_pull_in",
+          "warmup": "3 rounds: 10 empty-bar RDLs, 5 kip swings, 250 m easy row. Then 2–3 ramp sets on the main lift (bar → 50% → 70%)."
+        },
+        {
+          "code": "it_pull_in",
+          "name": "Calisthenics Pull",
+          "short": "Pull (car in)",
+          "kind": "lift",
+          "day_of_week": 1,
+          "gets_path_techniques": false,
+          "required_for_full_week": true,
+          "prescriptions": [
+            {
+              "exercise": "weighted-pull-up",
+              "sets": 4,
+              "rep_min": 5,
+              "rep_max": 8,
+              "rest_seconds": 120,
+              "is_main_lift": false,
+              "role": "main",
+              "note": "Dip belt or a dumbbell between the feet once 10+ strict"
+            },
+            {
+              "exercise": "chin-up",
+              "sets": 3,
+              "rep_min": 8,
+              "rep_max": 10,
+              "rest_seconds": 90,
+              "is_main_lift": false
+            },
+            {
+              "exercise": "australian-row",
+              "sets": 3,
+              "rep_min": 10,
+              "rep_max": 15,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "note": "Bar low in the rack"
+            },
+            {
+              "exercise": "dead-hang",
+              "sets": 3,
+              "rep_min": 1,
+              "rep_max": 1,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "note": "20–30 s; dead hangs or scap pulls"
+            },
+            {
+              "exercise": "mountain-climber",
+              "sets": 3,
+              "rep_min": 1,
+              "rep_max": 1,
+              "rest_seconds": 30,
+              "is_main_lift": false,
+              "note": "30 s; stands in for the calorie row"
+            },
+            {
+              "role": "core",
+              "block": {
+                "kind": "circuit",
+                "name": "Core: plank, dead bugs, Pallof press",
+                "rounds": 3,
+                "movements": [
+                  {
+                    "exercise": "plank",
+                    "target": {
+                      "amount": 30,
+                      "unit": "seconds"
+                    }
+                  },
+                  {
+                    "exercise": "dead-bug",
+                    "target": {
+                      "amount": 12,
+                      "unit": "reps"
+                    },
+                    "note": "6 per side"
+                  },
+                  {
+                    "exercise": "pallof-press",
+                    "target": {
+                      "amount": 30,
+                      "unit": "seconds"
+                    },
+                    "note": "each side"
+                  }
+                ],
+                "rest_seconds": 30
+              }
+            },
+            {
+              "exercise": "x3-bar-deadlift",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            },
+            {
+              "exercise": "x3-bar-curl",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            }
+          ],
+          "garage_only": true,
+          "warmup": "3 rounds: 10 bodyweight good mornings, 5 kip swings, 20 jumping jacks."
+        },
+        {
+          "code": "it_push",
+          "name": "Push + Overhead Press",
+          "short": "Push",
+          "kind": "lift",
+          "day_of_week": 2,
+          "gets_path_techniques": false,
+          "required_for_full_week": true,
+          "prescriptions": [
+            {
+              "role": "main",
+              "block": {
+                "kind": "emom",
+                "name": "18:00 Alt EMOM",
+                "rounds": 6,
+                "interval_seconds": 60,
+                "movements": [
+                  {
+                    "exercise": "standing-barbell-overhead-press",
+                    "levels": [
+                      {
+                        "amount": 3,
+                        "unit": "reps",
+                        "percent": 70
+                      },
+                      {
+                        "amount": 3,
+                        "unit": "reps",
+                        "percent": 75
+                      },
+                      {
+                        "amount": 3,
+                        "unit": "reps",
+                        "percent": 80
+                      }
+                    ],
+                    "note": "Strict press; build across sets"
+                  },
+                  {
+                    "exercise": "weighted-push-up",
+                    "levels": [
+                      {
+                        "amount": 12,
+                        "unit": "reps",
+                        "exercise": "push-up"
+                      },
+                      {
+                        "amount": 15,
+                        "unit": "reps"
+                      },
+                      {
+                        "amount": 20,
+                        "unit": "reps"
+                      }
+                    ]
+                  },
+                  {
+                    "exercise": "dumbbell-push-press",
+                    "levels": [
+                      {
+                        "amount": 10,
+                        "unit": "reps",
+                        "weight_lb": 35
+                      },
+                      {
+                        "amount": 10,
+                        "unit": "reps",
+                        "weight_lb": 50
+                      },
+                      {
+                        "amount": 12,
+                        "unit": "reps",
+                        "weight_lb": 50
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "role": "finisher",
+              "block": {
+                "kind": "interval",
+                "name": "Every 3:00 × 5",
+                "rounds": 5,
+                "interval_seconds": 180,
+                "movements": [
+                  {
+                    "exercise": "barbell-push-press",
+                    "target": {
+                      "amount": 5,
+                      "unit": "reps",
+                      "percent": 80,
+                      "percent_of": "standing-barbell-overhead-press"
+                    },
+                    "note": "~80% of the strict press 1RM"
+                  },
+                  {
+                    "exercise": "incline-dumbbell-press",
+                    "target": {
+                      "amount": 10,
+                      "unit": "reps"
+                    },
+                    "note": "2 s lowering"
+                  },
+                  {
+                    "exercise": "pull-up",
+                    "target": {
+                      "amount": 10,
+                      "unit": "reps"
+                    },
+                    "note": "Strict"
+                  }
+                ]
+              }
+            },
+            {
+              "exercise": "dumbbell-romanian-deadlift",
+              "sets": 4,
+              "rep_min": 12,
+              "rep_max": 12,
+              "rest_seconds": 90,
+              "is_main_lift": false,
+              "role": "accessory",
+              "note": "3 s lowering; hamstring focus"
+            },
+            {
+              "role": "core",
+              "block": {
+                "kind": "circuit",
+                "name": "Core: hollow hold, dead bugs, side plank",
+                "rounds": 3,
+                "movements": [
+                  {
+                    "exercise": "hollow-hold",
+                    "target": {
+                      "amount": 30,
+                      "unit": "seconds"
+                    }
+                  },
+                  {
+                    "exercise": "dead-bug",
+                    "target": {
+                      "amount": 12,
+                      "unit": "reps"
+                    },
+                    "note": "6 per side"
+                  },
+                  {
+                    "exercise": "side-plank",
+                    "target": {
+                      "amount": 30,
+                      "unit": "seconds"
+                    },
+                    "note": "each side"
+                  }
+                ],
+                "rest_seconds": 30
+              }
+            },
+            {
+              "exercise": "x3-bar-chest-press",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            },
+            {
+              "exercise": "x3-bar-overhead-press",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            },
+            {
+              "exercise": "x3-bar-triceps-extension",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            }
+          ],
+          "garage_template": "it_push_in",
+          "warmup": "3 rounds: 10 light DB strict press, 10 band pull-aparts, 5 inchworm push-ups. Then 2–3 ramp sets on the main lift (bar → 50% → 70%)."
+        },
+        {
+          "code": "it_push_in",
+          "name": "Calisthenics Push",
+          "short": "Push (car in)",
+          "kind": "lift",
+          "day_of_week": 2,
+          "gets_path_techniques": false,
+          "required_for_full_week": true,
+          "prescriptions": [
+            {
+              "exercise": "pseudo-planche-push-up",
+              "sets": 4,
+              "rep_min": 6,
+              "rep_max": 10,
+              "rest_seconds": 90,
+              "is_main_lift": false,
+              "role": "main"
+            },
+            {
+              "exercise": "dips",
+              "sets": 4,
+              "rep_min": 6,
+              "rep_max": 10,
+              "rest_seconds": 90,
+              "is_main_lift": false,
+              "note": "Add weight once 12+ bodyweight reps"
+            },
+            {
+              "exercise": "pike-push-up",
+              "sets": 3,
+              "rep_min": 8,
+              "rep_max": 12,
+              "rest_seconds": 75,
+              "is_main_lift": false,
+              "note": "Shoulder focus"
+            },
+            {
+              "exercise": "diamond-push-up",
+              "sets": 3,
+              "rep_min": 1,
+              "rep_max": 1,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "note": "As many good reps as you can (AMRAP)"
+            },
+            {
+              "exercise": "burpee",
+              "sets": 3,
+              "rep_min": 1,
+              "rep_max": 1,
+              "rest_seconds": 30,
+              "is_main_lift": false,
+              "note": "30 s; stands in for the DB push press"
+            },
+            {
+              "role": "core",
+              "block": {
+                "kind": "circuit",
+                "name": "Core: hollow hold, dead bugs, side plank",
+                "rounds": 3,
+                "movements": [
+                  {
+                    "exercise": "hollow-hold",
+                    "target": {
+                      "amount": 30,
+                      "unit": "seconds"
+                    }
+                  },
+                  {
+                    "exercise": "dead-bug",
+                    "target": {
+                      "amount": 12,
+                      "unit": "reps"
+                    },
+                    "note": "6 per side"
+                  },
+                  {
+                    "exercise": "side-plank",
+                    "target": {
+                      "amount": 30,
+                      "unit": "seconds"
+                    },
+                    "note": "each side"
+                  }
+                ],
+                "rest_seconds": 30
+              }
+            },
+            {
+              "exercise": "x3-bar-chest-press",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            },
+            {
+              "exercise": "x3-bar-overhead-press",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            },
+            {
+              "exercise": "x3-bar-triceps-extension",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            }
+          ],
+          "garage_only": true,
+          "warmup": "3 rounds: 10 band pull-aparts, 10 scap push-ups, 5 inchworm push-ups."
+        },
+        {
+          "code": "it_legs",
+          "name": "Squat + Legs",
+          "short": "Legs",
+          "kind": "lift",
+          "day_of_week": 4,
+          "gets_path_techniques": false,
+          "required_for_full_week": true,
+          "prescriptions": [
+            {
+              "role": "main",
+              "block": {
+                "kind": "emom",
+                "name": "18:00 Alt EMOM",
+                "rounds": 6,
+                "interval_seconds": 60,
+                "movements": [
+                  {
+                    "exercise": "barbell-back-squat",
+                    "levels": [
+                      {
+                        "amount": 3,
+                        "unit": "reps",
+                        "percent": 70
+                      },
+                      {
+                        "amount": 3,
+                        "unit": "reps",
+                        "percent": 75
+                      },
+                      {
+                        "amount": 4,
+                        "unit": "reps",
+                        "percent": 80
+                      }
+                    ],
+                    "note": "Build across sets"
+                  },
+                  {
+                    "exercise": "calorie-row",
+                    "levels": [
+                      {
+                        "amount": 12,
+                        "unit": "cal"
+                      },
+                      {
+                        "amount": 15,
+                        "unit": "cal"
+                      },
+                      {
+                        "amount": 18,
+                        "unit": "cal"
+                      }
+                    ]
+                  },
+                  {
+                    "exercise": "walking-lunge",
+                    "levels": [
+                      {
+                        "amount": 20,
+                        "unit": "steps"
+                      },
+                      {
+                        "amount": 24,
+                        "unit": "steps"
+                      },
+                      {
+                        "amount": 28,
+                        "unit": "steps"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "role": "finisher",
+              "block": {
+                "kind": "interval",
+                "name": "Every 3:00 × 4",
+                "rounds": 4,
+                "interval_seconds": 180,
+                "movements": [
+                  {
+                    "exercise": "front-squat",
+                    "target": {
+                      "amount": 5,
+                      "unit": "reps",
+                      "percent": 65
+                    },
+                    "note": "Moderate on purpose"
+                  },
+                  {
+                    "exercise": "calorie-row",
+                    "target": {
+                      "amount": null,
+                      "unit": "cal"
+                    },
+                    "note": "Near-max sprint"
+                  }
+                ]
+              }
+            },
+            {
+              "exercise": "dumbbell-romanian-deadlift",
+              "sets": 4,
+              "rep_min": 12,
+              "rep_max": 12,
+              "rest_seconds": 90,
+              "is_main_lift": false,
+              "role": "accessory",
+              "note": "Or walking lunges; hamstring and glute focus"
+            },
+            {
+              "role": "core",
+              "block": {
+                "kind": "circuit",
+                "name": "Core: plank, weighted sit-ups, Pallof press",
+                "rounds": 3,
+                "movements": [
+                  {
+                    "exercise": "plank",
+                    "target": {
+                      "amount": 30,
+                      "unit": "seconds"
+                    }
+                  },
+                  {
+                    "exercise": "weighted-sit-up",
+                    "target": {
+                      "amount": 12,
+                      "unit": "reps"
+                    }
+                  },
+                  {
+                    "exercise": "pallof-press",
+                    "target": {
+                      "amount": 30,
+                      "unit": "seconds"
+                    },
+                    "note": "each side"
+                  }
+                ],
+                "rest_seconds": 30
+              }
+            },
+            {
+              "exercise": "x3-bar-squat",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            },
+            {
+              "exercise": "x3-bar-calf-raise",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            }
+          ],
+          "garage_template": "it_legs_in",
+          "warmup": "3 rounds: 10 bodyweight squats, 10 walking lunges, 250 m easy row. Then 2–3 ramp sets on the main lift (bar → 50% → 70%)."
+        },
+        {
+          "code": "it_legs_in",
+          "name": "Calisthenics Legs",
+          "short": "Legs (car in)",
+          "kind": "lift",
+          "day_of_week": 4,
+          "gets_path_techniques": false,
+          "required_for_full_week": true,
+          "prescriptions": [
+            {
+              "exercise": "bulgarian-split-squat",
+              "sets": 4,
+              "rep_min": 8,
+              "rep_max": 10,
+              "rest_seconds": 90,
+              "is_main_lift": false,
+              "role": "main",
+              "note": "Per leg, dumbbells"
+            },
+            {
+              "exercise": "pistol-squat-progression",
+              "sets": 3,
+              "rep_min": 5,
+              "rep_max": 8,
+              "rest_seconds": 75,
+              "is_main_lift": false,
+              "note": "Per leg; use your progression step"
+            },
+            {
+              "exercise": "nordic-curl-negative",
+              "sets": 3,
+              "rep_min": 8,
+              "rep_max": 10,
+              "rest_seconds": 75,
+              "is_main_lift": false
+            },
+            {
+              "exercise": "standing-calf-raise",
+              "sets": 3,
+              "rep_min": 15,
+              "rep_max": 20,
+              "rest_seconds": 45,
+              "is_main_lift": false
+            },
+            {
+              "exercise": "jump-rope",
+              "sets": 3,
+              "rep_min": 1,
+              "rep_max": 1,
+              "rest_seconds": 30,
+              "is_main_lift": false,
+              "note": "60 s; stands in for the row"
+            },
+            {
+              "role": "core",
+              "block": {
+                "kind": "circuit",
+                "name": "Core: plank, weighted sit-ups, Pallof press",
+                "rounds": 3,
+                "movements": [
+                  {
+                    "exercise": "plank",
+                    "target": {
+                      "amount": 30,
+                      "unit": "seconds"
+                    }
+                  },
+                  {
+                    "exercise": "weighted-sit-up",
+                    "target": {
+                      "amount": 12,
+                      "unit": "reps"
+                    }
+                  },
+                  {
+                    "exercise": "pallof-press",
+                    "target": {
+                      "amount": 30,
+                      "unit": "seconds"
+                    },
+                    "note": "each side"
+                  }
+                ],
+                "rest_seconds": 30
+              }
+            },
+            {
+              "exercise": "x3-bar-squat",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            },
+            {
+              "exercise": "x3-bar-calf-raise",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            }
+          ],
+          "garage_only": true,
+          "warmup": "3 rounds: 10 bodyweight squats, 10 walking lunges, 30 s jump rope."
+        },
+        {
+          "code": "it_engine",
+          "name": "Conditioning + Skill",
+          "short": "Engine",
+          "kind": "lift",
+          "day_of_week": 5,
+          "gets_path_techniques": false,
+          "required_for_full_week": true,
+          "prescriptions": [
+            {
+              "role": "main",
+              "block": {
+                "kind": "emom",
+                "name": "24:00 Alt EMOM",
+                "rounds": 8,
+                "interval_seconds": 60,
+                "movements": [
+                  {
+                    "exercise": "chest-to-bar-pull-up",
+                    "levels": [
+                      {
+                        "amount": 10,
+                        "unit": "reps",
+                        "exercise": "pull-up"
+                      },
+                      {
+                        "amount": 10,
+                        "unit": "reps"
+                      },
+                      {
+                        "amount": 12,
+                        "unit": "reps"
+                      }
+                    ]
+                  },
+                  {
+                    "exercise": "kettlebell-swing",
+                    "levels": [
+                      {
+                        "amount": 8,
+                        "unit": "reps",
+                        "weight_lb": 35
+                      },
+                      {
+                        "amount": 8,
+                        "unit": "reps",
+                        "weight_lb": 50
+                      },
+                      {
+                        "amount": 10,
+                        "unit": "reps",
+                        "weight_lb": 50
+                      }
+                    ],
+                    "note": "Heavy"
+                  },
+                  {
+                    "exercise": "calorie-row",
+                    "levels": [
+                      {
+                        "amount": 15,
+                        "unit": "cal"
+                      },
+                      {
+                        "amount": 18,
+                        "unit": "cal"
+                      },
+                      {
+                        "amount": 20,
+                        "unit": "cal"
+                      }
+                    ],
+                    "note": "Max effort"
+                  }
+                ]
+              }
+            },
+            {
+              "role": "finisher",
+              "block": {
+                "kind": "for_time",
+                "name": "5 rounds for time",
+                "rounds": 5,
+                "cap_seconds": 900,
+                "movements": [
+                  {
+                    "exercise": "kettlebell-swing",
+                    "target": {
+                      "amount": 12,
+                      "unit": "reps"
+                    },
+                    "note": "Heavy"
+                  },
+                  {
+                    "exercise": "pull-up",
+                    "target": {
+                      "amount": 15,
+                      "unit": "reps"
+                    }
+                  },
+                  {
+                    "exercise": "calorie-row",
+                    "target": {
+                      "amount": 20,
+                      "unit": "cal"
+                    }
+                  }
+                ]
+              },
+              "note": "Cap 15:00"
+            },
+            {
+              "exercise": "dead-hang",
+              "sets": 3,
+              "rep_min": 1,
+              "rep_max": 1,
+              "rest_seconds": 90,
+              "is_main_lift": false,
+              "note": "Max effort hold; grip and shoulder stability",
+              "role": "accessory"
+            },
+            {
+              "exercise": "x3-bar-front-raise",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            }
+          ],
+          "garage_template": "it_engine_in",
+          "warmup": "3 rounds: 5 kip swings into 3 pull-ups, 10 push-ups, 250 m moderate row. Then 2–3 ramp sets on the main lift (bar → 50% → 70%)."
+        },
+        {
+          "code": "it_engine_in",
+          "name": "Calisthenics Skill + Core",
+          "short": "Engine (car in)",
+          "kind": "lift",
+          "day_of_week": 5,
+          "gets_path_techniques": false,
+          "required_for_full_week": true,
+          "prescriptions": [
+            {
+              "exercise": "l-sit-hold",
+              "sets": 4,
+              "rep_min": 1,
+              "rep_max": 1,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "note": "15–30 s; tuck L-sit is fine",
+              "role": "main"
+            },
+            {
+              "exercise": "handstand-hold",
+              "sets": 4,
+              "rep_min": 1,
+              "rep_max": 1,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "note": "30–60 s total per set, wall-assisted"
+            },
+            {
+              "exercise": "hollow-hold",
+              "sets": 3,
+              "rep_min": 1,
+              "rep_max": 1,
+              "rest_seconds": 45,
+              "is_main_lift": false,
+              "note": "30–45 s"
+            },
+            {
+              "exercise": "dragon-flag",
+              "sets": 3,
+              "rep_min": 8,
+              "rep_max": 12,
+              "rest_seconds": 60,
+              "is_main_lift": false
+            },
+            {
+              "exercise": "burpee",
+              "sets": 5,
+              "rep_min": 1,
+              "rep_max": 1,
+              "rest_seconds": 15,
+              "is_main_lift": false,
+              "note": "45 s; burpees or jump squats"
+            },
+            {
+              "exercise": "x3-bar-front-raise",
+              "sets": 1,
+              "rep_min": 15,
+              "rep_max": 40,
+              "rest_seconds": 60,
+              "is_main_lift": false,
+              "role": "x3",
+              "note": "X3: one set to full failure, 15–40 reps"
+            }
+          ],
+          "garage_only": true,
+          "warmup": "3 rounds: 10 scap pulls, 10 push-ups, 30 s jump rope."
+        },
+        {
+          "code": "it_pump",
+          "name": "Hypertrophy + Zone 2",
+          "short": "Pump",
+          "kind": "lift",
+          "day_of_week": 6,
+          "gets_path_techniques": false,
+          "required_for_full_week": false,
+          "prescriptions": [
+            {
+              "role": "main",
+              "block": {
+                "kind": "emom",
+                "name": "18:00 Alt EMOM",
+                "rounds": 6,
+                "interval_seconds": 60,
+                "movements": [
+                  {
+                    "exercise": "dumbbell-bench-press",
+                    "levels": [
+                      {
+                        "amount": 10,
+                        "unit": "reps",
+                        "weight_lb": 35
+                      },
+                      {
+                        "amount": 10,
+                        "unit": "reps",
+                        "weight_lb": 50
+                      },
+                      {
+                        "amount": 12,
+                        "unit": "reps",
+                        "weight_lb": 50
+                      }
+                    ],
+                    "note": "2 s down, 1 s pause"
+                  },
+                  {
+                    "exercise": "one-arm-dumbbell-row",
+                    "levels": [
+                      {
+                        "amount": 10,
+                        "unit": "reps",
+                        "weight_lb": 35
+                      },
+                      {
+                        "amount": 10,
+                        "unit": "reps",
+                        "weight_lb": 50
+                      },
+                      {
+                        "amount": 12,
+                        "unit": "reps",
+                        "weight_lb": 50
+                      }
+                    ],
+                    "note": "Each side, strict"
+                  },
+                  {
+                    "exercise": "calorie-row",
+                    "levels": [
+                      {
+                        "amount": 12,
+                        "unit": "cal"
+                      },
+                      {
+                        "amount": 14,
+                        "unit": "cal"
+                      },
+                      {
+                        "amount": 16,
+                        "unit": "cal"
+                      }
+                    ],
+                    "note": "70% effort"
+                  }
+                ]
+              }
+            },
+            {
+              "role": "pump",
+              "block": {
+                "kind": "circuit",
+                "name": "Pump circuit",
+                "rounds": 3,
+                "movements": [
+                  {
+                    "exercise": "dumbbell-curl",
+                    "target": {
+                      "amount": 12,
+                      "unit": "reps"
+                    }
+                  },
+                  {
+                    "exercise": "dumbbell-skull-crusher",
+                    "target": {
+                      "amount": 12,
+                      "unit": "reps"
+                    }
+                  },
+                  {
+                    "exercise": "lateral-raise",
+                    "target": {
+                      "amount": 12,
+                      "unit": "reps"
+                    }
+                  },
+                  {
+                    "exercise": "rear-delt-dumbbell-fly",
+                    "target": {
+                      "amount": 12,
+                      "unit": "reps"
+                    }
+                  }
+                ],
+                "rest_seconds": 90
+              },
+              "note": "Moderate weight, full range, slow tempo"
+            },
+            {
+              "exercise": "easy-rower-20-min",
+              "sets": 1,
+              "rep_min": 1,
+              "rep_max": 1,
+              "rest_seconds": 0,
+              "is_main_lift": false,
+              "note": "Zone 2: conversational pace",
+              "role": "conditioning"
+            }
+          ],
+          "warmup": "3 rounds: 10 light DB curls, 10 DB kickbacks, 10 DB rear delt flys, 250 m easy row."
+        }
+      ]
     }
   ],
   "phases": [

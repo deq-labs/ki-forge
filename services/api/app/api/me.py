@@ -124,6 +124,9 @@ def _path_id(db: Db, slug: str) -> int:
     ids = program_ids(db)
     if slug not in ids.paths or slug not in get_program().paths:
         raise ApiError(422, "validation_error", f"path_slug: unknown path {slug!r}")
+    if get_program().path(slug).program is not None:
+        # Enrolling on a block program path (Iron Tempo) arrives with 1RM entry (#65).
+        raise ApiError(422, "validation_error", f"path_slug: {slug!r} is not available yet")
     return ids.paths[slug]
 
 

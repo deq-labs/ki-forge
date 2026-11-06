@@ -33,7 +33,8 @@ def test_program_returns_seed_counts(client: TestClient) -> None:
         sum(len(p["techniques"]) for p in body["paths"]),
         len(body["badges"]),
     )
-    assert counts == (57, 25, 11, 4, 8, 6)
+    assert counts == (93, 25, 11, 5, 8, 6)
+    assert [(b["slug"], len(b["session_templates"])) for b in body["programs"]] == [("iron-tempo", 9)]
     assert (body["slug"], body["version"], body["cycle_weeks"]) == ("ki-forge-core", 1, 84)
 
 
@@ -46,7 +47,9 @@ def test_program_round_trips_into_rules_program(client: TestClient, program: Pro
             for k in ("exercises", "phases", "session_templates", "paths", "tests", "badges", "ranks")
         },
     }
-    for ph in seed["phases"]:  # the API sends every modifier field; the seed omits unset ones
+    seed["programs"] = body["programs"]
+    for ph in [*seed["phases"], *(ph for b in seed["programs"] for ph in b["phases"])]:
+        # the API sends every modifier field; the seed omits unset ones
         ph["modifiers"] = {k: v for k, v in ph["modifiers"].items() if v not in (None, {}, 0)}
     assert parse_program(seed) == program
 

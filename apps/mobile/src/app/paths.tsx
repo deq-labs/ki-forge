@@ -33,7 +33,8 @@ export default function Paths() {
   return (
     <PathThemeProvider path={selected}>
       <PathPicker
-        paths={program.data?.paths}
+        // Paths with their own block program (Iron Tempo) arrive with 1RM entry in #65.
+        paths={program.data?.paths.filter((p) => !p.program)}
         loading={program.isPending}
         selected={selected}
         onSelect={setSelected}

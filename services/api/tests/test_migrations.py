@@ -33,14 +33,14 @@ def test_migration_0001_matches_reference_sql() -> None:
 @pytest.mark.parametrize(
     ("table", "expected"),
     [
-        ("exercises", 57),
-        ("prescriptions", 25),
-        ("phases", 11),
-        ("paths", 4),
+        ("exercises", 93),
+        ("prescriptions", 25 + 57),  # main arc + Iron Tempo (#64)
+        ("phases", 11 + 2),
+        ("paths", 5),
         ("path_techniques", 8),
         ("badges", 6),
-        ("session_templates", 6),
-        ("programs", 1),
+        ("session_templates", 6 + 9),
+        ("programs", 2),
     ],
 )
 def test_seed_counts(db_engine: Engine, table: str, expected: int) -> None:
@@ -79,4 +79,5 @@ def test_downgrade_and_upgrade_round_trip(db_url: str, db_engine: Engine) -> Non
     assert tables == 0
     command.upgrade(cfg, "head")
     with db_engine.connect() as conn:
-        assert conn.execute(text("SELECT count(*) FROM exercises")).scalar_one() == 57
+        assert conn.execute(text("SELECT count(*) FROM exercises")).scalar_one() == 93
+        assert conn.execute(text("SELECT count(*) FROM programs")).scalar_one() == 2

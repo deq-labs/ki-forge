@@ -27,9 +27,35 @@ class ExerciseOut(Model):
     cues: list[str] = []
 
 
+class TargetOut(Model):
+    amount: int | None  # None = max effort
+    unit: str  # reps | cal | steps | seconds
+    percent: float | None = None  # % of a 1RM
+    percent_of: str | None = None  # 1RM lift the percent refers to; None = the movement's own exercise
+    weight_lb: float | None = None
+    exercise: str | None = None  # this level does a different exercise
+
+
+class MovementOut(Model):
+    exercise: str
+    levels: list[TargetOut]  # L1, L2, L3; one entry when the block has no levels
+    note: str | None = None
+
+
+class BlockOut(Model):
+    kind: str  # emom | interval | for_time | circuit
+    name: str
+    rounds: int
+    movements: list[MovementOut]
+    interval_seconds: int | None = None
+    cap_seconds: int | None = None
+    rest_seconds: int | None = None
+    minutes: float | None = None
+
+
 class PrescriptionOut(Model):
-    exercise: str  # exercise slug, or "PATH_CONDITIONING" (filled from the path)
-    sets: int
+    exercise: str  # exercise slug, or "PATH_CONDITIONING" (filled from the path); a block's first movement
+    sets: int  # a block's rounds
     rep_min: int
     rep_max: int
     rest_seconds: int | None
@@ -37,6 +63,8 @@ class PrescriptionOut(Model):
     superset_group: str | None
     note: str | None
     garage_swap: str | None
+    role: str | None = None
+    block: BlockOut | None = None
 
 
 class SessionTemplateOut(Model):
@@ -48,6 +76,9 @@ class SessionTemplateOut(Model):
     gets_path_techniques: bool
     required_for_full_week: bool
     prescriptions: list[PrescriptionOut]
+    garage_template: str | None = None  # garage mode runs this template instead (e.g. the car-in day)
+    garage_only: bool = False
+    warmup: str | None = None
 
 
 class SetSchemeOut(Model):
@@ -63,6 +94,13 @@ class OptionalDayOut(Model):
     prescriptions: list[PrescriptionOut]
 
 
+class DeloadRuleOut(Model):
+    percent: float
+    round_factor: float
+    skip_roles: list[str]
+    note: str | None = None
+
+
 class PhaseModifiersOut(Model):
     main_lift_scheme: SetSchemeOut | None
     main_lift_rir: list[int] | None
@@ -72,6 +110,7 @@ class PhaseModifiersOut(Model):
     diet_break_week: int | None
     progression: str | None
     next: str | None
+    deload: DeloadRuleOut | None = None
 
 
 class PhaseOut(Model):
@@ -114,6 +153,7 @@ class PathOut(Model):
     techniques: list[PathTechniqueOut]
     conditioning: str
     conditioning_exercise: str
+    program: str | None = None  # slug in ProgramOut.programs; None = the main arc
 
 
 class TestDefOut(Model):
@@ -141,6 +181,19 @@ class RankOut(Model):
     name: str
 
 
+class BlockProgramOut(Model):
+    """A program a path brings instead of the main arc (e.g. Iron Tempo's 5-week block)."""
+
+    slug: str
+    version: int
+    name: str
+    cycle_weeks: int
+    repeats: bool
+    one_rm_lifts: list[str]
+    phases: list[PhaseOut]
+    session_templates: list[SessionTemplateOut]
+
+
 class ProgramOut(Model):
     slug: str
     version: int
@@ -153,3 +206,4 @@ class ProgramOut(Model):
     tests: list[TestDefOut]
     badges: list[BadgeOut]
     ranks: list[RankOut]
+    programs: list[BlockProgramOut] = []
