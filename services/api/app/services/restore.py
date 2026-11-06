@@ -17,7 +17,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from app.api.errors import ApiError
-from app.models import BodyScan, Enrollment, User, WorkoutSession
+from app.models import BodyScan, Enrollment, User, UserLift, WorkoutSession
 from app.rules.program import Program
 from app.rules.trials import trial_awards
 from app.rules.xp import Award, scan_award
@@ -59,7 +59,7 @@ def restore_export(
         e = Enrollment(
             id=new_id(row["id"]),
             user_id=user.id,
-            program_id=ids.program_id,
+            program_id=ids.program_id_for(program.for_path(ids.path_slug(row["path_id"]))),
             path_id=row["path_id"],
             cycle=row.get("cycle", 1),
             started_on=_date(row["started_on"]),
@@ -159,6 +159,19 @@ def restore_export(
             .on_conflict_do_nothing(index_elements=[BodyScan.id])
         )
         awards += record_awards(db, user.id, [scan_award(str(sid))])
+
+    # 1RMs (Iron Tempo), keeping when they were last tested.
+    for lift in tables.get("user_lifts", []):
+        db.execute(
+            insert(UserLift)
+            .values(
+                user_id=user.id,
+                exercise_id=lift["exercise_id"],
+                one_rm_lb=lift["one_rm_lb"],
+                updated_at=_ts(lift.get("updated_at")) or dt.datetime.now(dt.UTC),
+            )
+            .on_conflict_do_nothing(index_elements=[UserLift.user_id, UserLift.exercise_id])
+        )
 
     active = next((e for e in runs.values() if e.status == "active"), None)
     _, badge_xp = award_badges(db, user.id, active, program)

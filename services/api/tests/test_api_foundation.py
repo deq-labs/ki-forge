@@ -76,7 +76,10 @@ def test_program_needs_no_auth(db: Session) -> None:
 def test_program_ids_match_seed(db: Session, program: Program) -> None:
     ids = program_ids(db)
     assert set(ids.exercises) == set(program.exercises)
-    assert set(ids.templates) == {t.code for t in program.session_templates}
+    every = [program, *program.programs.values()]  # template codes are unique across programs
+    assert set(ids.templates) == {t.code for p in every for t in p.session_templates}
+    assert set(ids.programs) == {p.slug for p in every}
+    assert {s for s, _ in ids.block_phases} == set(program.programs)
     assert sorted(ids.phases) == list(range(11))
     assert ids.exercise_slug(ids.exercises["dips"]) == "dips"
     assert ids.phase_ord(ids.phases[7]) == 7

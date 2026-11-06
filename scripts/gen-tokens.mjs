@@ -24,7 +24,7 @@ for (const t of tokens.color.tokens) {
   const value = t.value[THEME];
   if (!value) throw new Error(`color ${t.name} has no "${THEME}" value`);
   colors[camel(t.name)] = value;
-  const path = /^path-([a-z]+)(-2)?$/.exec(t.name);
+  const path = /^path-([a-z]+(?:-[a-z]+)*?)(-2)?$/.exec(t.name); // slugs may have hyphens (iron-tempo)
   if (path) {
     pathColors[path[1]] ??= {};
     pathColors[path[1]][path[2] ? 'kiHot' : 'ki'] = value;

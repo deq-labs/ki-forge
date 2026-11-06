@@ -90,6 +90,8 @@ def progress_session(
         by_exercise.setdefault(s.exercise, []).append(s)
     out = dict(states)
     for item in session.items:
+        if item.block is not None or item.role == "x3":
+            continue  # timed blocks use % of 1RM or fixed loads; X3 sets are band work to failure
         # A swapped row may have been done as written, a technique on any of its steps; each exercise
         # performed keeps its own state.
         for slug in (item.exercise, item.replaces, *item.alternatives):

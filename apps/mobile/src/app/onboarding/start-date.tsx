@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { KText } from '@/components/k-text';
 import { Panel, PrimaryButton, StepHeader } from '@/components/ui';
 import { api, ApiError } from '@/lib/api';
+import { useProgram } from '@/lib/queries';
 import { addDays, isoDate, mondayOptions, nextMonday, shortDate } from '@/lib/dates';
 import { toLb, useOnboarding } from '@/state/onboarding';
 import { useSettings } from '@/state/settings';
@@ -29,6 +30,8 @@ function StartDateForm() {
   const queryClient = useQueryClient();
   const owner = useSettings((s) => s.devEmail);
   const { units, path } = useOnboarding();
+  // A path with its own block program (Iron Tempo) starts training in week 0: no Trial, 1RMs instead.
+  const block = !!useProgram().data?.paths.find((p) => p.slug === path)?.program;
   const today = useMemo(() => new Date(), []);
   const options = useMemo(() => mondayOptions(today, 8), [today]);
   const [start, setStart] = useState(isoDate(nextMonday(today)));
@@ -45,12 +48,12 @@ function StartDateForm() {
     try {
       if (units !== 'imperial') await api.patch('/v1/me', { units });
       await api.post('/v1/enrollments', { path_slug: path, start_date: start, garage_mode_default: false });
-      if (bodyweight !== '') {
+      if (bodyweight !== '' && !block) {
         // Bodyweight is a Trial 0 test; entering it now just pre-fills that Trial.
         await api.raw('put', '/v1/trials/0', { body: { results: { bodyweight_lb: toLb(bw, units) } } });
       }
       await queryClient.invalidateQueries({ queryKey: ['me', owner] });
-      router.replace('/');
+      router.replace(block ? '/lifts?from=onboarding' : '/');
     } catch (e) {
       setError(
         e instanceof ApiError && e.offline
@@ -74,12 +77,13 @@ function StartDateForm() {
           When do you start?
         </KText>
         <KText color="inkMuted">
-          Week 0 is Trial 0, your test week: you measure and test your lifts so every later Trial has something to
-          beat. Foundation training starts the Monday after.
+          {block
+            ? 'Training starts that Monday. Each block is 4 build weeks and a deload week, and it repeats. Next you enter your 1-rep maxes.'
+            : 'Week 0 is Trial 0, your test week: you measure and test your lifts so every later Trial has something to beat. Foundation training starts the Monday after.'}
         </KText>
 
         <KText variant="label" color="inkMuted" style={styles.section}>
-          Trial 0 starts on
+          {block ? 'Block 1 starts on' : 'Trial 0 starts on'}
         </KText>
         <View style={styles.dates} accessibilityRole="radiogroup">
           {options.map((o) => {
@@ -94,7 +98,10 @@ function StartDateForm() {
                 accessibilityLabel={shortDate(o)}
                 style={[
                   styles.date,
-                  { borderColor: on ? colors.ki : colors.line, backgroundColor: on ? colors.panelRaised : colors.panel },
+                  {
+                    borderColor: on ? colors.ki : colors.line,
+                    backgroundColor: on ? colors.panelRaised : colors.panel,
+                  },
                 ]}>
                 <KText variant="dataSm" color={on ? 'kiHot' : 'ink'}>
                   {shortDate(o)}
@@ -105,33 +112,42 @@ function StartDateForm() {
         </View>
         <Panel>
           <KText variant="caption" color="inkMuted">
-            Trial 0: {shortDate(startDate)} – {shortDate(addDays(startDate, 6))}. Foundation week 1 begins{' '}
-            {shortDate(addDays(startDate, 7))}.
+            {block
+              ? `Build weeks: ${shortDate(startDate)} – ${shortDate(addDays(startDate, 27))}. Deload week begins ${shortDate(addDays(startDate, 28))}.`
+              : `Trial 0: ${shortDate(startDate)} – ${shortDate(addDays(startDate, 6))}. Foundation week 1 begins ${shortDate(addDays(startDate, 7))}.`}
           </KText>
         </Panel>
 
-        <KText variant="label" color="inkMuted" style={styles.section}>
-          Bodyweight (optional)
-        </KText>
-        <View style={styles.bwRow}>
-          <TextInput
-            value={bodyweight}
-            onChangeText={setBodyweight}
-            placeholder={units === 'metric' ? '86' : '190'}
-            placeholderTextColor={colors.inkFaint}
-            inputMode="decimal"
-            keyboardType="decimal-pad"
-            accessibilityLabel={`Bodyweight in ${units === 'metric' ? 'kilograms' : 'pounds'}`}
-            style={[
-              textStyle('stat'),
-              styles.bwInput,
-              { color: colors.ink, backgroundColor: colors.panel, borderColor: bwValid ? colors.line : colors.danger },
-            ]}
-          />
-          <KText variant="bodyStrong" color="inkMuted">
-            {units === 'metric' ? 'kg' : 'lb'}
+        {!block && (
+          <KText variant="label" color="inkMuted" style={styles.section}>
+            Bodyweight (optional)
           </KText>
-        </View>
+        )}
+        {!block && (
+          <View style={styles.bwRow}>
+            <TextInput
+              value={bodyweight}
+              onChangeText={setBodyweight}
+              placeholder={units === 'metric' ? '86' : '190'}
+              placeholderTextColor={colors.inkFaint}
+              inputMode="decimal"
+              keyboardType="decimal-pad"
+              accessibilityLabel={`Bodyweight in ${units === 'metric' ? 'kilograms' : 'pounds'}`}
+              style={[
+                textStyle('stat'),
+                styles.bwInput,
+                {
+                  color: colors.ink,
+                  backgroundColor: colors.panel,
+                  borderColor: bwValid ? colors.line : colors.danger,
+                },
+              ]}
+            />
+            <KText variant="bodyStrong" color="inkMuted">
+              {units === 'metric' ? 'kg' : 'lb'}
+            </KText>
+          </View>
+        )}
         {!bwValid && (
           <KText variant="caption" color="danger">
             Enter a bodyweight between 20 and 700, or leave it empty.
@@ -159,7 +175,16 @@ const styles = StyleSheet.create({
   body: { padding: spacing[4], gap: spacing[3] },
   section: { marginTop: spacing[4] },
   dates: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] },
-  date: { minHeight: 48, minWidth: '30%', flexGrow: 1, borderWidth: 2, borderRadius: radius.md, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing[2] },
+  date: {
+    minHeight: 48,
+    minWidth: '30%',
+    flexGrow: 1,
+    borderWidth: 2,
+    borderRadius: radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing[2],
+  },
   bwRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[3] },
   bwInput: { width: 140, minHeight: 56, borderWidth: 1, borderRadius: radius.md, paddingHorizontal: spacing[3] },
   footer: { padding: spacing[4] },

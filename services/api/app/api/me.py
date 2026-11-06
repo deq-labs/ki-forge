@@ -124,9 +124,6 @@ def _path_id(db: Db, slug: str) -> int:
     ids = program_ids(db)
     if slug not in ids.paths or slug not in get_program().paths:
         raise ApiError(422, "validation_error", f"path_slug: unknown path {slug!r}")
-    if get_program().path(slug).program is not None:
-        # Enrolling on a block program path (Iron Tempo) arrives with 1RM entry (#65).
-        raise ApiError(422, "validation_error", f"path_slug: {slug!r} is not available yet")
     return ids.paths[slug]
 
 
@@ -165,10 +162,11 @@ def update_me(body: MePatch, db: Db, user: CurrentUser) -> MeOut:
 def create_enrollment(body: EnrollmentCreate, db: Db, user: CurrentUser) -> EnrollmentOut:
     if active_enrollment(db, user.id) is not None:
         raise ApiError(409, "conflict", "you already have an active run; finish or change it instead")
+    path_id = _path_id(db, body.path_slug)
     e = Enrollment(
         user_id=user.id,
-        program_id=program_ids(db).program_id,
-        path_id=_path_id(db, body.path_slug),
+        program_id=program_ids(db).program_id_for(get_program().for_path(body.path_slug)),
+        path_id=path_id,
         started_on=body.start_date,
         garage_mode_default=body.garage_mode_default,
     )
@@ -193,6 +191,13 @@ def update_enrollment(
     if any(v is None for v in changes.values()):
         raise ApiError(422, "validation_error", "fields may not be null")
     if "path_slug" in changes:
+        _path_id(db, changes["path_slug"])  # validates the slug
+        program, ids = get_program(), program_ids(db)
+        if program.for_path(changes["path_slug"]).slug != program.for_path(ids.path_slug(e.path_id)).slug:
+            # Iron Tempo runs its own program; moving to or from it starts a new run.
+            raise ApiError(
+                409, "program_change", "this path runs a different program; restart to switch to it"
+            )
         e.path_id = _path_id(db, changes["path_slug"])
     if "start_date" in changes:
         e.started_on = changes["start_date"]

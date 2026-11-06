@@ -57,10 +57,12 @@ export function useWeek(week?: number, enabled = true) {
       const data = await cached(owner!, key, () => api.get('/v1/week', { query: { week } }));
       if (week === undefined) {
         // Also file it under its number, and fetch next week for offline use (best effort).
-        void getDb().then((db) => cachePut(db, owner!, `week:${data.week}`, data)).catch(() => {});
-        void cached(owner!, `week:${data.week + 1}`, () => api.get('/v1/week', { query: { week: data.week + 1 } })).catch(
-          () => {},
-        );
+        void getDb()
+          .then((db) => cachePut(db, owner!, `week:${data.week}`, data))
+          .catch(() => {});
+        void cached(owner!, `week:${data.week + 1}`, () =>
+          api.get('/v1/week', { query: { week: data.week + 1 } }),
+        ).catch(() => {});
       }
       return data;
     },
@@ -84,6 +86,16 @@ export function useTrials() {
   return useQuery({
     queryKey: ['trials', owner],
     queryFn: () => cached(owner!, 'trials', () => api.get('/v1/trials')),
+    enabled: !!owner,
+  });
+}
+
+/** The 1RMs for % targets (Iron Tempo), in lb; null = not entered. */
+export function useLifts() {
+  const owner = useSettings((s) => s.devEmail);
+  return useQuery({
+    queryKey: ['lifts', owner],
+    queryFn: () => cached(owner!, 'lifts', () => api.get('/v1/me/lifts')),
     enabled: !!owner,
   });
 }

@@ -262,6 +262,16 @@ class ProgressionStateRow(Base):
     updated_at: Mapped[dt.datetime] = mapped_column(TZ, server_default=NOW)
 
 
+class UserLift(Base):
+    """A 1RM the user entered (lb), for % of 1RM targets."""
+
+    __tablename__ = "user_lifts"
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    exercise_id: Mapped[int] = mapped_column(SmallInteger, ForeignKey("exercises.id"), primary_key=True)
+    one_rm_lb: Mapped[Decimal] = mapped_column(Numeric(6, 2))
+    updated_at: Mapped[dt.datetime] = mapped_column(TZ, server_default=NOW)
+
+
 # --- tests and scans -------------------------------------------------------------------------------------
 
 

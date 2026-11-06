@@ -29,6 +29,17 @@
       },
       "ArcOut": {
         "properties": {
+          "block": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Block"
+          },
           "current_phase_ord": {
             "anyOf": [
               {
@@ -336,6 +347,85 @@
           "session_templates"
         ],
         "title": "BlockProgramOut",
+        "type": "object"
+      },
+      "BlockView": {
+        "properties": {
+          "cap_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cap Seconds"
+          },
+          "interval_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interval Seconds"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "minutes": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minutes"
+          },
+          "movements": {
+            "items": {
+              "$ref": "#/components/schemas/MovementView"
+            },
+            "title": "Movements",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "rest_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rest Seconds"
+          },
+          "rounds": {
+            "title": "Rounds",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "name",
+          "rounds",
+          "interval_seconds",
+          "cap_seconds",
+          "rest_seconds",
+          "minutes",
+          "movements"
+        ],
+        "title": "BlockView",
         "type": "object"
       },
       "Body_import_workbook_endpoint_v1_import_workbook_post": {
@@ -832,6 +922,148 @@
         "title": "LevelUp",
         "type": "object"
       },
+      "LevelView": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "exercise": {
+            "title": "Exercise",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "percent": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Percent"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "weight_lb": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight Lb"
+          }
+        },
+        "required": [
+          "amount",
+          "unit",
+          "percent",
+          "weight_lb",
+          "exercise",
+          "name"
+        ],
+        "title": "LevelView",
+        "type": "object"
+      },
+      "LiftOut": {
+        "properties": {
+          "exercise": {
+            "title": "Exercise",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "one_rm_lb": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "One Rm Lb"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "required": [
+          "exercise",
+          "name",
+          "one_rm_lb",
+          "updated_at"
+        ],
+        "title": "LiftOut",
+        "type": "object"
+      },
+      "LiftsOut": {
+        "properties": {
+          "lifts": {
+            "items": {
+              "$ref": "#/components/schemas/LiftOut"
+            },
+            "title": "Lifts",
+            "type": "array"
+          }
+        },
+        "required": [
+          "lifts"
+        ],
+        "title": "LiftsOut",
+        "type": "object"
+      },
+      "LiftsPut": {
+        "properties": {
+          "lifts": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "minProperties": 1,
+            "title": "Lifts",
+            "type": "object"
+          }
+        },
+        "required": [
+          "lifts"
+        ],
+        "title": "LiftsPut",
+        "type": "object"
+      },
       "MeOut": {
         "properties": {
           "badges": {
@@ -983,6 +1215,44 @@
           "levels"
         ],
         "title": "MovementOut",
+        "type": "object"
+      },
+      "MovementView": {
+        "properties": {
+          "exercise": {
+            "title": "Exercise",
+            "type": "string"
+          },
+          "levels": {
+            "items": {
+              "$ref": "#/components/schemas/LevelView"
+            },
+            "title": "Levels",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "exercise",
+          "name",
+          "note",
+          "levels"
+        ],
+        "title": "MovementView",
         "type": "object"
       },
       "NewBadge": {
@@ -1365,6 +1635,28 @@
       },
       "PhaseSummary": {
         "properties": {
+          "block": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Block"
+          },
+          "deload_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deload Note"
+          },
           "kind": {
             "title": "Kind",
             "type": "string"
@@ -1502,6 +1794,16 @@
       },
       "PrescriptionView": {
         "properties": {
+          "block": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BlockView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "current_step": {
             "anyOf": [
               {
@@ -1528,6 +1830,11 @@
           "is_swap": {
             "title": "Is Swap",
             "type": "boolean"
+          },
+          "key": {
+            "default": "",
+            "title": "Key",
+            "type": "string"
           },
           "name": {
             "title": "Name",
@@ -1578,6 +1885,17 @@
               }
             ],
             "title": "Rest Seconds"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
           },
           "sets": {
             "title": "Sets",
@@ -2043,6 +2361,11 @@
             "title": "Garage Mode",
             "type": "boolean"
           },
+          "garage_twin": {
+            "default": false,
+            "title": "Garage Twin",
+            "type": "boolean"
+          },
           "kind": {
             "title": "Kind",
             "type": "string"
@@ -2073,6 +2396,17 @@
           "short": {
             "title": "Short",
             "type": "string"
+          },
+          "warmup": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warmup"
           }
         },
         "required": [
@@ -2947,6 +3281,14 @@
             "title": "Full Week",
             "type": "boolean"
           },
+          "lifts_needed": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Lifts Needed",
+            "type": "array"
+          },
           "phase": {
             "$ref": "#/components/schemas/PhaseSummary"
           },
@@ -3046,7 +3388,7 @@
     },
     "/v1/arc": {
       "get": {
-        "description": "Phases with dates and status, plus progress through the current week.",
+        "description": "Phases with dates and status, plus progress through the current week.\n\nA repeating block program (Iron Tempo) shows the current block's phases.",
         "operationId": "read_arc_v1_arc_get",
         "parameters": [
           {
@@ -3729,6 +4071,133 @@
           }
         },
         "summary": "Update Me",
+        "tags": [
+          "me"
+        ]
+      }
+    },
+    "/v1/me/lifts": {
+      "get": {
+        "operationId": "read_lifts_v1_me_lifts_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-dev-user",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiftsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not signed in"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Lifts",
+        "tags": [
+          "me"
+        ]
+      },
+      "put": {
+        "description": "Set or clear 1RMs (lb). Each lift set here counts as re-tested now.",
+        "operationId": "put_lifts_v1_me_lifts_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-dev-user",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LiftsPut"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiftsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not signed in"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Lifts",
         "tags": [
           "me"
         ]
