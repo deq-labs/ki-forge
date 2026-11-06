@@ -245,3 +245,32 @@ def test_slots_split_the_same_exercise_between_blocks(client: TestClient, run: d
     pull = session_view(client.get("/v1/week", params={"week": 0}).json(), "it_pull")
     # 7 EMOM rounds + 6 finisher rounds + 4 rows + 3 core rounds + 2 X3 sets
     assert (pull["sets_logged"], pull["sets_needed"]) == (22, 22)
+
+
+def test_week_carries_the_twin_for_offline_switching(client: TestClient, run: dict) -> None:
+    body = client.get("/v1/week", params={"week": 0}).json()
+    pull = session_view(body, "it_pull")
+    assert not pull["garage_mode"]
+    assert [p["exercise"] for p in pull["twin_prescriptions"]][:2] == ["weighted-pull-up", "chin-up"]
+    assert pull["twin_warmup"] and pull["twin_warmup"] != pull["warmup"]
+    assert session_view(body, "it_pump")["twin_prescriptions"] is None
+    assert [s["code"] for s in body["sessions"] if not s["available_in_garage"]] == ["it_pump"]
+
+
+def test_band_and_seconds_are_stored(client: TestClient, db: Session, run: dict) -> None:
+    sid = str(uuid.uuid4())
+    sets = [
+        {
+            "client_id": str(uuid.uuid4()),
+            "session_client_id": sid,
+            "exercise_slug": "x3-bar-curl",
+            "set_no": 1,
+            "reps": 24,
+            "band": "Dark gray",
+            "logged_at": T0.isoformat(),
+        }
+    ]
+    session = {"client_id": sid, "template_code": "it_pull", "week": 0, "started_at": T0.isoformat()}
+    assert client.post("/v1/sync", json={"sessions": [session], "sets": sets}).status_code == 200
+    exported = client.get("/v1/export").json()["tables"]["set_logs"]
+    assert [(r["reps"], r["band"]) for r in exported] == [(24, "Dark gray")]

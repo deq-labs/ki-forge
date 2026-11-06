@@ -28,6 +28,10 @@ export type LocalSet = {
   synced: boolean;
   /** The session row's key for a block round ("p0"); null for plain rows. */
   slot: string | null;
+  /** Seconds: a timed movement's hold, or the time a for-time round was finished at. */
+  seconds: number | null;
+  /** The band of an X3 set. */
+  band: string | null;
 };
 
 type SessionRow = Omit<LocalSession, 'garage_mode' | 'synced'> & { garage_mode: number; synced: number };
@@ -94,6 +98,8 @@ export async function completeSession(db: SQLiteDatabase, clientId: string): Pro
 
 export type NewSet = Pick<LocalSet, 'exercise_slug' | 'set_no' | 'weight_lb' | 'reps' | 'rir' | 'is_swap'> & {
   slot?: string | null;
+  seconds?: number | null;
+  band?: string | null;
 };
 
 /** Log a set (or, with `supersedes`, an edit of an earlier set). Written locally before any network call. */
@@ -109,14 +115,16 @@ export async function logSet(
     session_client_id: sessionClientId,
     ...set,
     slot: set.slot ?? null,
+    seconds: set.seconds ?? null,
+    band: set.band ?? null,
     supersedes_client_id: supersedes,
     logged_at: now(),
     synced: false,
   };
   await db.runAsync(
     `INSERT INTO sets (client_id, owner, session_client_id, exercise_slug, set_no, weight_lb, reps, rir, is_swap,
-                       supersedes_client_id, logged_at, slot)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                       supersedes_client_id, logged_at, slot, seconds, band)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     row.client_id,
     owner,
     sessionClientId,
@@ -129,6 +137,8 @@ export async function logSet(
     supersedes,
     row.logged_at,
     row.slot,
+    row.seconds,
+    row.band,
   );
   return row;
 }

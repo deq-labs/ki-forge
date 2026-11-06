@@ -1085,6 +1085,11 @@ export interface components {
         };
         /** SessionView */
         SessionView: {
+            /**
+             * Available In Garage
+             * @default true
+             */
+            available_in_garage: boolean;
             /** Cleared */
             cleared: boolean;
             /** Code */
@@ -1115,6 +1120,10 @@ export interface components {
             sets_needed: number;
             /** Short */
             short: string;
+            /** Twin Prescriptions */
+            twin_prescriptions?: components["schemas"]["PrescriptionView"][] | null;
+            /** Twin Warmup */
+            twin_warmup?: string | null;
             /** Warmup */
             warmup?: string | null;
         };
@@ -1202,6 +1211,8 @@ export interface components {
         };
         /** SyncSet */
         SyncSet: {
+            /** Band */
+            band?: string | null;
             /**
              * Client Id
              * Format: uuid

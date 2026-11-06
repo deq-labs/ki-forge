@@ -105,6 +105,11 @@ class SessionView(BaseModel):
     prescriptions: list[PrescriptionView]
     warmup: str | None = None
     garage_twin: bool = False  # garage mode runs a whole different day (e.g. the car-in calisthenics day)
+    # For a day with a twin: the other version's rows and warm-up, so switching works offline.
+    twin_prescriptions: list[PrescriptionView] | None = None
+    twin_warmup: str | None = None
+    # False for a car-out-only day of a block program (Iron Tempo Saturday): hidden in garage mode.
+    available_in_garage: bool = True
 
 
 class WeekOut(BaseModel):
@@ -319,24 +324,13 @@ def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, 
             other = None if t.garage_template else built_for(base, sess_path, t.code, week, not garage)
             assert built is not None
             alts = list(other.items) if other is not None else [None] * len(built.items)
-            for item in built.items:
-                if item.block is not None:
-                    needed.update(x for x in _lifts_used(item.block) if x not in lifts)
-            sessions.append(
-                SessionView(
-                    code=t.code,
-                    name=t.name,
-                    short=t.short,
-                    date=session_date(e.started_on, week, t.day_of_week),
-                    kind=t.kind,
-                    required_for_full_week=t.required_for_full_week,
-                    garage_mode=garage,
-                    cleared=bool(best and best[1].cleared),
-                    sets_needed=built.sets_needed,
-                    sets_logged=best[1].sets_logged if best else 0,
-                    warmup=built.warmup,
-                    garage_twin=t.garage_template is not None,
-                    prescriptions=[
+
+            def views(b, alts: list, sess_path: str) -> list[PrescriptionView]:
+                rows = []
+                for item, alt in zip(b.items, alts, strict=True):
+                    if item.block is not None:
+                        needed.update(x for x in _lifts_used(item.block) if x not in lifts)
+                    rows.append(
                         PrescriptionView(
                             exercise=item.exercise,
                             name=item.name,
@@ -356,8 +350,28 @@ def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, 
                             role=item.role,
                             block=_block_view(base, item.block, lifts) if item.block else None,
                         )
-                        for item, alt in zip(built.items, alts, strict=True)
-                    ],
+                    )
+                return rows
+
+            twin = built_for(base, sess_path, t.code, week, not garage) if t.garage_template else None
+            sessions.append(
+                SessionView(
+                    code=t.code,
+                    name=t.name,
+                    short=t.short,
+                    date=session_date(e.started_on, week, t.day_of_week),
+                    kind=t.kind,
+                    required_for_full_week=t.required_for_full_week,
+                    garage_mode=garage,
+                    cleared=bool(best and best[1].cleared),
+                    sets_needed=built.sets_needed,
+                    sets_logged=best[1].sets_logged if best else 0,
+                    warmup=built.warmup,
+                    garage_twin=t.garage_template is not None,
+                    prescriptions=views(built, alts, sess_path),
+                    twin_prescriptions=views(twin, [None] * len(twin.items), sess_path) if twin else None,
+                    twin_warmup=twin.warmup if twin else None,
+                    available_in_garage=not (program.repeats and t.garage_template is None),
                 )
             )
 

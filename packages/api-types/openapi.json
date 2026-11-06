@@ -2344,6 +2344,11 @@
       },
       "SessionView": {
         "properties": {
+          "available_in_garage": {
+            "default": true,
+            "title": "Available In Garage",
+            "type": "boolean"
+          },
           "cleared": {
             "title": "Cleared",
             "type": "boolean"
@@ -2396,6 +2401,31 @@
           "short": {
             "title": "Short",
             "type": "string"
+          },
+          "twin_prescriptions": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/PrescriptionView"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Twin Prescriptions"
+          },
+          "twin_warmup": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Twin Warmup"
           },
           "warmup": {
             "anyOf": [
@@ -2674,6 +2704,18 @@
       },
       "SyncSet": {
         "properties": {
+          "band": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Band"
+          },
           "client_id": {
             "format": "uuid",
             "title": "Client Id",

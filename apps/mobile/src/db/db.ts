@@ -47,6 +47,8 @@ const MIGRATIONS: string[] = [
   `,
   // 2: the session row a block round was logged on (Iron Tempo; the same exercise can be in two rows)
   `ALTER TABLE sets ADD COLUMN slot TEXT;`,
+  // 3: seconds (holds, for-time splits) and the band of an X3 set
+  `ALTER TABLE sets ADD COLUMN seconds INTEGER; ALTER TABLE sets ADD COLUMN band TEXT;`,
 ];
 
 export async function migrate(db: SQLite.SQLiteDatabase): Promise<void> {

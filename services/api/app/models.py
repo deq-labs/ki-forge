@@ -250,6 +250,7 @@ class SetLog(Base):
     rir: Mapped[int | None] = mapped_column(SmallInteger)
     is_swap: Mapped[bool] = mapped_column(Boolean, server_default=text("false"))
     slot: Mapped[str | None] = mapped_column(Text)  # session row key for block rounds (#66)
+    band: Mapped[str | None] = mapped_column(Text)  # resistance band (X3 sets, #67)
     supersedes_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("set_logs.id"))
     logged_at: Mapped[dt.datetime] = mapped_column(TZ)
 

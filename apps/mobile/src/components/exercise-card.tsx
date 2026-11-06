@@ -7,11 +7,12 @@ import { RestSetting } from '@/components/rest-setting';
 import type { LocalSet } from '@/db/repo';
 import { defaultStep, isDoneStyle, nextStep, prescriptionLine, setsForRow, type Row } from '@/lib/train';
 import { SET_XP } from '@/lib/xp';
+import { useTrainingPrefs } from '@/state/training-prefs';
 import { useTheme } from '@/theme/theme';
 import { radius, spacing } from '@/theme/tokens';
 
 /** `exercise` is the technique step picked (else the row's exercise is logged). */
-export type LogInput = { weight_lb: number; reps: number; supersedes?: LocalSet; exercise?: string };
+export type LogInput = { weight_lb: number; reps: number; supersedes?: LocalSet; exercise?: string; band?: string };
 
 export type FormInfo = { name: string; setup?: string | null; cues?: string[] };
 
@@ -47,7 +48,12 @@ export function ExerciseCard({ row, number, sets, expanded, increment, garage, o
     const lastOnStep = [...mine].reverse().find((s) => s.exercise_slug === slug);
     setWeight(lastOnStep?.weight_lb ?? row.steps?.find((s) => s.exercise === slug)?.prefill_weight_lb ?? 0);
   };
-  const [reps, setReps] = useState(last?.reps ?? row.rep_max);
+  const [reps, setReps] = useState(last?.reps ?? (row.role === 'x3' ? row.rep_min : row.rep_max));
+  // X3 sets: band + reps to failure, no weight.
+  const x3 = row.role === 'x3';
+  const bands = useTrainingPrefs((s) => s.bands);
+  const lastBand = useTrainingPrefs((s) => s.lastBand[row.exercise]);
+  const [band, setBand] = useState<string | null>(last?.band ?? lastBand ?? null);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditingState] = useState<LocalSet | null>(null);
   const setEditing = (s: LocalSet | null) => {
@@ -75,7 +81,17 @@ export function ExerciseCard({ row, number, sets, expanded, increment, garage, o
       : `Log set ${nextSetNo}${nextSetNo > row.sets ? ' (extra)' : ` · +${SET_XP} XP`}`;
 
   function log() {
-    onLog({ weight_lb: weight, reps: doneStyle ? 1 : reps, supersedes: editing ?? undefined, exercise: step ?? undefined });
+    if (x3 && band) {
+      const prefs = useTrainingPrefs.getState();
+      prefs.set({ lastBand: { ...prefs.lastBand, [row.exercise]: band } });
+    }
+    onLog({
+      weight_lb: x3 ? 0 : weight,
+      reps: doneStyle ? 1 : reps,
+      supersedes: editing ?? undefined,
+      exercise: step ?? undefined,
+      band: x3 ? (band ?? undefined) : undefined,
+    });
     setEditing(null);
   }
 
@@ -190,16 +206,43 @@ export function ExerciseCard({ row, number, sets, expanded, increment, garage, o
                       : { borderColor: colors.line, borderStyle: 'dashed' },
                   ]}>
                   <KText variant="dataSm" color={s ? 'ink' : 'inkFaint'}>
-                    {s ? (doneStyle ? '✓ done' : `${s.weight_lb}×${s.reps}`) : `Set ${i + 1}`}
+                    {s ? setLabel(s, doneStyle) : `Set ${i + 1}`}
                   </KText>
                 </Pressable>
               );
             })}
           </View>
 
+          {x3 && (
+            <View style={styles.stepBlock}>
+              <KText variant="label" color="inkMuted">
+                Band
+              </KText>
+              <View style={styles.chips} accessibilityRole="radiogroup">
+                {bands.map((b) => {
+                  const on = b === band;
+                  return (
+                    <Pressable
+                      key={b}
+                      onPress={() => setBand(b)}
+                      accessibilityRole="radio"
+                      accessibilityState={{ checked: on }}
+                      style={[
+                        styles.stepChip,
+                        { borderColor: on ? colors.kiHot : colors.line, backgroundColor: on ? colors.panelRaised : 'transparent' },
+                      ]}>
+                      <KText variant="caption" color={on ? 'kiHot' : 'ink'}>
+                        {b}
+                      </KText>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+          )}
           {!doneStyle && (
             <View style={styles.steppers}>
-              <Stepper value={weight} unit="lb" step={increment} min={0} onChange={setWeight} label="Weight" />
+              {!x3 && <Stepper value={weight} unit="lb" step={increment} min={0} onChange={setWeight} label="Weight" />}
               <Stepper value={reps} unit="reps" step={1} min={0} onChange={setReps} label="Reps" />
             </View>
           )}
@@ -221,6 +264,13 @@ export function ExerciseCard({ row, number, sets, expanded, increment, garage, o
       )}
     </View>
   );
+}
+
+/** A logged set on its chip: "100×8", "24 · Dark gray" (X3), "✓ 45 s", "✓ done". */
+export function setLabel(s: Pick<LocalSet, 'weight_lb' | 'reps' | 'seconds' | 'band'>, doneStyle: boolean): string {
+  if (s.band) return `${s.reps ?? 0} · ${s.band}`;
+  if (doneStyle) return s.seconds ? `✓ ${s.seconds} s` : '✓ done';
+  return `${s.weight_lb}×${s.reps}`;
 }
 
 /** "Form" toggle and the cue bubble for the exercise being done. */

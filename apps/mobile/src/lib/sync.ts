@@ -97,6 +97,8 @@ async function run(queryClient: QueryClient): Promise<SyncResponse | null> {
           supersedes_client_id: s.supersedes_client_id,
           logged_at: s.logged_at,
           slot: s.slot ?? null,
+          seconds: s.seconds ?? null,
+          band: s.band ?? null,
         })),
       });
       await markSynced(db, res.accepted.sessions, res.accepted.sets);

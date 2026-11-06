@@ -52,6 +52,7 @@ class SetInput:
     is_swap: bool = False
     supersedes_client_id: uuid.UUID | None = None
     slot: str | None = None
+    band: str | None = None
 
 
 @dataclass(frozen=True)
@@ -180,6 +181,7 @@ def _insert_sets(
                     rir=s.rir,
                     is_swap=s.is_swap,
                     slot=s.slot,
+                    band=s.band,
                     supersedes_id=prev.id if prev else None,
                     logged_at=s.logged_at,
                 )

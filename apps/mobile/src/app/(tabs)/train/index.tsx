@@ -5,6 +5,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'reac
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BlockCard, type RoundEntry } from '@/components/block-card';
+import { WarmupChecklist } from '@/components/warmup';
 import { ExerciseCard, type LogInput } from '@/components/exercise-card';
 import { useGarage } from '@/components/hud';
 import { KText } from '@/components/k-text';
@@ -35,7 +36,9 @@ export default function TrainScreen() {
   const code = picked && picked.param === params.code ? picked.code : params.code;
   const setCode = (c: string) => setPicked({ param: params.code, code: c });
 
-  const sessions = week.data?.sessions ?? [];
+  const [garageOn] = useGarage();
+  // Car-out-only days (Iron Tempo Saturday) are hidden while the car is in.
+  const sessions = (week.data?.sessions ?? []).filter((s) => !garageOn || s.available_in_garage !== false);
   const active = sessions.find((s) => s.code === code) ?? sessions.find((s) => !s.cleared) ?? sessions[0];
 
   return (
@@ -109,9 +112,15 @@ function SessionView({ weekNo, session }: { weekNo: number; session: WeekSession
   const startRest = useRest((s) => s.start);
 
   const exercises = useMemo(() => new Map(program.data?.exercises.map((e) => [e.slug, e]) ?? []), [program.data]);
+  // A day with a whole twin (car-in calisthenics) switches to the twin's rows; others swap per row.
+  const useTwin = !!session.garage_twin && garage !== session.garage_mode && !!session.twin_prescriptions;
+  const warmup = useTwin ? session.twin_warmup : session.warmup;
   const rows: Row[] = useMemo(
-    () => rowsFor(session.prescriptions, session.garage_mode, garage, (slug) => exercises.get(slug)?.name),
-    [session, garage, exercises],
+    () =>
+      useTwin
+        ? rowsFor(session.twin_prescriptions!, garage, garage, (slug) => exercises.get(slug)?.name)
+        : rowsFor(session.prescriptions, session.garage_mode, garage, (slug) => exercises.get(slug)?.name),
+    [session, garage, exercises, useTwin],
   );
 
   const localKey = ['local', owner, weekNo, session.code];
@@ -147,6 +156,7 @@ function SessionView({ weekNo, session }: { weekNo: number; session: WeekSession
         reps: input.reps,
         rir: null,
         is_swap: input.supersedes?.is_swap ?? row.is_swap,
+        band: input.band ?? null,
       },
       input.supersedes?.client_id ?? null,
     );
@@ -172,7 +182,9 @@ function SessionView({ weekNo, session }: { weekNo: number; session: WeekSession
         exercise_slug: e.exercise,
         set_no: round,
         weight_lb: e.weight_lb,
-        reps: e.amount,
+        // Held seconds go in `seconds`; reps, calories and steps in `reps`.
+        reps: e.unit === 'seconds' ? null : e.amount,
+        seconds: e.unit === 'seconds' ? e.amount : (e.split_seconds ?? null),
         rir: null,
         is_swap: false,
         slot: row.key ?? null,
@@ -249,13 +261,11 @@ function SessionView({ weekNo, session }: { weekNo: number; session: WeekSession
           </KText>
         </View>
       )}
-      {session.warmup ? (
-        <Panel>
-          <KText variant="label" color="inkMuted">
-            Warm-up
-          </KText>
-          <KText variant="caption">{session.warmup}</KText>
-        </Panel>
+      {warmup ? (
+        <WarmupChecklist
+          text={warmup}
+          storageKey={`warmup:${owner}:${weekNo}:${session.code}:${useTwin ? 'twin' : 'day'}`}
+        />
       ) : null}
       {session.cleared && (
         <View style={[styles.banner, { borderColor: colors.good }]}>
