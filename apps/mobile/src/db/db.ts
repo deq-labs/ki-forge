@@ -45,6 +45,8 @@ const MIGRATIONS: string[] = [
     PRIMARY KEY (owner, key)
   );
   `,
+  // 2: the session row a block round was logged on (Iron Tempo; the same exercise can be in two rows)
+  `ALTER TABLE sets ADD COLUMN slot TEXT;`,
 ];
 
 export async function migrate(db: SQLite.SQLiteDatabase): Promise<void> {

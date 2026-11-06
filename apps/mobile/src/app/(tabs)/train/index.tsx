@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { BlockCard, type RoundEntry } from '@/components/block-card';
 import { ExerciseCard, type LogInput } from '@/components/exercise-card';
 import { useGarage } from '@/components/hud';
 import { KText } from '@/components/k-text';
@@ -14,9 +15,10 @@ import { getDb } from '@/db/db';
 import { completeSession, currentSets, ensureSession, findSession, logSet, type LocalSet } from '@/db/repo';
 import { dayName, parseIsoDate } from '@/lib/dates';
 import { haptic } from '@/lib/feedback';
+import { formatLoad } from '@/lib/lifts';
 import { useMe, useProgram, useWeek } from '@/lib/queries';
 import { requestSync, syncNow } from '@/lib/sync';
-import { afterSet, nextOpenRow, progress, rowsFor, setsForRow, type Row } from '@/lib/train';
+import { afterSet, doneFor, nextOpenRow, progress, rowsFor, setsForRow, type Row } from '@/lib/train';
 import { useRest } from '@/state/rest';
 import { useTrainingPrefs } from '@/state/training-prefs';
 import { useSettings } from '@/state/settings';
@@ -61,7 +63,11 @@ export default function TrainScreen() {
         )
       ) : (
         <>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs} style={styles.tabsWrap}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.tabs}
+            style={styles.tabsWrap}>
             {sessions.map((s) => {
               const on = s.code === active.code;
               return (
@@ -71,7 +77,10 @@ export default function TrainScreen() {
                   accessibilityRole="tab"
                   accessibilityState={{ selected: on }}
                   accessibilityLabel={`${s.short}${s.cleared ? ', cleared' : ''}`}
-                  style={[styles.tab, { backgroundColor: on ? colors.ink : colors.panel, borderColor: on ? colors.ink : colors.line }]}>
+                  style={[
+                    styles.tab,
+                    { backgroundColor: on ? colors.ink : colors.panel, borderColor: on ? colors.ink : colors.line },
+                  ]}>
                   <KText variant="bodyStrong" color={on ? 'night900' : 'ink'}>
                     {s.cleared ? '✓ ' : ''}
                     {s.short}
@@ -147,12 +156,43 @@ function SessionView({ weekNo, session }: { weekNo: number; session: WeekSession
     requestSync(queryClient);
     if (!input.supersedes) {
       // Sets done per row after this one; then rest and move on (supersets alternate partners).
-      const setsDone = rows.map((r) => setsForRow(r, sets).length + (r.index === row.index ? 1 : 0));
+      const setsDone = rows.map((r) => doneFor(r, sets) + (r.index === row.index ? 1 : 0));
       const next = afterSet(rows, row.index, setsDone, useTrainingPrefs.getState());
       if (next.rest) startRest(next.rest);
       setOpen(next.open ?? -1);
     }
   }
+
+  /** A block round: one set per movement, all with the round number and the row's key as their slot. */
+  async function onLogRound(row: Row, round: number, entries: RoundEntry[]) {
+    const db = await getDb();
+    const s = await ensureSession(db, owner, { template_code: session.code, week: weekNo, garage_mode: garage });
+    for (const e of entries) {
+      await logSet(db, owner, s.client_id, {
+        exercise_slug: e.exercise,
+        set_no: round,
+        weight_lb: e.weight_lb,
+        reps: e.amount,
+        rir: null,
+        is_swap: false,
+        slot: row.key ?? null,
+      });
+    }
+    haptic.set();
+    useQuestName.getState().set(session.name);
+    await queryClient.invalidateQueries({ queryKey: localKey });
+    requestSync(queryClient);
+    const setsDone = rows.map((r) => doneFor(r, sets) + (r.index === row.index ? 1 : 0));
+    const next = afterSet(rows, row.index, setsDone, useTrainingPrefs.getState());
+    if (next.rest) startRest(next.rest);
+    setOpen(next.open ?? -1);
+  }
+
+  const units = me.data?.user.units === 'metric' ? 'metric' : 'imperial';
+  const formOf = (slug: string) => {
+    const e = exercises.get(slug);
+    return e ? { name: e.name, setup: e.setup, cues: e.cues } : undefined;
+  };
 
   async function clearQuest() {
     const db = await getDb();
@@ -188,18 +228,35 @@ function SessionView({ weekNo, session }: { weekNo: number; session: WeekSession
             </KText>
           </KText>
         </View>
-        <View style={[styles.track, { backgroundColor: colors.panelRaised }]} accessibilityLabel={`${logged} of ${prog.needed} sets logged`}>
-          <View style={[styles.fill, { width: `${prog.needed ? (100 * logged) / prog.needed : 0}%`, backgroundColor: colors.ki }]} />
+        <View
+          style={[styles.track, { backgroundColor: colors.panelRaised }]}
+          accessibilityLabel={`${logged} of ${prog.needed} sets logged`}>
+          <View
+            style={[
+              styles.fill,
+              { width: `${prog.needed ? (100 * logged) / prog.needed : 0}%`, backgroundColor: colors.ki },
+            ]}
+          />
         </View>
       </View>
 
       {garage && (
         <View style={[styles.banner, { borderColor: colors.volt }]}>
           <KText variant="caption" color="volt">
-            Garage mode on. Rack, rower and treadmill moves are swapped.
+            {session.garage_twin
+              ? 'Car in: the calisthenics version of today.'
+              : 'Garage mode on. Rack, rower and treadmill moves are swapped.'}
           </KText>
         </View>
       )}
+      {session.warmup ? (
+        <Panel>
+          <KText variant="label" color="inkMuted">
+            Warm-up
+          </KText>
+          <KText variant="caption">{session.warmup}</KText>
+        </Panel>
+      ) : null}
       {session.cleared && (
         <View style={[styles.banner, { borderColor: colors.good }]}>
           <KText variant="caption" color="good">
@@ -208,23 +265,36 @@ function SessionView({ weekNo, session }: { weekNo: number; session: WeekSession
         </View>
       )}
 
-      {rows.map((row, i) => (
-        <ExerciseCard
-          key={`${row.index}:${row.exercise}`}
-          row={row}
-          number={i + 1}
-          sets={sets}
-          expanded={expanded === i}
-          increment={exercises.get(row.exercise)?.increment_lb ?? 5}
-          formOf={(slug) => {
-            const e = exercises.get(slug);
-            return e ? { name: e.name, setup: e.setup, cues: e.cues } : undefined;
-          }}
-          garage={garage}
-          onToggle={() => setOpen(expanded === i ? -1 : i)}
-          onLog={(input) => void onLog(row, input)}
-        />
-      ))}
+      {rows.map((row, i) =>
+        row.block ? (
+          <BlockCard
+            key={`${row.index}:${row.key}`}
+            row={row}
+            number={i + 1}
+            sets={sets}
+            expanded={expanded === i}
+            timerKey={`${weekNo}:${session.code}:${row.key}`}
+            load={(lb) => formatLoad(lb, units)}
+            incrementOf={(slug) => exercises.get(slug)?.increment_lb ?? 5}
+            formOf={formOf}
+            onToggle={() => setOpen(expanded === i ? -1 : i)}
+            onLogRound={(round, entries) => void onLogRound(row, round, entries)}
+          />
+        ) : (
+          <ExerciseCard
+            key={`${row.index}:${row.exercise}`}
+            row={row}
+            number={i + 1}
+            sets={sets}
+            expanded={expanded === i}
+            increment={exercises.get(row.exercise)?.increment_lb ?? 5}
+            formOf={formOf}
+            garage={garage}
+            onToggle={() => setOpen(expanded === i ? -1 : i)}
+            onLog={(input) => void onLog(row, input)}
+          />
+        ),
+      )}
 
       <View style={styles.actions}>
         {allDone && !session.cleared ? (
@@ -245,7 +315,13 @@ const styles = StyleSheet.create({
   gap: { height: spacing[3] },
   tabsWrap: { flexGrow: 0 },
   tabs: { paddingHorizontal: spacing[4], paddingVertical: spacing[3], gap: spacing[2] },
-  tab: { minHeight: 44, paddingHorizontal: spacing[4], borderRadius: radius.pill, borderWidth: 1, justifyContent: 'center' },
+  tab: {
+    minHeight: 44,
+    paddingHorizontal: spacing[4],
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    justifyContent: 'center',
+  },
   body: { padding: spacing[4], paddingTop: 0, gap: spacing[3], paddingBottom: 140 },
   header: { gap: spacing[2] },
   titleRow: { flexDirection: 'row', alignItems: 'baseline', gap: spacing[3] },

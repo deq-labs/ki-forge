@@ -1232,6 +1232,8 @@ export interface components {
             session_client_id: string;
             /** Set No */
             set_no: number;
+            /** Slot */
+            slot?: string | null;
             /** Supersedes Client Id */
             supersedes_client_id?: string | null;
             /**

@@ -41,6 +41,8 @@ class SyncSet(BaseModel):
     is_swap: bool = False
     supersedes_client_id: uuid.UUID | None = None
     logged_at: AwareDatetime
+    # The session row's `key` (from GET /v1/week) for a block round, where an exercise can be in two rows.
+    slot: str | None = Field(default=None, max_length=16)
 
 
 class SyncIn(BaseModel):

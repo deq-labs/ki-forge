@@ -10,9 +10,16 @@ export type TrainingPrefs = {
   restAdjust: number; // seconds added to every program rest (−30 … +30)
   supersetTransition: number; // rest between superset partners (0 = go straight to the next exercise)
   perExercise: Record<string, number>; // exercise slug → your own rest in seconds
+  emomLevel: number; // L1 = 0, L2 = 1, L3 = 2: picked per session, remembered for the next one
 };
 
-export const DEFAULT_PREFS: TrainingPrefs = { restEnabled: true, restAdjust: 0, supersetTransition: 0, perExercise: {} };
+export const DEFAULT_PREFS: TrainingPrefs = {
+  restEnabled: true,
+  restAdjust: 0,
+  supersetTransition: 0,
+  perExercise: {},
+  emomLevel: 0,
+};
 
 function load(): TrainingPrefs {
   try {
@@ -32,8 +39,8 @@ export const useTrainingPrefs = create<State>((set, get) => ({
   ...load(),
   set: (patch) => {
     set(patch);
-    const { restEnabled, restAdjust, supersetTransition, perExercise } = get();
-    kv.set(KEY, JSON.stringify({ restEnabled, restAdjust, supersetTransition, perExercise }));
+    const { restEnabled, restAdjust, supersetTransition, perExercise, emomLevel } = get();
+    kv.set(KEY, JSON.stringify({ restEnabled, restAdjust, supersetTransition, perExercise, emomLevel }));
   },
   setExerciseRest: (slug, seconds) => {
     const perExercise = { ...get().perExercise };

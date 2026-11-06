@@ -68,6 +68,7 @@ def logged_sets(db: Session, session_ids: Iterable[uuid.UUID]) -> dict[uuid.UUID
                 weight_lb=float(s.weight_lb),
                 rir=s.rir,
                 supersedes=str(supersedes_client) if supersedes_client else None,
+                slot=s.slot,
             )
         )
     return out
