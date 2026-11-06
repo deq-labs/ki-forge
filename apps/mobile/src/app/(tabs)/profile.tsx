@@ -35,6 +35,7 @@ export default function ProfileScreen() {
             <Header />
             <PathCard />
             <LiftsCard />
+            <LibraryCard />
             <TrialResults />
             <Settings />
             <TrainingSettings />
@@ -144,6 +145,22 @@ function LiftsCard() {
           onPress={() => router.push('/lifts?from=profile')}
         />
       ))}
+    </Panel>
+  );
+}
+
+/** The exercise library: photos and steps for about 870 exercises. */
+function LibraryCard() {
+  const router = useRouter();
+  return (
+    <Panel style={styles.list}>
+      <SettingRow
+        first
+        label="Exercise library"
+        hint="Photos and steps for about 870 exercises"
+        value={<KText color="volt">›</KText>}
+        onPress={() => router.push('/library')}
+      />
     </Panel>
   );
 }

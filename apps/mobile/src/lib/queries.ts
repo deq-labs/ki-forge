@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { getDb } from '@/db/db';
 import { cacheGet, cachePut } from '@/db/repo';
-import { api, ApiError, type Arc, type Me, type Program, type Week } from '@/lib/api';
+import { api, ApiError, type Arc, type LibraryPage, type Me, type Program, type Week } from '@/lib/api';
 import { useSettings } from '@/state/settings';
 
 /**
@@ -35,6 +35,16 @@ export function useMe() {
     queryKey: ['me', owner],
     queryFn: () => cached(owner!, 'me', () => api.get('/v1/me')),
     enabled: !!owner,
+  });
+}
+
+/** Exercise library search (reference data, online only). The last page stays on screen while typing. */
+export function useLibrary(q: string, muscle: string | null, limit: number) {
+  return useQuery<LibraryPage>({
+    queryKey: ['library', q, muscle, limit],
+    queryFn: () => api.get('/v1/library', { query: { q: q || undefined, muscle: muscle ?? undefined, limit } }),
+    staleTime: 60 * 60 * 1000,
+    placeholderData: keepPreviousData,
   });
 }
 

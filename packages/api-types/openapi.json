@@ -705,6 +705,14 @@
             "title": "Equipment",
             "type": "array"
           },
+          "images": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Images",
+            "type": "array"
+          },
           "increment_lb": {
             "title": "Increment Lb",
             "type": "number"
@@ -712,6 +720,25 @@
           "is_timed": {
             "title": "Is Timed",
             "type": "boolean"
+          },
+          "library": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Library"
+          },
+          "muscles": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Muscles",
+            "type": "array"
           },
           "name": {
             "title": "Name",
@@ -979,6 +1006,155 @@
           "name"
         ],
         "title": "LevelView",
+        "type": "object"
+      },
+      "LibraryExerciseOut": {
+        "properties": {
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "equipment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Equipment"
+          },
+          "force": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Force"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "images": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Images",
+            "type": "array"
+          },
+          "instructions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Instructions",
+            "type": "array"
+          },
+          "level": {
+            "title": "Level",
+            "type": "string"
+          },
+          "mechanic": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mechanic"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "primary_muscles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Primary Muscles",
+            "type": "array"
+          },
+          "program_exercise": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Program Exercise"
+          },
+          "secondary_muscles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Secondary Muscles",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "category",
+          "equipment",
+          "level",
+          "force",
+          "mechanic",
+          "primary_muscles",
+          "secondary_muscles",
+          "instructions",
+          "images"
+        ],
+        "title": "LibraryExerciseOut",
+        "type": "object"
+      },
+      "LibraryPage": {
+        "properties": {
+          "commit": {
+            "title": "Commit",
+            "type": "string"
+          },
+          "equipment": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Equipment",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/LibraryExerciseOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "muscles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Muscles",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "commit",
+          "items",
+          "equipment",
+          "muscles"
+        ],
+        "title": "LibraryPage",
         "type": "object"
       },
       "LiftOut": {
@@ -3948,6 +4124,158 @@
         "summary": "Import Workbook Endpoint",
         "tags": [
           "account"
+        ]
+      }
+    },
+    "/v1/library": {
+      "get": {
+        "description": "Library exercises matching every filter, sorted by name, one page at a time.",
+        "operationId": "list_library_v1_library_get",
+        "parameters": [
+          {
+            "description": "Words that must all appear in the name",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Words that must all appear in the name",
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "equipment",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 40,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Equipment"
+            }
+          },
+          {
+            "in": "query",
+            "name": "muscle",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 40,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Muscle"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Library",
+        "tags": [
+          "library"
+        ]
+      }
+    },
+    "/v1/library/{library_id}": {
+      "get": {
+        "operationId": "read_library_exercise_v1_library__library_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "library_id",
+            "required": true,
+            "schema": {
+              "title": "Library Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryExerciseOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Library Exercise",
+        "tags": [
+          "library"
         ]
       }
     },

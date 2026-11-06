@@ -40,6 +40,7 @@ class Exercise:
     swap: str | None  # slug of the garage-mode replacement
     setup: str | None = None  # how to set up, one line
     cues: tuple[str, ...] = ()  # form cues shown in Train
+    library: str | None = None  # id in db/seed/exercise_library.json (photos, muscles)
 
 
 BlockKind = Literal["emom", "interval", "for_time", "circuit"]
@@ -590,6 +591,7 @@ def parse_program(data: Mapping[str, Any]) -> Program:
                     swap=e["swap"],
                     setup=e.get("setup"),
                     cues=tuple(e.get("cues", [])),
+                    library=e.get("library"),
                 )
                 for e in data["exercises"]
             ],
