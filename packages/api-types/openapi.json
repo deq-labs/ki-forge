@@ -430,6 +430,14 @@
       },
       "ExerciseOut": {
         "properties": {
+          "cues": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Cues",
+            "type": "array"
+          },
           "equipment": {
             "items": {
               "type": "string"
@@ -452,6 +460,17 @@
           "needs_garage_space": {
             "title": "Needs Garage Space",
             "type": "boolean"
+          },
+          "setup": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Setup"
           },
           "slug": {
             "title": "Slug",

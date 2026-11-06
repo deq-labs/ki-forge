@@ -102,3 +102,9 @@ def test_rejects_bad_data(seed: dict, mutate, message: str) -> None:
     mutate(seed)
     with pytest.raises(ProgramError, match=message):
         parse_program(seed)
+
+
+def test_every_exercise_has_form_cues(program: Program) -> None:
+    for e in program.exercises.values():
+        assert e.setup, e.slug
+        assert 3 <= len(e.cues) <= 5, e.slug

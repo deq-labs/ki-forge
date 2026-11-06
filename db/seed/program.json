@@ -15,7 +15,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Hold a post, doorframe or band in front of you; one leg out in front.",
+      "cues": [
+        "Use the support only as much as you need",
+        "Sit down slowly on the working leg",
+        "Knee tracks over the toes",
+        "Drive up through the whole foot"
+      ]
     },
     {
       "slug": "band-face-pull",
@@ -26,7 +33,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Band anchored at face height, hands at the ends, step back until there is tension.",
+      "cues": [
+        "Pull toward your forehead, hands apart",
+        "Elbows high, finishing with a double-biceps shape",
+        "Squeeze the upper back at the end",
+        "Control the band back out"
+      ]
     },
     {
       "slug": "band-lat-pulldown",
@@ -37,7 +51,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Band anchored high, kneel or sit facing it, arms up.",
+      "cues": [
+        "Pull the elbows down to your sides",
+        "Chest up toward the hands",
+        "Squeeze the lats for a second",
+        "Let the arms go fully up between reps"
+      ]
     },
     {
       "slug": "band-lateral-raise",
@@ -48,7 +69,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Stand on the middle of the band, one end in each hand (or one side at a time).",
+      "cues": [
+        "Lead with the elbows out to the sides",
+        "Raise to shoulder height and pause",
+        "Keep tension at the bottom: don't let the band go slack",
+        "Lower slowly against the band"
+      ]
     },
     {
       "slug": "band-overhead-extension",
@@ -59,7 +87,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Band under the back foot or anchored low behind you; hands overhead.",
+      "cues": [
+        "Elbows by the ears, pointed forward",
+        "Lower the hands behind the head into a stretch",
+        "Extend to straight arms",
+        "Control the band back down"
+      ]
     },
     {
       "slug": "band-seated-row",
@@ -70,7 +105,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Sit with legs extended, band around the feet.",
+      "cues": [
+        "Sit tall, chest up",
+        "Pull the hands to the lower ribs",
+        "Squeeze the shoulder blades",
+        "Return slowly with tension"
+      ]
     },
     {
       "slug": "barbell-back-squat",
@@ -82,7 +124,14 @@
       "increment_lb": 10,
       "is_timed": false,
       "needs_garage_space": true,
-      "swap": "x3-bar-squat"
+      "swap": "x3-bar-squat",
+      "setup": "Bar on the upper back, hands just outside the shoulders, feet shoulder-width, toes slightly out.",
+      "cues": [
+        "Big breath and brace before you unrack and before every rep",
+        "Knees track over the toes as you sit down between the hips",
+        "Depth: hip crease at or below the knee, chest up",
+        "Drive up through the whole foot, hips and chest rising together"
+      ]
     },
     {
       "slug": "barbell-row",
@@ -93,7 +142,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": "one-arm-dumbbell-row"
+      "swap": "one-arm-dumbbell-row",
+      "setup": "Hinge to about 45° with a flat back, bar hanging at the knees, overhand grip just outside the legs.",
+      "cues": [
+        "Brace and keep the torso still",
+        "Pull the bar to the lower ribs",
+        "Squeeze the shoulder blades together at the top",
+        "Lower until the arms are straight"
+      ]
     },
     {
       "slug": "barbell-shrug",
@@ -104,7 +160,14 @@
       "increment_lb": 10,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": "dumbbell-shrug"
+      "swap": "dumbbell-shrug",
+      "setup": "Bar at arm's length, hands just outside the thighs.",
+      "cues": [
+        "Shrug straight up toward the ears",
+        "Hold a one-second squeeze at the top",
+        "No rolling the shoulders",
+        "Lower all the way down"
+      ]
     },
     {
       "slug": "behind-the-back-shrug",
@@ -113,7 +176,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Barbell held behind you at arm's length, hands just outside the hips.",
+      "cues": [
+        "Lean forward a touch to clear the glutes",
+        "Shrug up and slightly back",
+        "Squeeze for a second at the top",
+        "Lower slowly"
+      ]
     },
     {
       "slug": "box-pistol-squat",
@@ -124,7 +194,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "A box or bench behind you; stand on one leg with the other leg out in front.",
+      "cues": [
+        "Arms forward for balance",
+        "Sit back slowly to the box on one leg",
+        "Touch, don't flop",
+        "Stand up on the working leg; lower the box over time"
+      ]
     },
     {
       "slug": "brisk-outdoor-walk",
@@ -133,7 +210,14 @@
       "increment_lb": 0,
       "is_timed": true,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Comfortable shoes, outside.",
+      "cues": [
+        "20–30 minutes at a brisk pace",
+        "Conversational effort",
+        "Tall posture, arms swinging",
+        "Log done = 1"
+      ]
     },
     {
       "slug": "bulgarian-split-squat",
@@ -145,7 +229,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Back foot on a bench, front foot far enough forward that the knee stays over the foot. Dumbbells at your sides.",
+      "cues": [
+        "Lower straight down until the back knee nearly touches the floor",
+        "Front knee tracks over the toes",
+        "Slight forward lean is fine; keep the chest proud",
+        "Drive up through the front heel; all reps on one leg, then switch"
+      ]
     },
     {
       "slug": "cable-face-pull",
@@ -156,7 +247,14 @@
       "increment_lb": 2.5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": "band-face-pull"
+      "swap": "band-face-pull",
+      "setup": "Rope at upper-chest to eye height, thumbs toward you, one step back.",
+      "cues": [
+        "Pull the rope toward your face, splitting the ends apart",
+        "Finish with the elbows high and the hands beside the ears",
+        "Squeeze the upper back for a second",
+        "Return slowly; don't let the stack pull you forward"
+      ]
     },
     {
       "slug": "cable-lateral-raise-drop-set",
@@ -165,7 +263,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Low cable, handle in the far hand, standing side-on to the stack.",
+      "cues": [
+        "12 reps, drop the weight one or two plates, 12 more with no rest",
+        "Lead with the elbow out to the side, up to shoulder height",
+        "Slight lean away from the stack for tension at the bottom",
+        "Same slow lowering on both halves of the drop set"
+      ]
     },
     {
       "slug": "cable-woodchop",
@@ -174,7 +279,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Cable at shoulder height, stand side-on, both hands on the handle.",
+      "cues": [
+        "Rotate through the hips and torso, not just the arms",
+        "Arms stay long",
+        "Finish across the body at hip height",
+        "Return slowly; 12 per side"
+      ]
     },
     {
       "slug": "conventional-deadlift",
@@ -185,7 +297,14 @@
       "increment_lb": 10,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": "x3-bar-deadlift"
+      "swap": "x3-bar-deadlift",
+      "setup": "Bar over the middle of the foot, hip-width stance, hands just outside the shins.",
+      "cues": [
+        "Push the hips back to grip; shins touch the bar",
+        "Pull the slack out of the bar and brace hard",
+        "Push the floor away; bar stays against the legs",
+        "Lock out with the glutes, then lower the same path"
+      ]
     },
     {
       "slug": "counterweight-pistol-squat",
@@ -196,7 +315,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Hold a light plate or dumbbell out in front at chest height.",
+      "cues": [
+        "The weight helps you balance: hold it out as you sit",
+        "Lower slowly to full depth on one leg",
+        "Free leg stays off the floor",
+        "Stand up without bouncing"
+      ]
     },
     {
       "slug": "deficit-push-ups",
@@ -207,7 +333,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Hands on two dumbbells or plates so the chest can go below hand height; body in one line.",
+      "cues": [
+        "Brace: glutes and abs tight, hips level",
+        "Lower the chest between the hands with elbows about 45°",
+        "Pause just below hand level",
+        "Push the floor away to straight arms"
+      ]
     },
     {
       "slug": "dips",
@@ -218,7 +351,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": "deficit-push-ups"
+      "swap": "deficit-push-ups",
+      "setup": "Parallel bars, arms locked out, chest up, legs crossed or straight below you.",
+      "cues": [
+        "Lower until the shoulders are just below the elbows, or as deep as is comfortable",
+        "Lean slightly forward and keep the elbows tracking back",
+        "Press up to locked arms",
+        "Max reps, stopping 1–2 short of failure; 12 counts as top of range"
+      ]
     },
     {
       "slug": "dumbbell-romanian-deadlift",
@@ -229,7 +369,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "A dumbbell in each hand in front of the thighs.",
+      "cues": [
+        "Soft knees, hips push straight back",
+        "Dumbbells stay close to the legs",
+        "Flat back; stop at a strong hamstring stretch",
+        "Glutes drive you back to standing"
+      ]
     },
     {
       "slug": "dumbbell-shrug",
@@ -240,7 +387,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "A dumbbell in each hand at your sides.",
+      "cues": [
+        "Shrug straight up",
+        "One-second hold at the top",
+        "Arms stay straight; no curling",
+        "Full lowering between reps"
+      ]
     },
     {
       "slug": "dumbbell-standing-press",
@@ -251,7 +405,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Dumbbells at shoulder height, palms facing in or slightly forward, feet hip-width.",
+      "cues": [
+        "Brace and squeeze glutes so the ribs stay down",
+        "Press up and slightly in until the arms are straight",
+        "Keep the wrists stacked over the elbows",
+        "Lower to ear level with control"
+      ]
     },
     {
       "slug": "easy-rower-20-min",
@@ -260,7 +421,14 @@
       "increment_lb": 0,
       "is_timed": true,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Rower damper 4–6.",
+      "cues": [
+        "20 minutes at a pace you can talk at",
+        "Smooth, relaxed strokes",
+        "Breathe through the nose if you can",
+        "Log done = 1"
+      ]
     },
     {
       "slug": "easy-rower-or-incline-treadmill-walk",
@@ -272,7 +440,14 @@
       "increment_lb": 5,
       "is_timed": true,
       "needs_garage_space": true,
-      "swap": "brisk-outdoor-walk"
+      "swap": "brisk-outdoor-walk",
+      "setup": "Rower or a brisk incline walk.",
+      "cues": [
+        "20–30 minutes, conversational pace",
+        "You should be able to talk the whole time",
+        "This is recovery, not a test",
+        "Log done = 1"
+      ]
     },
     {
       "slug": "farmer-carry",
@@ -283,7 +458,14 @@
       "increment_lb": 5,
       "is_timed": true,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Heavy dumbbells at your sides; clear space for 40 m.",
+      "cues": [
+        "Stand tall, shoulders back and down",
+        "Short, quick steps",
+        "Grip hard and keep the weights from swinging",
+        "40 m per set; it counts as done = 1"
+      ]
     },
     {
       "slug": "goblet-squat",
@@ -294,7 +476,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Hold one dumbbell vertically at the chest, elbows under it, feet shoulder-width.",
+      "cues": [
+        "Sit down between the hips, elbows inside the knees",
+        "Chest tall, the weight stays touching the body",
+        "Full depth you can control",
+        "Stand by driving the floor away"
+      ]
     },
     {
       "slug": "hammer-curl",
@@ -305,7 +494,14 @@
       "increment_lb": 2.5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Dumbbells at your sides, palms facing each other.",
+      "cues": [
+        "Elbows pinned to your sides",
+        "Curl up with the palms staying in",
+        "No swinging the torso",
+        "Lower slowly to straight arms"
+      ]
     },
     {
       "slug": "hanging-knee-or-leg-raise",
@@ -316,7 +512,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": "lying-leg-raise"
+      "swap": "lying-leg-raise",
+      "setup": "Hang from the bar with straight arms, shoulders active.",
+      "cues": [
+        "Curl the pelvis up, not just the legs",
+        "Knees (or straight legs) to hip height or higher",
+        "No swinging: pause at the bottom",
+        "Lower slowly"
+      ]
     },
     {
       "slug": "heavy-farmer-hold",
@@ -325,7 +528,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Heavier than your carry; stand in place.",
+      "cues": [
+        "Tall posture, shoulders down",
+        "Squeeze the handles as hard as you can",
+        "Breathe and brace for 30 seconds",
+        "Set the weights down under control"
+      ]
     },
     {
       "slug": "incline-dumbbell-curl",
@@ -337,7 +547,14 @@
       "increment_lb": 2.5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Bench at about 45–60°, arms hanging straight down behind the body.",
+      "cues": [
+        "Keep the upper arms still and back",
+        "Curl up, turning the palms up",
+        "Squeeze at the top without the elbows coming forward",
+        "Lower to a full stretch"
+      ]
     },
     {
       "slug": "incline-dumbbell-press",
@@ -349,7 +566,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Bench at about 30°. Kick the dumbbells up from your knees; feet planted.",
+      "cues": [
+        "Shoulder blades pulled back and down into the bench",
+        "Lower to the upper chest with elbows about 45° from the body",
+        "Press up and slightly together without clanking the bells",
+        "Stop each rep 1–2 short of failure"
+      ]
     },
     {
       "slug": "jump-rope-or-burpee-intervals",
@@ -358,7 +582,14 @@
       "increment_lb": 0,
       "is_timed": true,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Rope or open floor space.",
+      "cues": [
+        "10 rounds: 20 s hard, 40 s rest",
+        "Jump rope: light, quick bounces",
+        "Burpees: chest to the floor, jump at the top",
+        "Log done = 1"
+      ]
     },
     {
       "slug": "l-sit-hold",
@@ -367,7 +598,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Parallettes, dip bars or the floor; straight arms.",
+      "cues": [
+        "Push the floor away, shoulders down",
+        "Both legs straight and level with the hips",
+        "Point the toes and squeeze the thighs",
+        "Hold 15–30 s; log done"
+      ]
     },
     {
       "slug": "lateral-raise",
@@ -379,7 +617,14 @@
       "increment_lb": 2.5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": "band-lateral-raise"
+      "swap": "band-lateral-raise",
+      "setup": "Light dumbbells or a low cable, slight bend in the elbows, a small lean forward.",
+      "cues": [
+        "Lead with the elbows, out to the sides",
+        "Raise to shoulder height, not higher",
+        "Pinkies level with or slightly above the thumbs",
+        "Lower slowly; no swinging"
+      ]
     },
     {
       "slug": "lateral-raise-light",
@@ -390,7 +635,14 @@
       "increment_lb": 2.5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": "band-lateral-raise"
+      "swap": "band-lateral-raise",
+      "setup": "Lighter than your main lateral raise: this one is for high reps and a strong pump.",
+      "cues": [
+        "Slight lean forward, soft elbows",
+        "Raise out to shoulder height, leading with the elbows",
+        "Keep the traps quiet: shoulders down, away from the ears",
+        "Smooth 2-second lowering on every rep"
+      ]
     },
     {
       "slug": "lying-leg-raise",
@@ -399,7 +651,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Lie on your back, hands under the hips or holding a bench behind you.",
+      "cues": [
+        "Press the lower back into the floor",
+        "Raise straight legs to vertical",
+        "Lower slowly, stopping before the back arches",
+        "Breathe out as the legs rise"
+      ]
     },
     {
       "slug": "one-arm-dumbbell-row",
@@ -410,7 +669,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "One hand and knee on a bench, the other foot on the floor; flat back.",
+      "cues": [
+        "Pull the dumbbell toward the hip",
+        "Elbow stays close to the body",
+        "Squeeze the back at the top; no twisting",
+        "Full stretch at the bottom"
+      ]
     },
     {
       "slug": "one-leg-l-sit-hold",
@@ -419,7 +685,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Same support as the tuck L-sit.",
+      "cues": [
+        "Push down, shoulders away from the ears",
+        "One leg straight out in front, the other tucked",
+        "Switch legs each set",
+        "Hold 15–30 s; log done"
+      ]
     },
     {
       "slug": "overhead-cable-triceps-extension",
@@ -430,7 +703,14 @@
       "increment_lb": 2.5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": "band-overhead-extension"
+      "swap": "band-overhead-extension",
+      "setup": "Rope on a low or mid cable, face away, split stance, elbows up by the head.",
+      "cues": [
+        "Keep the elbows pointed forward and still",
+        "Stretch the rope behind the head",
+        "Extend to straight arms, spreading the rope at the top",
+        "Slow lowering into the stretch"
+      ]
     },
     {
       "slug": "paused-back-squat",
@@ -439,7 +719,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Same setup as your back squat, a little lighter.",
+      "cues": [
+        "Squat to depth and hold a full 2-second pause",
+        "Stay tight in the pause: no relaxing at the bottom",
+        "Drive up out of the pause without bouncing",
+        "Keep the chest up as you stand"
+      ]
     },
     {
       "slug": "pistol-squat-progression",
@@ -448,7 +735,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Full pistol: stand on one leg, the other leg straight out in front.",
+      "cues": [
+        "Arms forward, sit down slowly",
+        "Heel stays down, knee over the toes",
+        "Full depth, free leg off the floor",
+        "Stand up smoothly; 5 per leg"
+      ]
     },
     {
       "slug": "pull-up",
@@ -459,7 +753,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": true,
-      "swap": "band-lat-pulldown"
+      "swap": "band-lat-pulldown",
+      "setup": "Hang from the bar, hands slightly wider than the shoulders, palms away.",
+      "cues": [
+        "Start each rep from a dead hang",
+        "Pull the elbows down toward the ribs",
+        "Chin clearly over the bar",
+        "Lower all the way under control; add weight once 10+ strict reps"
+      ]
     },
     {
       "slug": "rear-delt-dumbbell-fly",
@@ -470,7 +771,14 @@
       "increment_lb": 2.5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Hinge forward with a flat back (or chest on an incline bench), light dumbbells hanging.",
+      "cues": [
+        "Soft elbows, fixed angle",
+        "Raise the arms out to the sides, thinking \"wide\"",
+        "Squeeze the back of the shoulders at the top",
+        "Lower slowly; keep the traps out of it"
+      ]
     },
     {
       "slug": "romanian-deadlift",
@@ -481,7 +789,14 @@
       "increment_lb": 10,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": "dumbbell-romanian-deadlift"
+      "swap": "dumbbell-romanian-deadlift",
+      "setup": "Barbell from the rack or floor, hip-width stance, hands just outside the thighs.",
+      "cues": [
+        "Soft knees, then push the hips back",
+        "Bar slides down the thighs; keep it close",
+        "Stop when you feel a strong hamstring stretch with a flat back",
+        "Squeeze the glutes to stand tall"
+      ]
     },
     {
       "slug": "rower-5-500-m",
@@ -490,7 +805,14 @@
       "increment_lb": 0,
       "is_timed": true,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Rower damper 4–6. Warm up 5 minutes easy.",
+      "cues": [
+        "5 × 500 m at a strong, steady pace with 2 minutes easy between",
+        "Drive with the legs first",
+        "Long, smooth strokes around 24–28 per minute",
+        "Log done = 1"
+      ]
     },
     {
       "slug": "rower-intervals-8-250-m",
@@ -499,7 +821,14 @@
       "increment_lb": 0,
       "is_timed": true,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Rower damper 4–6. Warm up 5 minutes easy.",
+      "cues": [
+        "8 × 250 m hard with 1 minute easy between",
+        "Legs, then body, then arms on the drive",
+        "Arms, body, then legs on the way back",
+        "Even split times; log done = 1"
+      ]
     },
     {
       "slug": "seated-cable-row",
@@ -510,7 +839,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": "band-seated-row"
+      "swap": "band-seated-row",
+      "setup": "Sit tall, slight bend in the knees, handle at arm's length.",
+      "cues": [
+        "Chest up; no rocking back",
+        "Pull to the lower ribs, elbows close",
+        "Squeeze the shoulder blades together",
+        "Reach forward slowly into a stretch"
+      ]
     },
     {
       "slug": "seated-dumbbell-press",
@@ -522,7 +858,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Bench upright, dumbbells at shoulder height, back against the pad.",
+      "cues": [
+        "Ribs down, no big arch",
+        "Press up and slightly in",
+        "Stop just short of the bells touching",
+        "Lower to ear level under control"
+      ]
     },
     {
       "slug": "standing-barbell-overhead-press",
@@ -534,7 +877,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": true,
-      "swap": "dumbbell-standing-press"
+      "swap": "dumbbell-standing-press",
+      "setup": "Bar in the rack at collarbone height; hands just outside the shoulders, elbows slightly in front of the bar.",
+      "cues": [
+        "Squeeze glutes and brace before every rep",
+        "Press straight up and move your head back, then through once the bar passes your forehead",
+        "Finish with the bar over the middle of your foot, biceps by your ears",
+        "Lower under control to the collarbones"
+      ]
     },
     {
       "slug": "standing-calf-raise",
@@ -545,7 +895,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Balls of the feet on a step or plate, heels hanging off; hold a dumbbell or a support.",
+      "cues": [
+        "Lower the heels into a deep stretch",
+        "Rise as high as you can onto the big toe",
+        "Pause a second at the top",
+        "No bouncing: slow down, slow up"
+      ]
     },
     {
       "slug": "towel-pull-up-hang",
@@ -554,7 +911,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Two towels over the bar, one in each hand.",
+      "cues": [
+        "Hang with active shoulders, not slumped",
+        "Crush the towels",
+        "Hold as long as you can with good position",
+        "Step down; don't drop"
+      ]
     },
     {
       "slug": "treadmill-hill-sprints-10-20-s",
@@ -563,7 +927,14 @@
       "increment_lb": 0,
       "is_timed": true,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Treadmill at an incline you can sprint on; warm up 5 minutes.",
+      "cues": [
+        "10 × 20 s fast with about 60–90 s walking between",
+        "Drive the knees and arms",
+        "Step to the side rails between efforts",
+        "Log done = 1"
+      ]
     },
     {
       "slug": "tuck-l-sit-hold",
@@ -572,7 +943,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Hands on parallettes, dip bars or the floor beside the hips.",
+      "cues": [
+        "Push down hard and lift the hips",
+        "Knees tucked to the chest, feet off the floor",
+        "Shoulders down, away from the ears",
+        "Hold 15–30 s; log done"
+      ]
     },
     {
       "slug": "walking-lunge",
@@ -583,7 +961,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Dumbbells at your sides, tall posture.",
+      "cues": [
+        "Long step forward, lower the back knee toward the floor",
+        "Front knee over the foot",
+        "Push through the front heel to bring the back leg through",
+        "10 steps per leg; count each leg"
+      ]
     },
     {
       "slug": "x3-bar-deadlift",
@@ -594,7 +979,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Stand on the band, bar at mid-shin, hip-width stance.",
+      "cues": [
+        "Hinge back with a flat back to reach the bar",
+        "Brace, then stand up by pushing the floor away",
+        "Squeeze the glutes hard at the top, where it's heaviest",
+        "Control the lowering"
+      ]
     },
     {
       "slug": "x3-bar-squat",
@@ -605,7 +997,14 @@
       "increment_lb": 5,
       "is_timed": false,
       "needs_garage_space": false,
-      "swap": null
+      "swap": null,
+      "setup": "Stand on the band, bar across the front of the shoulders or held at the chest.",
+      "cues": [
+        "Brace and sit down between the hips",
+        "Knees out over the toes",
+        "Drive up hard: the band gets heavier at the top",
+        "Pause briefly at the bottom to keep reps honest"
+      ]
     }
   ],
   "paths": [
