@@ -52,6 +52,245 @@ export const pathColors = {
   }
 } as const;
 
+/** Every theme's style, default first (Profile › Theme). */
+export const themes = [
+  {
+    "id": "night",
+    "name": "Night arena",
+    "scheme": "dark",
+    "gradient": true,
+    "glow": true,
+    "border": 1,
+    "radius": 18
+  },
+  {
+    "id": "forge",
+    "name": "Forge",
+    "scheme": "dark",
+    "gradient": false,
+    "glow": false,
+    "border": 1,
+    "radius": 6
+  },
+  {
+    "id": "manga",
+    "name": "Manga print",
+    "scheme": "light",
+    "gradient": false,
+    "glow": false,
+    "border": 2,
+    "radius": 4
+  },
+  {
+    "id": "garage",
+    "name": "Garage steel",
+    "scheme": "dark",
+    "gradient": false,
+    "glow": false,
+    "border": 1,
+    "radius": 2
+  }
+] as const;
+
+/** Every theme's colors and path energy pairs, by theme id. */
+export const themeColors = {
+  "night": {
+    "night900": "#110f26",
+    "night800": "#1a1738",
+    "panel": "#221e46",
+    "panelRaised": "#2b2657",
+    "line": "#3a3470",
+    "ink": "#f4f0ff",
+    "inkMuted": "#b6aedd",
+    "inkFaint": "#8d86b8",
+    "ki": "#ff7a1a",
+    "kiHot": "#ffd23f",
+    "onKi": "#1a0f00",
+    "volt": "#4fd8ff",
+    "good": "#5ee0a0",
+    "danger": "#ff6b86",
+    "pathStorm": "#ff7a1a",
+    "pathStorm2": "#ffd23f",
+    "pathShadow": "#4fd8ff",
+    "pathShadow2": "#a68bff",
+    "pathTitan": "#ff4d6d",
+    "pathTitan2": "#ff9e5e",
+    "pathBlade": "#5ee0a0",
+    "pathBlade2": "#d4ff6a",
+    "pathIronTempo": "#b8c7dc",
+    "pathIronTempo2": "#6f9bff"
+  },
+  "forge": {
+    "night900": "#141210",
+    "night800": "#1c1915",
+    "panel": "#221e1a",
+    "panelRaised": "#2c2722",
+    "line": "#423a32",
+    "ink": "#efe8dc",
+    "inkMuted": "#c2b8a8",
+    "inkFaint": "#9e9383",
+    "ki": "#e2552b",
+    "kiHot": "#d0a454",
+    "onKi": "#160904",
+    "volt": "#9dbcd0",
+    "good": "#93bf7a",
+    "danger": "#ef6a5a",
+    "pathStorm": "#e2552b",
+    "pathStorm2": "#d0a454",
+    "pathShadow": "#7f9fc4",
+    "pathShadow2": "#b3bdd6",
+    "pathTitan": "#d9503f",
+    "pathTitan2": "#e0915a",
+    "pathBlade": "#8fae6c",
+    "pathBlade2": "#c9cc8d",
+    "pathIronTempo": "#b0bac6",
+    "pathIronTempo2": "#8aa2c0"
+  },
+  "manga": {
+    "night900": "#f2ede3",
+    "night800": "#e6dfd1",
+    "panel": "#fbf8f2",
+    "panelRaised": "#ebe4d6",
+    "line": "#2a251f",
+    "ink": "#16130f",
+    "inkMuted": "#4a443b",
+    "inkFaint": "#625a4e",
+    "ki": "#c4221a",
+    "kiHot": "#16130f",
+    "onKi": "#fffaf0",
+    "volt": "#2b3a67",
+    "good": "#2d6a3a",
+    "danger": "#a3221b",
+    "pathStorm": "#c4221a",
+    "pathStorm2": "#16130f",
+    "pathShadow": "#2b3a67",
+    "pathShadow2": "#16130f",
+    "pathTitan": "#9c3d1c",
+    "pathTitan2": "#16130f",
+    "pathBlade": "#2f6340",
+    "pathBlade2": "#16130f",
+    "pathIronTempo": "#45525f",
+    "pathIronTempo2": "#16130f"
+  },
+  "garage": {
+    "night900": "#16181a",
+    "night800": "#1d2023",
+    "panel": "#24282b",
+    "panelRaised": "#2e3337",
+    "line": "#454b51",
+    "ink": "#ecede8",
+    "inkMuted": "#b9beba",
+    "inkFaint": "#959b97",
+    "ki": "#f2c230",
+    "kiHot": "#f6d97a",
+    "onKi": "#16181a",
+    "volt": "#9ec3d9",
+    "good": "#86c784",
+    "danger": "#ff7a6b",
+    "pathStorm": "#f2c230",
+    "pathStorm2": "#f6d97a",
+    "pathShadow": "#79b0de",
+    "pathShadow2": "#b0cfea",
+    "pathTitan": "#f0703f",
+    "pathTitan2": "#f5a77f",
+    "pathBlade": "#7cc490",
+    "pathBlade2": "#bfe0b5",
+    "pathIronTempo": "#c6cfd8",
+    "pathIronTempo2": "#93abc4"
+  }
+} as const;
+
+export const themePathColors = {
+  "night": {
+    "storm": {
+      "ki": "#ff7a1a",
+      "kiHot": "#ffd23f"
+    },
+    "shadow": {
+      "ki": "#4fd8ff",
+      "kiHot": "#a68bff"
+    },
+    "titan": {
+      "ki": "#ff4d6d",
+      "kiHot": "#ff9e5e"
+    },
+    "blade": {
+      "ki": "#5ee0a0",
+      "kiHot": "#d4ff6a"
+    },
+    "iron-tempo": {
+      "ki": "#b8c7dc",
+      "kiHot": "#6f9bff"
+    }
+  },
+  "forge": {
+    "storm": {
+      "ki": "#e2552b",
+      "kiHot": "#d0a454"
+    },
+    "shadow": {
+      "ki": "#7f9fc4",
+      "kiHot": "#b3bdd6"
+    },
+    "titan": {
+      "ki": "#d9503f",
+      "kiHot": "#e0915a"
+    },
+    "blade": {
+      "ki": "#8fae6c",
+      "kiHot": "#c9cc8d"
+    },
+    "iron-tempo": {
+      "ki": "#b0bac6",
+      "kiHot": "#8aa2c0"
+    }
+  },
+  "manga": {
+    "storm": {
+      "ki": "#c4221a",
+      "kiHot": "#16130f"
+    },
+    "shadow": {
+      "ki": "#2b3a67",
+      "kiHot": "#16130f"
+    },
+    "titan": {
+      "ki": "#9c3d1c",
+      "kiHot": "#16130f"
+    },
+    "blade": {
+      "ki": "#2f6340",
+      "kiHot": "#16130f"
+    },
+    "iron-tempo": {
+      "ki": "#45525f",
+      "kiHot": "#16130f"
+    }
+  },
+  "garage": {
+    "storm": {
+      "ki": "#f2c230",
+      "kiHot": "#f6d97a"
+    },
+    "shadow": {
+      "ki": "#79b0de",
+      "kiHot": "#b0cfea"
+    },
+    "titan": {
+      "ki": "#f0703f",
+      "kiHot": "#f5a77f"
+    },
+    "blade": {
+      "ki": "#7cc490",
+      "kiHot": "#bfe0b5"
+    },
+    "iron-tempo": {
+      "ki": "#c6cfd8",
+      "kiHot": "#93abc4"
+    }
+  }
+} as const;
+
 /** CSS font stacks (web). Native font names are mapped when fonts load (M3). */
 export const fontFamilies = {
   "display": "\"Dela Gothic One\", \"Arial Black\", Impact, sans-serif",
@@ -157,4 +396,5 @@ export const shadow = {
 
 export type ColorToken = keyof typeof colors;
 export type PathSlug = keyof typeof pathColors;
+export type ThemeId = keyof typeof themeColors;
 export type TypographyToken = keyof typeof typography;

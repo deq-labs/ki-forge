@@ -14,7 +14,7 @@ import { addDays, dayName, isoDate, parseIsoDate } from '@/lib/dates';
 import { useArc, useMe, useProgram, useTrials, useWeek } from '@/lib/queries';
 import { useSync } from '@/lib/sync';
 import { maxSessionXp } from '@/lib/xp';
-import { useTheme } from '@/theme/theme';
+import { energyFill, glowColor, useTheme } from '@/theme/theme';
 import { radius, spacing } from '@/theme/tokens';
 
 type WeekSession = Week['sessions'][number];
@@ -84,7 +84,8 @@ export default function BaseScreen() {
 }
 
 function Hero() {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const me = useMe();
   const program = useProgram();
   const stats = me.data?.stats;
@@ -99,13 +100,17 @@ function Hero() {
 
   return (
     <Panel style={styles.hero}>
-      <LinearGradient
-        colors={['transparent', `${colors.ki}33`]}
-        start={{ x: 0.5, y: 0.2 }}
-        end={{ x: 0.5, y: 1 }}
-        style={StyleSheet.absoluteFill}
-      />
-      <Aura colors={auraColors} />
+      {theme.style.glow ? (
+        <>
+          <LinearGradient
+            colors={['transparent', `${colors.ki}33`]}
+            start={{ x: 0.5, y: 0.2 }}
+            end={{ x: 0.5, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+          <Aura colors={auraColors} />
+        </>
+      ) : null}
       <Pressable
         onPress={() => router.push({ pathname: '/trial/[ord]', params: { ord: String(editOrd) } })}
         accessibilityRole="button"
@@ -119,7 +124,7 @@ function Hero() {
             <KText
               variant="burst"
               color="kiHot"
-              style={[styles.power, { textShadowColor: colors.ki }]}
+              style={[styles.power, { textShadowColor: glowColor(theme, colors.ki) }]}
               accessibilityLabel={`Power Level ${stats.power_level}`}>
               {stats.power_level}
             </KText>
@@ -297,7 +302,8 @@ function NextQuest({ week }: { week?: Week }) {
 }
 
 function ThisWeek({ week }: { week?: Week }) {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   if (!week) return null;
   const start = parseIsoDate(week.starts_on);
   const today = isoDate(new Date());
@@ -322,7 +328,7 @@ function ThisWeek({ week }: { week?: Week }) {
               accessibilityLabel={`${dayName(d)}${cleared ? ', cleared' : ''}${isToday ? ', today' : ''}`}>
               {cleared ? (
                 <LinearGradient
-                  colors={[colors.kiHot, colors.ki]}
+                  colors={energyFill(theme)}
                   style={[styles.tile, isToday && { borderColor: colors.volt, borderWidth: 2 }]}>
                   <KText variant="bodyStrong" color="onKi">
                     ✓
