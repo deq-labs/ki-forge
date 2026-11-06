@@ -648,6 +648,8 @@ export interface components {
             rep_max: number;
             /** Rep Min */
             rep_min: number;
+            /** Rest Seconds */
+            rest_seconds?: number | null;
             /** Sets */
             sets: number;
             /**
@@ -922,6 +924,8 @@ export interface components {
             rep_max: number;
             /** Rep Min */
             rep_min: number;
+            /** Rest Seconds */
+            rest_seconds?: number | null;
             /** Sets */
             sets: number;
         };

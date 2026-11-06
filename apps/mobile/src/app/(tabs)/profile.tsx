@@ -16,6 +16,7 @@ import { parseIsoDate, shortDate } from '@/lib/dates';
 import { useMe, useProgram, useTrials } from '@/lib/queries';
 import { levelProgress } from '@/lib/xp';
 import { useSettings } from '@/state/settings';
+import { useTrainingPrefs } from '@/state/training-prefs';
 import { toast } from '@/state/toast';
 import { textStyle, useTheme } from '@/theme/theme';
 import { pathColors, radius, spacing, type PathSlug } from '@/theme/tokens';
@@ -34,6 +35,7 @@ export default function ProfileScreen() {
             <PathCard />
             <TrialResults />
             <Settings />
+            <TrainingSettings />
             <RunActions />
             <DevSection />
           </>
@@ -285,6 +287,95 @@ function Settings() {
   );
 }
 
+function Segmented<T extends number>({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: { value: T; label: string }[];
+  value: T;
+  onChange: (v: T) => void;
+}) {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.segBlock}>
+      <KText>{label}</KText>
+      <View style={styles.seg} accessibilityRole="radiogroup" accessibilityLabel={label}>
+        {options.map((o) => {
+          const on = o.value === value;
+          return (
+            <Pressable
+              key={o.value}
+              onPress={() => onChange(o.value)}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: on }}
+              style={[styles.segItem, { borderColor: on ? colors.volt : colors.line, backgroundColor: on ? colors.panelRaised : 'transparent' }]}>
+              <KText variant="caption" color={on ? 'volt' : 'ink'}>
+                {o.label}
+              </KText>
+            </Pressable>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+/** Rest timer settings, kept on this device. Per-exercise rest is set from each exercise card in Train. */
+function TrainingSettings() {
+  const { colors } = useTheme();
+  const prefs = useTrainingPrefs();
+  const customCount = Object.keys(prefs.perExercise).length;
+  return (
+    <Panel style={styles.list}>
+      <KText variant="cardTitle" style={styles.listTitle}>
+        Training
+      </KText>
+      <SettingRow
+        first
+        label="Rest timer"
+        hint="Starts after each set; keeps counting with the screen off"
+        role="checkbox"
+        checked={prefs.restEnabled}
+        onPress={() => prefs.set({ restEnabled: !prefs.restEnabled })}
+      />
+      <View style={[styles.segWrap, { borderTopColor: colors.line }]}>
+        <Segmented
+          label="Rest length"
+          value={prefs.restAdjust}
+          onChange={(v) => prefs.set({ restAdjust: v })}
+          options={[
+            { value: -30, label: '−30 s' },
+            { value: -15, label: '−15 s' },
+            { value: 0, label: 'Program' },
+            { value: 15, label: '+15 s' },
+            { value: 30, label: '+30 s' },
+          ]}
+        />
+        <Segmented
+          label="Between superset exercises"
+          value={prefs.supersetTransition}
+          onChange={(v) => prefs.set({ supersetTransition: v })}
+          options={[
+            { value: 0, label: 'No rest' },
+            { value: 15, label: '15 s' },
+            { value: 30, label: '30 s' },
+          ]}
+        />
+      </View>
+      <SettingRow
+        label="Custom rest per exercise"
+        hint={customCount ? `${customCount} exercise${customCount === 1 ? '' : 's'} set from Train · tap to reset` : 'Set it from an exercise card in Train'}
+        value={customCount ? <KText color="volt">Reset</KText> : undefined}
+        onPress={() => customCount && prefs.set({ perExercise: {} })}
+      />
+    </Panel>
+  );
+}
+
+
 /** Restart the program (new path and start date) and delete the account, each with a confirmation step. */
 function RunActions() {
   const { colors } = useTheme();
@@ -461,6 +552,10 @@ const styles = StyleSheet.create({
   confirmBtn: { minHeight: 48, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center' },
   danger: { minHeight: 52, borderWidth: 1.5, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center' },
   dev: { gap: spacing[1] },
+  segWrap: { borderTopWidth: 1, padding: spacing[4], gap: spacing[4] },
+  segBlock: { gap: spacing[2] },
+  seg: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] },
+  segItem: { minHeight: 44, minWidth: 56, paddingHorizontal: spacing[3], borderRadius: radius.md, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
   devGap: { marginTop: spacing[3] },
   input: { minHeight: 48, borderWidth: 1, borderRadius: radius.md, paddingHorizontal: spacing[3] },
 });

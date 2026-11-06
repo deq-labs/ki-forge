@@ -74,6 +74,7 @@ class SetScheme:
     sets: int
     rep_min: int
     rep_max: int
+    rest_seconds: int | None = None  # the phase's rest for the main lift; None = as written
 
 
 @dataclass(frozen=True, slots=True)
@@ -132,6 +133,7 @@ class PathTechnique:
     rep_min: int
     rep_max: int
     note: str | None = None
+    rest_seconds: int | None = None
     # Progression steps, easiest first; the last is usually `exercise` itself. Empty = a single exercise.
     steps: tuple[TechniqueStep, ...] = ()
 
@@ -310,6 +312,7 @@ def _path(d: Mapping[str, Any]) -> TrainingPath:
                 rep_min=t["rep_min"],
                 rep_max=t["rep_max"],
                 note=t.get("note"),
+                rest_seconds=t.get("rest_seconds"),
                 steps=tuple(
                     TechniqueStep(exercise=s["exercise"], name=s["name"]) for s in t.get("steps", [])
                 ),

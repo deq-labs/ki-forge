@@ -57,9 +57,11 @@ def build_session(
     for pr in template.prescriptions:
         slug = path.conditioning_exercise if pr.exercise == PATH_CONDITIONING else pr.exercise
         sets, rep_min, rep_max = pr.sets, pr.rep_min, pr.rep_max
+        rest = pr.rest_seconds
         if pr.is_main_lift and mods.main_lift_scheme:
             s = mods.main_lift_scheme
             sets, rep_min, rep_max = s.sets, s.rep_min, s.rep_max
+            rest = s.rest_seconds or rest
         sets += mods.extra_sets.get(slug, 0)
         if pr.garage_swap:
             garage_overrides[len(items)] = pr.garage_swap
@@ -70,7 +72,7 @@ def build_session(
                 sets=sets,
                 rep_min=rep_min,
                 rep_max=rep_max,
-                rest_seconds=pr.rest_seconds,
+                rest_seconds=rest,
                 is_main_lift=pr.is_main_lift,
                 superset_group=pr.superset_group,
                 note=pr.note,
@@ -87,6 +89,7 @@ def build_session(
                 rep_min=t.rep_min,
                 rep_max=t.rep_max,
                 note=t.note,
+                rest_seconds=t.rest_seconds,
                 is_technique=True,
                 alternatives=tuple(s for s in t.step_slugs if s != t.exercise),
             )

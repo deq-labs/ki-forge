@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
 
 import { KText } from '@/components/k-text';
+import { RestSetting } from '@/components/rest-setting';
 import type { LocalSet } from '@/db/repo';
 import { defaultStep, isDoneStyle, nextStep, prescriptionLine, setsForRow, type Row } from '@/lib/train';
 import { SET_XP } from '@/lib/xp';
@@ -201,6 +202,7 @@ export function ExerciseCard({ row, number, sets, expanded, increment, garage, o
               {row.note}
             </KText>
           ) : null}
+          <RestSetting row={row} />
           <LogButton label={label} onPress={log} showXp={!editing && nextSetNo <= row.sets} />
           {editing && (
             <Pressable onPress={() => setEditing(null)} accessibilityRole="button" style={styles.cancel}>
