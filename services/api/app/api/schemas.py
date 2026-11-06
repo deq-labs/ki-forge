@@ -25,6 +25,9 @@ class ExerciseOut(Model):
     swap: str | None
     setup: str | None = None
     cues: list[str] = []
+    library: str | None = None  # exercise library id (GET /v1/library)
+    images: list[str] = []  # photo URLs, start position first
+    muscles: list[str] = []  # primary muscles, from the library
 
 
 class TargetOut(Model):
@@ -207,3 +210,29 @@ class ProgramOut(Model):
     badges: list[BadgeOut]
     ranks: list[RankOut]
     programs: list[BlockProgramOut] = []
+
+
+# --- exercise library --------------------------------------------------------------------------------
+
+
+class LibraryExerciseOut(Model):
+    id: str
+    name: str
+    category: str  # strength | stretching | cardio | plyometrics | ...
+    equipment: str | None
+    level: str  # beginner | intermediate | expert
+    force: str | None
+    mechanic: str | None
+    primary_muscles: list[str]
+    secondary_muscles: list[str]
+    instructions: list[str]
+    images: list[str]  # photo URLs, start position first
+    program_exercise: str | None = None  # slug of the program exercise that uses this entry
+
+
+class LibraryPage(Model):
+    total: int
+    commit: str  # free-exercise-db commit the library was imported from
+    items: list[LibraryExerciseOut]
+    equipment: list[str]  # every equipment value, for filters
+    muscles: list[str]  # every primary muscle, for filters

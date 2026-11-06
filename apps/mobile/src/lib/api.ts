@@ -86,5 +86,7 @@ export type Me = ResponseOf<'/v1/me', 'get'>;
 export type Program = ResponseOf<'/v1/program', 'get'>;
 export type Week = ResponseOf<'/v1/week', 'get'>;
 export type Arc = ResponseOf<'/v1/arc', 'get'>;
+export type LibraryPage = ResponseOf<'/v1/library', 'get'>;
+export type LibraryExercise = LibraryPage['items'][number];
 export type SyncResponse = ResponseOf<'/v1/sync', 'post'>;
 export type SyncRequest = BodyOf<'/v1/sync', 'post'>;

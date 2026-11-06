@@ -216,7 +216,7 @@ function SessionView({
   const units = me.data?.user.units === 'metric' ? 'metric' : 'imperial';
   const formOf = (slug: string) => {
     const e = exercises.get(slug);
-    return e ? { name: e.name, setup: e.setup, cues: e.cues } : undefined;
+    return e ? { name: e.name, setup: e.setup, cues: e.cues, images: e.images } : undefined;
   };
 
   async function clearQuest() {
