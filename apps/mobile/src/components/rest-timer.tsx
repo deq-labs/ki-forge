@@ -17,7 +17,8 @@ function mmss(s: number): string {
 
 /** Floating rest pill above the tab bar: volt ring (live system state, not progress), +30 s, Skip. */
 export function RestTimer() {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const { endsAt, total, extend, skip, finish } = useRest();
   const [now, setNow] = useState(() => Date.now());
 
@@ -40,7 +41,7 @@ export function RestTimer() {
 
   return (
     <View
-      style={[styles.pill, { backgroundColor: colors.panelRaised, borderColor: colors.volt, boxShadow: `0 0 16px ${colors.volt}55` }]}
+      style={[styles.pill, { backgroundColor: colors.panelRaised, borderColor: colors.volt, boxShadow: theme.style.glow ? `0 0 16px ${colors.volt}55` : undefined }]}
       accessibilityRole="timer"
       accessibilityLabel={`Rest ${mmss(left)} left`}
       accessibilityLiveRegion="polite">

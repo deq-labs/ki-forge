@@ -19,7 +19,7 @@ import type { Arc, Program } from '@/lib/api';
 import { parseIsoDate, shortDate } from '@/lib/dates';
 import { useArc, useMe, useProgram, useTrials } from '@/lib/queries';
 import { fieldOf, formatField, GROUPS } from '@/lib/trial-form';
-import { useTheme } from '@/theme/theme';
+import { energyFill, useTheme } from '@/theme/theme';
 import { radius, spacing } from '@/theme/tokens';
 
 type ArcPhase = Arc['phases'][number];
@@ -155,7 +155,8 @@ function Node({
   onPress: () => void;
   a11y: string;
 }) {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const reduceMotion = useReducedMotion();
   const pulse = useSharedValue(0);
   useEffect(() => {
@@ -176,7 +177,7 @@ function Node({
     <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={a11y} style={styles.nodeWrap}>
       {status === 'current' && <Animated.View style={[shape, styles.halo, { borderColor: colors.volt }, ring]} />}
       {done ? (
-        <LinearGradient colors={[colors.kiHot, colors.ki]} style={[shape, styles.center]}>
+        <LinearGradient colors={energyFill(theme)} style={[shape, styles.center]}>
           {inner}
         </LinearGradient>
       ) : (

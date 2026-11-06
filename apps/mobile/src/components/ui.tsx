@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { KText } from '@/components/k-text';
-import { useTheme } from '@/theme/theme';
+import { energyFill, useTheme } from '@/theme/theme';
 import { radius, spacing } from '@/theme/tokens';
 
 /** A surface on the night ground: `panel` with a `line` border (raised = `panelRaised`). */
@@ -16,12 +16,17 @@ export function Panel({
   raised?: boolean;
   style?: StyleProp<ViewStyle>;
 }) {
-  const { colors } = useTheme();
+  const { colors, style: theme } = useTheme();
   return (
     <View
       style={[
         styles.panel,
-        { backgroundColor: raised ? colors.panelRaised : colors.panel, borderColor: colors.line },
+        {
+          backgroundColor: raised ? colors.panelRaised : colors.panel,
+          borderColor: colors.line,
+          borderWidth: theme.border,
+          borderRadius: theme.radius,
+        },
         style,
       ]}>
       {children}
@@ -44,7 +49,11 @@ export function PrimaryButton({
   disabled?: boolean;
   accessibilityHint?: string;
 }) {
-  const { colors } = useTheme();
+  const t = useTheme();
+  const { colors } = t;
+  const r = { borderRadius: t.style.radius };
+  // Flat themes: a hard offset shadow (ink on light themes) instead of a shaded gradient.
+  const depth = t.style.scheme === 'light' ? colors.ink : shade(colors.ki);
   return (
     <Pressable
       onPress={onPress}
@@ -55,12 +64,12 @@ export function PrimaryButton({
       accessibilityState={{ disabled: !!disabled }}
       style={[styles.primaryWrap, { opacity: disabled ? 0.38 : 1 }]}>
       {({ pressed }) => (
-        <View style={[styles.primaryDepth, { backgroundColor: shade(colors.ki), paddingBottom: pressed ? 2 : 6 }]}>
+        <View style={[styles.primaryDepth, r, { backgroundColor: depth, paddingBottom: pressed ? 2 : 6 }]}>
           <LinearGradient
-            colors={[colors.kiHot, colors.ki]}
+            colors={energyFill(t)}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
-            style={[styles.primary, { marginTop: pressed ? 4 : 0 }]}>
+            style={[styles.primary, r, { marginTop: pressed ? 4 : 0 }]}>
             <KText variant="cardTitle" color="onKi" style={styles.primaryText}>
               {label}
             </KText>
@@ -73,12 +82,15 @@ export function PrimaryButton({
 
 /** Dismissals and secondary paths. */
 export function GhostButton({ label, onPress }: { label: string; onPress: () => void }) {
-  const { colors } = useTheme();
+  const { colors, style: theme } = useTheme();
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      style={({ pressed }) => [styles.ghost, { borderColor: colors.line, opacity: pressed ? 0.7 : 1 }]}>
+      style={({ pressed }) => [
+        styles.ghost,
+        { borderColor: colors.line, borderWidth: theme.border, borderRadius: theme.radius, opacity: pressed ? 0.7 : 1 },
+      ]}>
       <KText variant="bodyStrong">{label}</KText>
     </Pressable>
   );
