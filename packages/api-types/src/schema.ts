@@ -1557,6 +1557,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1597,6 +1598,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1641,6 +1643,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path: {
@@ -1687,6 +1690,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path: {
@@ -1733,6 +1737,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1773,6 +1778,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1819,6 +1825,7 @@ export interface operations {
                 commit?: boolean;
             };
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1930,6 +1937,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1970,6 +1978,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -2010,6 +2019,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -2054,6 +2064,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -2094,6 +2105,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -2158,6 +2170,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -2198,6 +2211,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -2242,6 +2256,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -2286,6 +2301,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -2326,6 +2342,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path: {
@@ -2374,6 +2391,7 @@ export interface operations {
                 week?: number | null;
             };
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;

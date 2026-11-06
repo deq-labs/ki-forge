@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     # Where exercise photos are served from; an image path is appended. Empty = jsDelivr at the
     # library's pinned commit (fine for development; mirror to R2 before production, M6).
     exercise_images_base_url: str = ""
+    # Clerk (sign-in). Without a secret key only the local dev header works (APP_ENV local/test).
+    clerk_secret_key: str = ""
+    clerk_authorized_parties: list[str] = []  # allowed "azp" origins for web sessions; empty = any
 
 
 settings = Settings()

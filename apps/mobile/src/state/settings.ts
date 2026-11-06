@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 
+import { clerkSignOut } from '@/lib/auth';
 import { defaultApiUrl } from '@/lib/config';
 import { kv } from '@/lib/storage';
 import { themeColors, type ThemeId } from '@/theme/tokens';
@@ -15,7 +16,10 @@ const storedTheme = (): ThemeId => {
 };
 
 type SettingsState = {
-  /** Who is signed in. Until Clerk (M6) this is a dev identity sent as `X-Dev-User` to the local API. */
+  /**
+   * Who is signed in: the account's email (Clerk) or the dev identity sent as `X-Dev-User`. It also keys
+   * the on-device data, so two accounts on one phone never mix.
+   */
   devEmail: string | null;
   /** Override for the API base URL; null = the default (the dev server's LAN address). */
   apiUrlOverride: string | null;
@@ -51,6 +55,7 @@ export const useSettings = create<SettingsState>((set) => ({
   signOut: () => {
     kv.set(DEV_EMAIL, null);
     set({ devEmail: null });
+    void clerkSignOut();
   },
   setApiUrl: (url) => {
     const clean = url?.trim().replace(/\/$/, '') || null;

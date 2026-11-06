@@ -1,5 +1,6 @@
 import type { paths } from '@kiforge/api-types';
 
+import { clerkEnabled, sessionToken } from '@/lib/auth';
 import { apiUrl, useSettings } from '@/state/settings';
 
 /**
@@ -44,8 +45,13 @@ async function request<T>(method: Method, path: string, opts: Options = {}): Pro
     if (v !== undefined) url.searchParams.set(k, String(v));
   }
   const headers: Record<string, string> = { Accept: 'application/json' };
-  const email = useSettings.getState().devEmail;
-  if (email) headers['X-Dev-User'] = email;
+  if (clerkEnabled) {
+    const token = await sessionToken();
+    if (token) headers.Authorization = `Bearer ${token}`;
+  } else {
+    const email = useSettings.getState().devEmail;
+    if (email) headers['X-Dev-User'] = email;
+  }
   if (opts.body !== undefined) headers['Content-Type'] = 'application/json';
 
   let res: Response;
