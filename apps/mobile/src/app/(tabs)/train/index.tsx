@@ -92,7 +92,12 @@ export default function TrainScreen() {
               );
             })}
           </ScrollView>
-          <SessionView key={`${week.data.week}:${active.code}`} weekNo={week.data.week} session={active} />
+          <SessionView
+            key={`${week.data.week}:${active.code}`}
+            weekNo={week.data.week}
+            session={active}
+            deloadNote={week.data.phase.deload_note ?? null}
+          />
         </>
       )}
     </SafeAreaView>
@@ -101,7 +106,15 @@ export default function TrainScreen() {
 
 type WeekSession = NonNullable<ReturnType<typeof useWeek>['data']>['sessions'][number];
 
-function SessionView({ weekNo, session }: { weekNo: number; session: WeekSession }) {
+function SessionView({
+  weekNo,
+  session,
+  deloadNote,
+}: {
+  weekNo: number;
+  session: WeekSession;
+  deloadNote: string | null;
+}) {
   const { colors } = useTheme();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -267,6 +280,13 @@ function SessionView({ weekNo, session }: { weekNo: number; session: WeekSession
           storageKey={`warmup:${owner}:${weekNo}:${session.code}:${useTwin ? 'twin' : 'day'}`}
         />
       ) : null}
+      {deloadNote && (
+        <View style={[styles.banner, { borderColor: colors.volt }]}>
+          <KText variant="caption" color="volt">
+            Deload week. {deloadNote}
+          </KText>
+        </View>
+      )}
       {session.cleared && (
         <View style={[styles.banner, { borderColor: colors.good }]}>
           <KText variant="caption" color="good">

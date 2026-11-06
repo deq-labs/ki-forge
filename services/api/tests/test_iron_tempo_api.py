@@ -7,7 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from app.models import Enrollment, ProgramRow
+from app.models import Enrollment, ProgramRow, UserLift
 from tests.test_calendar_api import enroll, monday_weeks_ago, session_view
 
 START = dt.date(2026, 10, 26)
@@ -274,3 +274,31 @@ def test_band_and_seconds_are_stored(client: TestClient, db: Session, run: dict)
     assert client.post("/v1/sync", json={"sessions": [session], "sets": sets}).status_code == 200
     exported = client.get("/v1/export").json()["tables"]["set_logs"]
     assert [(r["reps"], r["band"]) for r in exported] == [(24, "Dark gray")]
+
+
+def test_retest_is_due_after_a_deload(client: TestClient, db: Session) -> None:
+    start = monday_weeks_ago(db, client, 5)  # week 5 = block 2, first build week
+    enroll(client, start, path="iron-tempo")
+    assert client.get("/v1/week").json()["retest_due"] is False  # no 1RMs yet: nothing to re-test
+    client.put("/v1/me/lifts", json={"lifts": ONE_RMS})
+    assert client.get("/v1/week").json()["retest_due"] is False  # tested today, inside block 2
+
+    # Tested before block 2 started → due; the deload week and block 1 never ask.
+    db.execute(
+        UserLift.__table__.update().values(updated_at=dt.datetime.combine(start, dt.time(6), tzinfo=dt.UTC))
+    )
+    db.commit()
+    assert client.get("/v1/week").json()["retest_due"] is True
+    assert client.get("/v1/week", params={"week": 4}).json()["retest_due"] is False
+    assert client.get("/v1/week", params={"week": 2}).json()["retest_due"] is False
+    # Re-testing one lift is not enough; all of them clears it.
+    client.put("/v1/me/lifts", json={"lifts": {"front-squat": 210}})
+    assert client.get("/v1/week").json()["retest_due"] is True
+    client.put("/v1/me/lifts", json={"lifts": ONE_RMS})
+    assert client.get("/v1/week").json()["retest_due"] is False
+
+
+def test_no_trials_on_a_block_program(client: TestClient, run: dict) -> None:
+    assert client.get("/v1/trials").json() == []
+    r = client.put("/v1/trials/0", json={"results": {"bodyweight_lb": 190}})
+    assert r.status_code == 404
