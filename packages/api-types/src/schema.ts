@@ -383,6 +383,47 @@ export interface components {
             /** Metric */
             metric: string;
         };
+        /** BlockOut */
+        BlockOut: {
+            /** Cap Seconds */
+            cap_seconds?: number | null;
+            /** Interval Seconds */
+            interval_seconds?: number | null;
+            /** Kind */
+            kind: string;
+            /** Minutes */
+            minutes?: number | null;
+            /** Movements */
+            movements: components["schemas"]["MovementOut"][];
+            /** Name */
+            name: string;
+            /** Rest Seconds */
+            rest_seconds?: number | null;
+            /** Rounds */
+            rounds: number;
+        };
+        /**
+         * BlockProgramOut
+         * @description A program a path brings instead of the main arc (e.g. Iron Tempo's 5-week block).
+         */
+        BlockProgramOut: {
+            /** Cycle Weeks */
+            cycle_weeks: number;
+            /** Name */
+            name: string;
+            /** One Rm Lifts */
+            one_rm_lifts: string[];
+            /** Phases */
+            phases: components["schemas"]["PhaseOut"][];
+            /** Repeats */
+            repeats: boolean;
+            /** Session Templates */
+            session_templates: components["schemas"]["SessionTemplateOut"][];
+            /** Slug */
+            slug: string;
+            /** Version */
+            version: number;
+        };
         /** Body_import_workbook_endpoint_v1_import_workbook_post */
         Body_import_workbook_endpoint_v1_import_workbook_post: {
             /** File */
@@ -397,6 +438,17 @@ export interface components {
             expected_completion_at: string;
             /** Status */
             status: string;
+        };
+        /** DeloadRuleOut */
+        DeloadRuleOut: {
+            /** Note */
+            note?: string | null;
+            /** Percent */
+            percent: number;
+            /** Round Factor */
+            round_factor: number;
+            /** Skip Roles */
+            skip_roles: string[];
         };
         /** EarnedBadgeOut */
         EarnedBadgeOut: {
@@ -596,6 +648,15 @@ export interface components {
             /** Workbook */
             workbook: unknown;
         };
+        /** MovementOut */
+        MovementOut: {
+            /** Exercise */
+            exercise: string;
+            /** Levels */
+            levels: components["schemas"]["TargetOut"][];
+            /** Note */
+            note?: string | null;
+        };
         /** NewBadge */
         NewBadge: {
             /** Description */
@@ -634,6 +695,8 @@ export interface components {
             };
             /** Name */
             name: string;
+            /** Program */
+            program?: string | null;
             /** Ratio Target */
             ratio_target: number;
             /** Slug */
@@ -667,6 +730,7 @@ export interface components {
         };
         /** PhaseModifiersOut */
         PhaseModifiersOut: {
+            deload?: components["schemas"]["DeloadRuleOut"] | null;
             /** Diet Break Week */
             diet_break_week: number | null;
             /** Extra Conditioning Sessions */
@@ -719,6 +783,7 @@ export interface components {
         };
         /** PrescriptionOut */
         PrescriptionOut: {
+            block?: components["schemas"]["BlockOut"] | null;
             /** Exercise */
             exercise: string;
             /** Garage Swap */
@@ -733,6 +798,8 @@ export interface components {
             rep_min: number;
             /** Rest Seconds */
             rest_seconds: number | null;
+            /** Role */
+            role?: string | null;
             /** Sets */
             sets: number;
             /** Superset Group */
@@ -793,6 +860,11 @@ export interface components {
             paths: components["schemas"]["PathOut"][];
             /** Phases */
             phases: components["schemas"]["PhaseOut"][];
+            /**
+             * Programs
+             * @default []
+             */
+            programs: components["schemas"]["BlockProgramOut"][];
             /** Ranks */
             ranks: components["schemas"]["RankOut"][];
             /** Session Templates */
@@ -884,6 +956,13 @@ export interface components {
             code: string;
             /** Day Of Week */
             day_of_week: number;
+            /**
+             * Garage Only
+             * @default false
+             */
+            garage_only: boolean;
+            /** Garage Template */
+            garage_template?: string | null;
             /** Gets Path Techniques */
             gets_path_techniques: boolean;
             /** Kind */
@@ -896,6 +975,8 @@ export interface components {
             required_for_full_week: boolean;
             /** Short */
             short: string;
+            /** Warmup */
+            warmup?: string | null;
         };
         /** SessionView */
         SessionView: {
@@ -1046,6 +1127,21 @@ export interface components {
              * @default 0
              */
             weight_lb: number;
+        };
+        /** TargetOut */
+        TargetOut: {
+            /** Amount */
+            amount: number | null;
+            /** Exercise */
+            exercise?: string | null;
+            /** Percent */
+            percent?: number | null;
+            /** Percent Of */
+            percent_of?: string | null;
+            /** Unit */
+            unit: string;
+            /** Weight Lb */
+            weight_lb?: number | null;
         };
         /** TechniqueStepOut */
         TechniqueStepOut: {

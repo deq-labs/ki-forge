@@ -17,11 +17,23 @@ def week_for(date: dt.date, start_date: dt.date) -> int:
 
 
 def phase_for(week: int, program: Program) -> Phase | None:
-    """The phase whose `start_week <= week <= end_week`, or None outside the cycle (e.g. before start)."""
+    """The phase whose `start_week <= week <= end_week`, or None outside the cycle (e.g. before start).
+
+    A repeating block program wraps: week 5 of a 5-week block is week 0 of the next block.
+    """
+    if program.repeats and week >= 0:
+        week %= program.cycle_weeks
     for phase in program.phases:
         if phase.contains(week):
             return phase
     return None
+
+
+def block_of(week: int, program: Program) -> int | None:
+    """1-based block number of a repeating program's week (None for the main arc or before the start)."""
+    if not program.repeats or week < 0:
+        return None
+    return week // program.cycle_weeks + 1
 
 
 def session_date(start_date: dt.date, week: int, day_of_week: int) -> dt.date:

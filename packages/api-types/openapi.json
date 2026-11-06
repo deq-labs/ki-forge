@@ -205,6 +205,139 @@
         "title": "BadgeRuleOut",
         "type": "object"
       },
+      "BlockOut": {
+        "properties": {
+          "cap_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cap Seconds"
+          },
+          "interval_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interval Seconds"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "minutes": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minutes"
+          },
+          "movements": {
+            "items": {
+              "$ref": "#/components/schemas/MovementOut"
+            },
+            "title": "Movements",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "rest_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rest Seconds"
+          },
+          "rounds": {
+            "title": "Rounds",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "name",
+          "rounds",
+          "movements"
+        ],
+        "title": "BlockOut",
+        "type": "object"
+      },
+      "BlockProgramOut": {
+        "description": "A program a path brings instead of the main arc (e.g. Iron Tempo's 5-week block).",
+        "properties": {
+          "cycle_weeks": {
+            "title": "Cycle Weeks",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "one_rm_lifts": {
+            "items": {
+              "type": "string"
+            },
+            "title": "One Rm Lifts",
+            "type": "array"
+          },
+          "phases": {
+            "items": {
+              "$ref": "#/components/schemas/PhaseOut"
+            },
+            "title": "Phases",
+            "type": "array"
+          },
+          "repeats": {
+            "title": "Repeats",
+            "type": "boolean"
+          },
+          "session_templates": {
+            "items": {
+              "$ref": "#/components/schemas/SessionTemplateOut"
+            },
+            "title": "Session Templates",
+            "type": "array"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "slug",
+          "version",
+          "name",
+          "cycle_weeks",
+          "repeats",
+          "one_rm_lifts",
+          "phases",
+          "session_templates"
+        ],
+        "title": "BlockProgramOut",
+        "type": "object"
+      },
       "Body_import_workbook_endpoint_v1_import_workbook_post": {
         "properties": {
           "file": {
@@ -236,6 +369,43 @@
           "expected_completion_at"
         ],
         "title": "DeleteOut",
+        "type": "object"
+      },
+      "DeloadRuleOut": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "percent": {
+            "title": "Percent",
+            "type": "number"
+          },
+          "round_factor": {
+            "title": "Round Factor",
+            "type": "number"
+          },
+          "skip_roles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Skip Roles",
+            "type": "array"
+          }
+        },
+        "required": [
+          "percent",
+          "round_factor",
+          "skip_roles"
+        ],
+        "title": "DeloadRuleOut",
         "type": "object"
       },
       "EarnedBadgeOut": {
@@ -783,6 +953,38 @@
         "title": "MismatchOut",
         "type": "object"
       },
+      "MovementOut": {
+        "properties": {
+          "exercise": {
+            "title": "Exercise",
+            "type": "string"
+          },
+          "levels": {
+            "items": {
+              "$ref": "#/components/schemas/TargetOut"
+            },
+            "title": "Levels",
+            "type": "array"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "exercise",
+          "levels"
+        ],
+        "title": "MovementOut",
+        "type": "object"
+      },
       "NewBadge": {
         "properties": {
           "description": {
@@ -868,6 +1070,17 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "program": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Program"
           },
           "ratio_target": {
             "title": "Ratio Target",
@@ -970,6 +1183,16 @@
       },
       "PhaseModifiersOut": {
         "properties": {
+          "deload": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DeloadRuleOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "diet_break_week": {
             "anyOf": [
               {
@@ -1177,6 +1400,16 @@
       },
       "PrescriptionOut": {
         "properties": {
+          "block": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BlockOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "exercise": {
             "title": "Exercise",
             "type": "string"
@@ -1225,6 +1458,17 @@
               }
             ],
             "title": "Rest Seconds"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
           },
           "sets": {
             "title": "Sets",
@@ -1424,6 +1668,14 @@
               "$ref": "#/components/schemas/PhaseOut"
             },
             "title": "Phases",
+            "type": "array"
+          },
+          "programs": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/BlockProgramOut"
+            },
+            "title": "Programs",
             "type": "array"
           },
           "ranks": {
@@ -1704,6 +1956,22 @@
             "title": "Day Of Week",
             "type": "integer"
           },
+          "garage_only": {
+            "default": false,
+            "title": "Garage Only",
+            "type": "boolean"
+          },
+          "garage_template": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Garage Template"
+          },
           "gets_path_techniques": {
             "title": "Gets Path Techniques",
             "type": "boolean"
@@ -1730,6 +1998,17 @@
           "short": {
             "title": "Short",
             "type": "string"
+          },
+          "warmup": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warmup"
           }
         },
         "required": [
@@ -2158,6 +2437,75 @@
           "logged_at"
         ],
         "title": "SyncSet",
+        "type": "object"
+      },
+      "TargetOut": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "exercise": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exercise"
+          },
+          "percent": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Percent"
+          },
+          "percent_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Percent Of"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "weight_lb": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight Lb"
+          }
+        },
+        "required": [
+          "amount",
+          "unit"
+        ],
+        "title": "TargetOut",
         "type": "object"
       },
       "TechniqueStepOut": {

@@ -17,11 +17,12 @@ def seed() -> dict:
 def test_seed_counts(program: Program) -> None:
     prescriptions = [p for t in program.session_templates for p in t.prescriptions]
     real = [p for p in prescriptions if p.exercise != PATH_CONDITIONING]
-    assert len(program.exercises) == 57  # 52 + 5 technique steps (#58)
+    assert len(program.exercises) == 93  # 52 + 5 technique steps (#58) + 36 for Iron Tempo (#64)
     assert (len(real), len(prescriptions) - len(real)) == (25, 1)
     assert len(program.phases) == 11
-    assert len(program.paths) == 4
+    assert len(program.paths) == 5  # 4 character paths + Iron Tempo (#64)
     assert sum(len(p.techniques) for p in program.paths.values()) == 8
+    assert list(program.programs) == ["iron-tempo"]
     assert len(program.badges) == 6
     # The remaining sections, for completeness.
     assert len(program.session_templates) == 6

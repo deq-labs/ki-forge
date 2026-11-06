@@ -35,5 +35,6 @@ def read_program(request: Request, response: Response) -> ProgramOut | Response:
             "tests": list(program.tests),
             "badges": list(program.badges),
             "ranks": list(program.ranks),
+            "programs": list(program.programs.values()),
         }
     )
