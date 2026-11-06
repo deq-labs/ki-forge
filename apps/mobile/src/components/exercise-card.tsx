@@ -224,7 +224,7 @@ export function ExerciseCard({ row, number, sets, expanded, increment, garage, o
 }
 
 /** "Form" toggle and the cue bubble for the exercise being done. */
-function FormCues({ info, open, onToggle }: { info?: FormInfo; open: boolean; onToggle: () => void }) {
+export function FormCues({ info, open, onToggle }: { info?: FormInfo; open: boolean; onToggle: () => void }) {
   const { colors } = useTheme();
   if (!info?.cues?.length && !info?.setup) return null;
   return (
@@ -265,7 +265,7 @@ function FormCues({ info, open, onToggle }: { info?: FormInfo; open: boolean; on
   );
 }
 
-function Stepper({
+export function Stepper({
   value,
   unit,
   step,

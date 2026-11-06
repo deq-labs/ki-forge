@@ -26,6 +26,8 @@ export type LocalSet = {
   supersedes_client_id: string | null;
   logged_at: string;
   synced: boolean;
+  /** The session row's key for a block round ("p0"); null for plain rows. */
+  slot: string | null;
 };
 
 type SessionRow = Omit<LocalSession, 'garage_mode' | 'synced'> & { garage_mode: number; synced: number };
@@ -59,7 +61,11 @@ export async function ensureSession(
   const existing = await findSession(db, owner, s.week, s.template_code);
   if (existing) {
     if (existing.garage_mode !== s.garage_mode && !existing.synced) {
-      await db.runAsync('UPDATE sessions SET garage_mode = ? WHERE client_id = ?', s.garage_mode ? 1 : 0, existing.client_id);
+      await db.runAsync(
+        'UPDATE sessions SET garage_mode = ? WHERE client_id = ?',
+        s.garage_mode ? 1 : 0,
+        existing.client_id,
+      );
       return { ...existing, garage_mode: s.garage_mode };
     }
     return existing;
@@ -86,7 +92,9 @@ export async function completeSession(db: SQLiteDatabase, clientId: string): Pro
   );
 }
 
-export type NewSet = Pick<LocalSet, 'exercise_slug' | 'set_no' | 'weight_lb' | 'reps' | 'rir' | 'is_swap'>;
+export type NewSet = Pick<LocalSet, 'exercise_slug' | 'set_no' | 'weight_lb' | 'reps' | 'rir' | 'is_swap'> & {
+  slot?: string | null;
+};
 
 /** Log a set (or, with `supersedes`, an edit of an earlier set). Written locally before any network call. */
 export async function logSet(
@@ -100,14 +108,15 @@ export async function logSet(
     client_id: uuid4(),
     session_client_id: sessionClientId,
     ...set,
+    slot: set.slot ?? null,
     supersedes_client_id: supersedes,
     logged_at: now(),
     synced: false,
   };
   await db.runAsync(
     `INSERT INTO sets (client_id, owner, session_client_id, exercise_slug, set_no, weight_lb, reps, rir, is_swap,
-                       supersedes_client_id, logged_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                       supersedes_client_id, logged_at, slot)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     row.client_id,
     owner,
     sessionClientId,
@@ -119,6 +128,7 @@ export async function logSet(
     set.is_swap ? 1 : 0,
     supersedes,
     row.logged_at,
+    row.slot,
   );
   return row;
 }
@@ -142,7 +152,10 @@ export async function pending(db: SQLiteDatabase, owner: string): Promise<Pendin
     'SELECT * FROM sessions WHERE owner = ? AND synced = 0 ORDER BY started_at',
     owner,
   );
-  const sets = await db.getAllAsync<SetRow>('SELECT * FROM sets WHERE owner = ? AND synced = 0 ORDER BY logged_at', owner);
+  const sets = await db.getAllAsync<SetRow>(
+    'SELECT * FROM sets WHERE owner = ? AND synced = 0 ORDER BY logged_at',
+    owner,
+  );
   return { sessions: sessions.map(toSession), sets: sets.map(toSet) };
 }
 
@@ -175,7 +188,11 @@ export async function cachePut(db: SQLiteDatabase, owner: string, key: string, v
 }
 
 export async function cacheGet<T>(db: SQLiteDatabase, owner: string, key: string): Promise<T | null> {
-  const row = await db.getFirstAsync<{ json: string }>('SELECT json FROM cache WHERE owner = ? AND key = ?', owner, key);
+  const row = await db.getFirstAsync<{ json: string }>(
+    'SELECT json FROM cache WHERE owner = ? AND key = ?',
+    owner,
+    key,
+  );
   return row ? (JSON.parse(row.json) as T) : null;
 }
 

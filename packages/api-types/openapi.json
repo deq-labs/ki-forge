@@ -2743,6 +2743,18 @@
             "title": "Set No",
             "type": "integer"
           },
+          "slot": {
+            "anyOf": [
+              {
+                "maxLength": 16,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slot"
+          },
           "supersedes_client_id": {
             "anyOf": [
               {

@@ -215,3 +215,33 @@ def test_export_round_trips_an_iron_tempo_run(client: TestClient) -> None:
     assert {x["exercise"]: x["one_rm_lb"] for x in lifts} == ONE_RMS
     week = client.get("/v1/week", params={"week": 0}, headers=fresh).json()
     assert session_view(week, "it_pull")["cleared"]
+
+
+def test_slots_split_the_same_exercise_between_blocks(client: TestClient, run: dict) -> None:
+    """Monday car-out: deadlifts in the EMOM (slot p0) and in the finisher (slot p1) both count (#66)."""
+    client.put("/v1/me/lifts", json={"lifts": ONE_RMS})
+    pull = session_view(client.get("/v1/week", params={"week": 0}).json(), "it_pull")
+    sid, sets = str(uuid.uuid4()), []
+    for row in pull["prescriptions"]:
+        for n in range(1, row["sets"] + 1):
+            moves = [m["levels"][0] for m in row["block"]["movements"]] if row["block"] else [None]
+            for lv in moves:
+                sets.append(
+                    {
+                        "client_id": str(uuid.uuid4()),
+                        "session_client_id": sid,
+                        "exercise_slug": lv["exercise"] if lv else row["exercise"],
+                        "set_no": n,
+                        "weight_lb": (lv or {}).get("weight_lb") or 0,
+                        "reps": (lv or {}).get("amount") or row["rep_max"],
+                        "logged_at": (T0 + dt.timedelta(minutes=len(sets))).isoformat(),
+                        "slot": row["key"] if row["block"] else None,
+                    }
+                )
+    session = {"client_id": sid, "template_code": "it_pull", "week": 0, "started_at": T0.isoformat()}
+    out = client.post("/v1/sync", json={"sessions": [session], "sets": sets})
+    assert out.status_code == 200, out.text
+    assert out.json()["sessions"][0]["cleared"]
+    pull = session_view(client.get("/v1/week", params={"week": 0}).json(), "it_pull")
+    # 7 EMOM rounds + 6 finisher rounds + 4 rows + 3 core rounds + 2 X3 sets
+    assert (pull["sets_logged"], pull["sets_needed"]) == (22, 22)
