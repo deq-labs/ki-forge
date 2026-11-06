@@ -1,3 +1,5 @@
+import { ClerkProvider } from '@clerk/expo';
+import { tokenCache } from '@clerk/expo/token-cache';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
@@ -5,8 +7,10 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, type ReactNode } from 'react';
 
+import { ClerkSession } from '@/components/clerk-session';
 import { Rewards } from '@/components/rewards';
 import { ApiError } from '@/lib/api';
+import { CLERK_PUBLISHABLE_KEY, clerkEnabled } from '@/lib/auth';
 import { useMe } from '@/lib/queries';
 import { useSyncLoop } from '@/lib/use-sync-loop';
 import { configureNotifications } from '@/state/rest';
@@ -69,6 +73,7 @@ function Navigator() {
         <Stack.Protected guard={signedIn}>
           <Stack.Screen name="paths" />
           <Stack.Screen name="lifts" />
+          <Stack.Screen name="library" />
         </Stack.Protected>
         <Stack.Protected guard={!signedIn}>
           <Stack.Screen name="sign-in" />
@@ -88,12 +93,21 @@ export default function RootLayout() {
 
   if (!loaded && !error) return null;
 
-  return (
+  const app = (
     <QueryClientProvider client={queryClient}>
       <PathTheme>
         <Navigator />
       </PathTheme>
     </QueryClientProvider>
+  );
+  // Real sign-in (#78) when a Clerk key is configured; otherwise the local dev sign-in.
+  return clerkEnabled ? (
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
+      <ClerkSession />
+      {app}
+    </ClerkProvider>
+  ) : (
+    app
   );
 }
 

@@ -1,5 +1,6 @@
 import type { paths } from '@kiforge/api-types';
 
+import { clerkEnabled, sessionToken } from '@/lib/auth';
 import { apiUrl, useSettings } from '@/state/settings';
 
 /**
@@ -44,8 +45,13 @@ async function request<T>(method: Method, path: string, opts: Options = {}): Pro
     if (v !== undefined) url.searchParams.set(k, String(v));
   }
   const headers: Record<string, string> = { Accept: 'application/json' };
-  const email = useSettings.getState().devEmail;
-  if (email) headers['X-Dev-User'] = email;
+  if (clerkEnabled) {
+    const token = await sessionToken();
+    if (token) headers.Authorization = `Bearer ${token}`;
+  } else {
+    const email = useSettings.getState().devEmail;
+    if (email) headers['X-Dev-User'] = email;
+  }
   if (opts.body !== undefined) headers['Content-Type'] = 'application/json';
 
   let res: Response;
@@ -86,5 +92,7 @@ export type Me = ResponseOf<'/v1/me', 'get'>;
 export type Program = ResponseOf<'/v1/program', 'get'>;
 export type Week = ResponseOf<'/v1/week', 'get'>;
 export type Arc = ResponseOf<'/v1/arc', 'get'>;
+export type LibraryPage = ResponseOf<'/v1/library', 'get'>;
+export type LibraryExercise = LibraryPage['items'][number];
 export type SyncResponse = ResponseOf<'/v1/sync', 'post'>;
 export type SyncRequest = BodyOf<'/v1/sync', 'post'>;

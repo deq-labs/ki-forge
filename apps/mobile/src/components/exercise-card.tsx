@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
 
+import { ExercisePhotos } from '@/components/exercise-photos';
 import { KText } from '@/components/k-text';
 import { RestSetting } from '@/components/rest-setting';
 import type { LocalSet } from '@/db/repo';
@@ -14,7 +15,7 @@ import { radius, spacing } from '@/theme/tokens';
 /** `exercise` is the technique step picked (else the row's exercise is logged). */
 export type LogInput = { weight_lb: number; reps: number; supersedes?: LocalSet; exercise?: string; band?: string };
 
-export type FormInfo = { name: string; setup?: string | null; cues?: string[] };
+export type FormInfo = { name: string; setup?: string | null; cues?: string[]; images?: string[] };
 
 type Props = {
   row: Row;
@@ -276,7 +277,7 @@ export function setLabel(s: Pick<LocalSet, 'weight_lb' | 'reps' | 'seconds' | 'b
 /** "Form" toggle and the cue bubble for the exercise being done. */
 export function FormCues({ info, open, onToggle }: { info?: FormInfo; open: boolean; onToggle: () => void }) {
   const { colors } = useTheme();
-  if (!info?.cues?.length && !info?.setup) return null;
+  if (!info?.cues?.length && !info?.setup && !info?.images?.length) return null;
   return (
     <View>
       <Pressable
@@ -294,6 +295,7 @@ export function FormCues({ info, open, onToggle }: { info?: FormInfo; open: bool
           <KText variant="label" color="volt">
             {info.name}
           </KText>
+          <ExercisePhotos images={info.images} name={info.name} compact />
           {info.setup ? (
             <KText variant="caption" color="inkMuted">
               {info.setup}

@@ -12,6 +12,7 @@ import { getDb } from '@/db/db';
 import { deleteOwner } from '@/db/repo';
 import { formatLoad } from '@/lib/lifts';
 import { api, ApiError } from '@/lib/api';
+import { clerkEnabled } from '@/lib/auth';
 import { defaultApiUrl } from '@/lib/config';
 import { parseIsoDate, shortDate } from '@/lib/dates';
 import { useLifts, useMe, useProgram, useTrials } from '@/lib/queries';
@@ -35,6 +36,7 @@ export default function ProfileScreen() {
             <Header />
             <PathCard />
             <LiftsCard />
+            <LibraryCard />
             <TrialResults />
             <ThemeSetting />
             <Settings />
@@ -146,6 +148,22 @@ function LiftsCard() {
           onPress={() => router.push('/lifts?from=profile')}
         />
       ))}
+    </Panel>
+  );
+}
+
+/** The exercise library: photos and steps for about 870 exercises. */
+function LibraryCard() {
+  const router = useRouter();
+  return (
+    <Panel style={styles.list}>
+      <SettingRow
+        first
+        label="Exercise library"
+        hint="Photos and steps for about 870 exercises"
+        value={<KText color="volt">›</KText>}
+        onPress={() => router.push('/library')}
+      />
     </Panel>
   );
 }
@@ -644,7 +662,7 @@ function RunActions() {
   );
 }
 
-/** Dev identity and server address (until real sign-in in M6). */
+/** The signed-in account and the server address (the address matters while the API runs on a PC). */
 function DevSection() {
   const { colors } = useTheme();
   const queryClient = useQueryClient();
@@ -680,7 +698,7 @@ function DevSection() {
       />
       <View style={styles.devGap}>
         <GhostButton
-          label="Switch user"
+          label={clerkEnabled ? 'Sign out' : 'Switch user'}
           onPress={() => {
             queryClient.clear();
             signOut();

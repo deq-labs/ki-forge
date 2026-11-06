@@ -160,6 +160,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/library": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Library
+         * @description Library exercises matching every filter, sorted by name, one page at a time.
+         */
+        get: operations["list_library_v1_library_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/library/{library_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Library Exercise */
+        get: operations["read_library_exercise_v1_library__library_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/me": {
         parameters: {
             query?: never;
@@ -585,10 +622,22 @@ export interface components {
             cues: string[];
             /** Equipment */
             equipment: string[];
+            /**
+             * Images
+             * @default []
+             */
+            images: string[];
             /** Increment Lb */
             increment_lb: number;
             /** Is Timed */
             is_timed: boolean;
+            /** Library */
+            library?: string | null;
+            /**
+             * Muscles
+             * @default []
+             */
+            muscles: string[];
             /** Name */
             name: string;
             /** Needs Garage Space */
@@ -676,6 +725,46 @@ export interface components {
             unit: string;
             /** Weight Lb */
             weight_lb: number | null;
+        };
+        /** LibraryExerciseOut */
+        LibraryExerciseOut: {
+            /** Category */
+            category: string;
+            /** Equipment */
+            equipment: string | null;
+            /** Force */
+            force: string | null;
+            /** Id */
+            id: string;
+            /** Images */
+            images: string[];
+            /** Instructions */
+            instructions: string[];
+            /** Level */
+            level: string;
+            /** Mechanic */
+            mechanic: string | null;
+            /** Name */
+            name: string;
+            /** Primary Muscles */
+            primary_muscles: string[];
+            /** Program Exercise */
+            program_exercise?: string | null;
+            /** Secondary Muscles */
+            secondary_muscles: string[];
+        };
+        /** LibraryPage */
+        LibraryPage: {
+            /** Commit */
+            commit: string;
+            /** Equipment */
+            equipment: string[];
+            /** Items */
+            items: components["schemas"]["LibraryExerciseOut"][];
+            /** Muscles */
+            muscles: string[];
+            /** Total */
+            total: number;
         };
         /** LiftOut */
         LiftOut: {
@@ -1468,6 +1557,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1508,6 +1598,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1552,6 +1643,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path: {
@@ -1598,6 +1690,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path: {
@@ -1644,6 +1737,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1684,6 +1778,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1730,6 +1825,7 @@ export interface operations {
                 commit?: boolean;
             };
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1770,10 +1866,78 @@ export interface operations {
             };
         };
     };
+    list_library_v1_library_get: {
+        parameters: {
+            query?: {
+                /** @description Words that must all appear in the name */
+                q?: string | null;
+                equipment?: string | null;
+                muscle?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_library_exercise_v1_library__library_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                library_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryExerciseOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     read_me_v1_me_get: {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1814,6 +1978,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1854,6 +2019,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1898,6 +2064,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -1938,6 +2105,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -2002,6 +2170,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -2042,6 +2211,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -2086,6 +2256,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -2130,6 +2301,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
@@ -2170,6 +2342,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path: {
@@ -2218,6 +2391,7 @@ export interface operations {
                 week?: number | null;
             };
             header?: {
+                authorization?: string | null;
                 "x-dev-user"?: string | null;
             };
             path?: never;
