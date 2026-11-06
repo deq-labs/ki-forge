@@ -9,7 +9,7 @@ import type { LocalSet } from '@/db/repo';
 import { defaultStep, isDoneStyle, nextStep, prescriptionLine, setsForRow, type Row } from '@/lib/train';
 import { SET_XP } from '@/lib/xp';
 import { useTrainingPrefs } from '@/state/training-prefs';
-import { useTheme } from '@/theme/theme';
+import { glowColor, useTheme } from '@/theme/theme';
 import { radius, spacing } from '@/theme/tokens';
 
 /** `exercise` is the technique step picked (else the row's exercise is logged). */
@@ -362,7 +362,8 @@ export function Stepper({
 
 /** The in-card solid button with the "+5 XP" float on press (off under reduced motion). */
 function LogButton({ label, onPress, showXp }: { label: string; onPress: () => void; showXp: boolean }) {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const reduceMotion = useReducedMotion();
   const float = useSharedValue(0);
   const style = useAnimatedStyle(() => ({
@@ -373,7 +374,7 @@ function LogButton({ label, onPress, showXp }: { label: string; onPress: () => v
     <View>
       {showXp && !reduceMotion && (
         <Animated.View style={[styles.float, style]} pointerEvents="none">
-          <KText variant="stat" color="kiHot" style={[styles.floatText, { textShadowColor: colors.ki }]}>
+          <KText variant="stat" color="kiHot" style={[styles.floatText, { textShadowColor: glowColor(theme, colors.ki) }]}>
             +{SET_XP} XP
           </KText>
         </Animated.View>

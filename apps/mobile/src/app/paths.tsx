@@ -11,8 +11,8 @@ import { api, ApiError, type Program } from '@/lib/api';
 import { useMe, useProgram } from '@/lib/queries';
 import { useOnboarding } from '@/state/onboarding';
 import { useSettings } from '@/state/settings';
-import { isPathSlug, PathThemeProvider, useTheme } from '@/theme/theme';
-import { pathColors, radius, spacing, type PathSlug } from '@/theme/tokens';
+import { isPathSlug, pathPair, PathThemeProvider, useTheme } from '@/theme/theme';
+import { radius, spacing, type PathSlug } from '@/theme/tokens';
 
 type ProgramPath = Program['paths'][number];
 
@@ -66,7 +66,8 @@ function PathPicker({
   onboarding: boolean;
   enrollmentId?: string;
 }) {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const router = useRouter();
   const queryClient = useQueryClient();
   const owner = useSettings((s) => s.devEmail);
@@ -131,7 +132,7 @@ function PathPicker({
           {paths?.map((p) => {
             const slug = p.slug as PathSlug;
             const on = slug === selected;
-            const pc = pathColors[slug] ?? pathColors.storm;
+            const pc = pathPair(theme, slug);
             return (
               <Pressable
                 key={p.slug}
@@ -144,7 +145,8 @@ function PathPicker({
                   {
                     backgroundColor: colors.panel,
                     borderColor: on ? pc.ki : colors.line,
-                    boxShadow: on ? `0 0 18px ${pc.ki}88` : undefined,
+                    boxShadow: on && theme.style.glow ? `0 0 18px ${pc.ki}88` : undefined,
+                    borderWidth: on ? 2 : theme.style.border,
                   },
                 ]}>
                 <View style={[styles.art, { backgroundColor: colors.night800 }]}>

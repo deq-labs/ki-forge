@@ -19,8 +19,8 @@ import { levelProgress } from '@/lib/xp';
 import { useSettings } from '@/state/settings';
 import { DEFAULT_BANDS, useTrainingPrefs } from '@/state/training-prefs';
 import { toast } from '@/state/toast';
-import { textStyle, useTheme } from '@/theme/theme';
-import { pathColors, radius, spacing, type PathSlug } from '@/theme/tokens';
+import { pathPair, textStyle, useTheme } from '@/theme/theme';
+import { radius, spacing, themeColors, themes } from '@/theme/tokens';
 
 /** Profile and account (docs/06-screens.md §7). The subscription card arrives with M6. */
 export default function ProfileScreen() {
@@ -37,6 +37,7 @@ export default function ProfileScreen() {
             <LiftsCard />
             <LibraryCard />
             <TrialResults />
+            <ThemeSetting />
             <Settings />
             <TrainingSettings />
             <RunActions />
@@ -91,12 +92,13 @@ function Header() {
 }
 
 function PathCard() {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const router = useRouter();
   const me = useMe().data!;
   const program = useProgram();
   const path = program.data?.paths.find((p) => p.slug === me.enrollment?.path_slug);
-  const pc = pathColors[(me.enrollment?.path_slug as PathSlug) ?? 'storm'] ?? pathColors.storm;
+  const pc = pathPair(theme, me.enrollment?.path_slug ?? 'storm');
   return (
     <Pressable
       onPress={() => router.push('/paths')}
@@ -263,8 +265,50 @@ function SettingRow({
           </KText>
         ) : null}
       </View>
-      {role === 'checkbox' ? <Checkbox checked={!!checked} /> : value}
+      {value}
+      {role === 'checkbox' ? <Checkbox checked={!!checked} /> : null}
     </Pressable>
+  );
+}
+
+const THEME_NOTES: Record<string, string> = {
+  night: 'The original: indigo night, neon energy',
+  forge: 'Soot and bone, one ember accent, brass for XP',
+  manga: 'Paper and ink with one red, like a printed chapter',
+  garage: 'Graphite and chalk, safety-yellow energy',
+};
+
+/** Color theme for this device: trial themes to live with before picking one (#76). */
+function ThemeSetting() {
+  const current = useSettings((s) => s.theme);
+  const setTheme = useSettings((s) => s.setTheme);
+  return (
+    <Panel style={styles.list}>
+      <KText variant="cardTitle" style={styles.listTitle}>
+        Theme
+      </KText>
+      {themes.map((t, i) => {
+        const c = themeColors[t.id];
+        return (
+          <SettingRow
+            key={t.id}
+            first={i === 0}
+            role="checkbox"
+            checked={current === t.id}
+            label={t.name}
+            hint={THEME_NOTES[t.id]}
+            value={
+              <View style={styles.swatches} accessible={false}>
+                {[c.night900, c.panel, c.ki, c.volt].map((hex, k) => (
+                  <View key={k} style={[styles.swatch, { backgroundColor: hex, borderColor: c.line }]} />
+                ))}
+              </View>
+            }
+            onPress={() => setTheme(t.id)}
+          />
+        );
+      })}
+    </Panel>
   );
 }
 
@@ -683,6 +727,8 @@ const styles = StyleSheet.create({
     minHeight: 72,
   },
   list: { padding: 0, overflow: 'hidden' },
+  swatches: { flexDirection: 'row', gap: 2 },
+  swatch: { width: 14, height: 28, borderWidth: 1 },
   listTitle: { paddingHorizontal: spacing[4], paddingTop: spacing[4], paddingBottom: spacing[2] },
   row: {
     flexDirection: 'row',

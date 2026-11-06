@@ -10,7 +10,8 @@ import { radius, spacing } from '@/theme/tokens';
 
 // Base, Arc, Train (raised center button), Scan, Profile.
 export default function TabLayout() {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const insets = useSafeAreaInsets();
   return (
     <View style={styles.root}>
@@ -40,7 +41,7 @@ export default function TabLayout() {
               accessibilityLabel="Train"
               accessibilityState={accessibilityState}
               style={styles.trainSlot}>
-              <View style={[styles.trainButton, { backgroundColor: colors.ki, boxShadow: `0 0 18px ${colors.ki}aa` }]}>
+              <View style={[styles.trainButton, { backgroundColor: colors.ki, boxShadow: theme.style.glow ? `0 0 18px ${colors.ki}aa` : undefined }]}>
                 <BarbellIcon color={colors.onKi} size={30} />
               </View>
               <KText variant="caption" color={accessibilityState?.selected ? 'ink' : 'inkMuted'} style={styles.label}>

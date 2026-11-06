@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
-import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, type ReactNode } from 'react';
@@ -40,11 +40,12 @@ function Navigator() {
   // Onboarding only once we know there is no run; while loading or offline, assume there is one.
   const hasRun = me.data ? !!me.data.enrollment : true;
   useSyncLoop();
+  const light = useTheme().style.scheme === 'light';
   const navTheme = useMemo(
     () => ({
-      ...DarkTheme,
+      ...(light ? DefaultTheme : DarkTheme),
       colors: {
-        ...DarkTheme.colors,
+        ...(light ? DefaultTheme : DarkTheme).colors,
         background: colors.night900,
         card: colors.night900,
         text: colors.ink,
@@ -52,11 +53,11 @@ function Navigator() {
         primary: colors.ki,
       },
     }),
-    [colors],
+    [colors, light],
   );
   return (
     <ThemeProvider value={navTheme}>
-      <StatusBar style="light" />
+      <StatusBar style={light ? 'dark' : 'light'} />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.night900 } }}>
         <Stack.Protected guard={signedIn && hasRun}>
           <Stack.Screen name="(tabs)" />
