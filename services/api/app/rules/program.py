@@ -561,10 +561,15 @@ def _validate(p: Program) -> None:
             for step in tech.steps:
                 need(step.exercise, f"path {path.slug!r} technique step")
     _validate_schedule(p)
+    codes = {t.code for t in p.session_templates}
     for sub in p.programs.values():
         if sub.slug == p.slug:
             raise ProgramError(f"block program slug {sub.slug!r} clashes with the main program")
         _validate_schedule(sub)
+        clash = codes & {t.code for t in sub.session_templates}
+        if clash:  # stored sessions are matched to templates by code
+            raise ProgramError(f"template codes {sorted(clash)} are used by more than one program")
+        codes |= {t.code for t in sub.session_templates}
 
     if not p.ranks or p.ranks[0].from_level != 1:
         raise ProgramError("ranks must start at level 1")

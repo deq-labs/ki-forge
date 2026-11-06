@@ -34,6 +34,7 @@ def current_week(enrollment: Enrollment, user: User) -> int:
 def built_for(
     program: Program, enrollment_path: str, code: str, week: int, garage_mode: bool
 ) -> BuiltSession | None:
+    program = program.for_path(enrollment_path)  # a path may run its own block program
     phase = phase_for(week, program)
     if phase is None:
         return None

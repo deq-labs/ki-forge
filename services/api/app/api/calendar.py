@@ -12,10 +12,12 @@ from sqlalchemy import select
 from app.api.deps import CurrentUser, Db
 from app.api.errors import ERROR_RESPONSES, ApiError
 from app.models import Enrollment, ProgressionStateRow, SetLog, User, WorkoutSession
-from app.rules.calendar import phase_display_name, phase_for, session_date
+from app.rules.calendar import block_of, phase_display_name, phase_for, session_date
 from app.rules.completion import is_full_week, latest_sets
-from app.rules.program import Phase, Program
+from app.rules.loads import percent_load
+from app.rules.program import Block, Movement, Phase, Program, Target
 from app.rules.progression import hit_target
+from app.services.lifts import Lift, user_lifts
 from app.services.program import get_program, program_ids
 from app.services.sessions import built_for, current_week, logged_sets, score_stored
 from app.services.stats import active_enrollment
@@ -28,6 +30,35 @@ class PhaseSummary(BaseModel):
     name: str  # display name, e.g. "Storm Fighter Specialization"
     kind: str
     rir_target: int | None
+    block: int | None = None  # 1-based block number in a repeating block program (Iron Tempo)
+    deload_note: str | None = None  # set in a deload week
+
+
+class LevelView(BaseModel):
+    amount: int | None  # None = max effort
+    unit: str  # reps | cal | steps | seconds
+    percent: float | None  # % of a 1RM
+    weight_lb: float | None  # from your 1RM for a % target (None until it is entered), else the fixed load
+    exercise: str  # exercise done at this level
+    name: str
+
+
+class MovementView(BaseModel):
+    exercise: str
+    name: str
+    note: str | None
+    levels: list[LevelView]  # L1, L2, L3; one entry when the block has no levels
+
+
+class BlockView(BaseModel):
+    kind: str  # emom | interval | for_time | circuit
+    name: str
+    rounds: int
+    interval_seconds: int | None
+    cap_seconds: int | None
+    rest_seconds: int | None
+    minutes: float | None
+    movements: list[MovementView]
 
 
 class StepView(BaseModel):
@@ -55,6 +86,9 @@ class PrescriptionView(BaseModel):
     steps: list[StepView] = []
     current_step: str | None = None
     ready_to_advance: bool = False
+    key: str = ""  # row id within the session; sent as a set's `slot`
+    role: str | None = None  # main, finisher, accessory, core, x3, ...
+    block: BlockView | None = None  # timed multi-movement work; sets = rounds
 
 
 class SessionView(BaseModel):
@@ -69,6 +103,8 @@ class SessionView(BaseModel):
     sets_needed: int
     sets_logged: int
     prescriptions: list[PrescriptionView]
+    warmup: str | None = None
+    garage_twin: bool = False  # garage mode runs a whole different day (e.g. the car-in calisthenics day)
 
 
 class WeekOut(BaseModel):
@@ -78,6 +114,7 @@ class WeekOut(BaseModel):
     phase: PhaseSummary
     full_week: bool
     sessions: list[SessionView]  # empty in Trial weeks: those are test weeks
+    lifts_needed: list[str] = []  # 1RM lifts this week's % targets need that you have not entered
 
 
 class ArcPhase(BaseModel):
@@ -105,6 +142,7 @@ class ArcOut(BaseModel):
     current_phase_ord: int | None
     phases: list[ArcPhase]
     progress: WeekProgress | None  # None before the start date and after the cycle
+    block: int | None = None  # current block of a repeating block program; phases are that block's
 
 
 def _enrollment(db: Db, user: User) -> Enrollment:
@@ -114,13 +152,67 @@ def _enrollment(db: Db, user: User) -> Enrollment:
     return e
 
 
-def _phase_summary(phase: Phase, program: Program, path_slug: str) -> PhaseSummary:
+def _phase_summary(phase: Phase, program: Program, path_slug: str, week: int) -> PhaseSummary:
+    deload = phase.modifiers.deload
     return PhaseSummary(
         ord=phase.ord,
         name=phase_display_name(phase, program.path(path_slug)),
         kind=phase.kind,
         rir_target=phase.rir_target,
+        block=block_of(week, program),
+        deload_note=(deload.note or "Deload week") if deload else None,
     )
+
+
+def _level(program: Program, m: Movement, t: Target, lifts: dict[str, Lift]) -> LevelView:
+    exercise = t.exercise or m.exercise
+    weight = t.weight_lb
+    if t.percent is not None:
+        lift = lifts.get(t.percent_of or m.exercise)
+        increment = program.exercise(exercise).increment_lb
+        weight = percent_load(t.percent, lift.one_rm_lb, increment) if lift else None
+    return LevelView(
+        amount=t.amount,
+        unit=t.unit,
+        percent=t.percent,
+        weight_lb=weight,
+        exercise=exercise,
+        name=program.exercise(exercise).name,
+    )
+
+
+def _block_view(program: Program, block: Block, lifts: dict[str, Lift]) -> BlockView:
+    return BlockView(
+        kind=block.kind,
+        name=block.name,
+        rounds=block.rounds,
+        interval_seconds=block.interval_seconds,
+        cap_seconds=block.cap_seconds,
+        rest_seconds=block.rest_seconds,
+        minutes=block.minutes,
+        movements=[
+            MovementView(
+                exercise=m.exercise,
+                name=program.exercise(m.exercise).name,
+                note=m.note,
+                levels=[_level(program, m, t, lifts) for t in m.levels],
+            )
+            for m in block.movements
+        ],
+    )
+
+
+def _lifts_used(block: Block) -> list[str]:
+    return [t.percent_of or m.exercise for m in block.movements for t in m.levels if t.percent is not None]
+
+
+def _cleared_days(program: Program, cleared: set[str]) -> set[str]:
+    """Day templates cleared this week: a cleared car-in twin clears its day."""
+    return {
+        t.code
+        for t in program.session_templates
+        if not t.garage_only and (t.code in cleared or (t.garage_template or "") in cleared)
+    }
 
 
 def _week_sessions(db: Db, user: User, e: Enrollment, week: int) -> list[WorkoutSession]:
@@ -178,13 +270,14 @@ def _steps(db: Db, user: User, program: Program, path_slug: str, item, prefill: 
 @router.get("/week", response_model=WeekOut)
 def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, ge=0)) -> WeekOut:
     """A week's sessions fully built for the user's path, phase and garage default. Default: current week."""
-    program = get_program()
+    base = get_program()
     e = _enrollment(db, user)
     ids = program_ids(db)
     path_slug = ids.path_slug(e.path_id)
+    program = base.for_path(path_slug)  # a path may run its own block program
     today_week = current_week(e, user)
     if week is None:
-        week = min(max(today_week, 0), program.cycle_weeks - 1)
+        week = max(today_week, 0) if program.repeats else min(max(today_week, 0), program.cycle_weeks - 1)
     phase = phase_for(week, program)
     if phase is None:
         raise ApiError(
@@ -194,7 +287,9 @@ def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, 
         )
 
     stored = _week_sessions(db, user, e, week)
-    scores = score_stored(db, program, path_slug, stored)
+    scores = score_stored(db, base, path_slug, stored)
+    lifts = user_lifts(db, user.id)
+    needed: set[str] = set()
     by_code: dict[str, list] = {}
     for ws in stored:
         if ws.id in scores:
@@ -211,15 +306,22 @@ def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, 
     sessions: list[SessionView] = []
     if not phase.is_trial:
         for t in program.session_templates:
+            if t.garage_only:
+                continue  # reached through its day's garage mode
             logged = by_code.get(t.code, [])
             # The best logged attempt for this template this week; otherwise the user's garage default.
             best = max(logged, key=lambda p: (p[1].cleared, p[1].sets_logged), default=None)
             garage = best[0].garage_mode if best else e.garage_mode_default
             # A logged session keeps the path it was done on; an unstarted one uses the run's current path.
             sess_path = ids.path_slug(best[0].path_id) if best and best[0].path_id else path_slug
-            built = built_for(program, sess_path, t.code, week, garage)
-            other = built_for(program, sess_path, t.code, week, not garage)
-            assert built is not None and other is not None
+            built = built_for(base, sess_path, t.code, week, garage)
+            # The per-row alternative; a day with a whole car-in twin has none.
+            other = None if t.garage_template else built_for(base, sess_path, t.code, week, not garage)
+            assert built is not None
+            alts = list(other.items) if other is not None else [None] * len(built.items)
+            for item in built.items:
+                if item.block is not None:
+                    needed.update(x for x in _lifts_used(item.block) if x not in lifts)
             sessions.append(
                 SessionView(
                     code=t.code,
@@ -232,11 +334,13 @@ def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, 
                     cleared=bool(best and best[1].cleared),
                     sets_needed=built.sets_needed,
                     sets_logged=best[1].sets_logged if best else 0,
+                    warmup=built.warmup,
+                    garage_twin=t.garage_template is not None,
                     prescriptions=[
                         PrescriptionView(
                             exercise=item.exercise,
                             name=item.name,
-                            swap=alt.exercise if alt.exercise != item.exercise else None,
+                            swap=alt.exercise if alt is not None and alt.exercise != item.exercise else None,
                             is_swap=item.is_swap,
                             sets=item.sets,
                             rep_min=item.rep_min,
@@ -246,10 +350,13 @@ def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, 
                             is_main_lift=item.is_main_lift,
                             is_path_technique=item.is_technique,
                             note=item.note,
-                            prefill_weight_lb=prefill.get(item.exercise),
-                            **_steps(db, user, program, sess_path, item, prefill),
+                            prefill_weight_lb=None if item.block else prefill.get(item.exercise),
+                            **_steps(db, user, base, sess_path, item, prefill),
+                            key=item.key,
+                            role=item.role,
+                            block=_block_view(base, item.block, lifts) if item.block else None,
                         )
-                        for item, alt in zip(built.items, other.items, strict=True)
+                        for item, alt in zip(built.items, alts, strict=True)
                     ],
                 )
             )
@@ -258,35 +365,43 @@ def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, 
         week=week,
         current_week=today_week,
         starts_on=session_date(e.started_on, week, 1),
-        phase=_phase_summary(phase, program, path_slug),
+        phase=_phase_summary(phase, program, path_slug, week),
         full_week=is_full_week(program, [s.code for s in sessions if s.cleared]),
         sessions=sessions,
+        lifts_needed=[x for x in program.one_rm_lifts if x in needed],
     )
 
 
 @router.get("/arc", response_model=ArcOut)
 def read_arc(db: Db, user: CurrentUser) -> ArcOut:
-    """Phases with dates and status, plus progress through the current week."""
-    program = get_program()
+    """Phases with dates and status, plus progress through the current week.
+
+    A repeating block program (Iron Tempo) shows the current block's phases.
+    """
+    base = get_program()
     e = _enrollment(db, user)
     path_slug = program_ids(db).path_slug(e.path_id)
+    program = base.for_path(path_slug)
     week = current_week(e, user)
     current = phase_for(week, program)
+    block = block_of(week, program)
+    offset = (block - 1) * program.cycle_weeks if block else 0
+    in_block = week - offset  # week within the block (the week itself for the main arc)
 
     def status(ph: Phase) -> Literal["past", "current", "future"]:
-        if ph.end_week < week:
+        if ph.end_week < in_block:
             return "past"
-        return "current" if ph.contains(week) else "future"
+        return "current" if ph.contains(in_block) else "future"
 
     phases = [
         ArcPhase(
             ord=ph.ord,
             name=phase_display_name(ph, program.path(path_slug)),
             kind=ph.kind,
-            start_week=ph.start_week,
-            end_week=ph.end_week,
-            start_date=session_date(e.started_on, ph.start_week, 1),
-            end_date=session_date(e.started_on, ph.end_week, 7),
+            start_week=ph.start_week + offset,
+            end_week=ph.end_week + offset,
+            start_date=session_date(e.started_on, ph.start_week + offset, 1),
+            end_date=session_date(e.started_on, ph.end_week + offset, 7),
             status=status(ph),
         )
         for ph in program.phases
@@ -294,17 +409,22 @@ def read_arc(db: Db, user: CurrentUser) -> ArcOut:
     progress = None
     if current is not None:
         stored = _week_sessions(db, user, e, week)
-        scores = score_stored(db, program, path_slug, stored)
+        scores = score_stored(db, base, path_slug, stored)
         ids = program_ids(db)
-        cleared = {
-            ids.template_code(ws.session_template_id)
-            for ws in stored
-            if ws.id in scores and scores[ws.id][1].cleared
-        }
-        required = [t.code for t in program.session_templates if t.required_for_full_week]
+        cleared = _cleared_days(
+            program,
+            {
+                ids.template_code(ws.session_template_id)
+                for ws in stored
+                if ws.id in scores and scores[ws.id][1].cleared
+            },
+        )
+        required = [
+            t.code for t in program.session_templates if t.required_for_full_week and not t.garage_only
+        ]
         progress = WeekProgress(
             week=week,
-            week_in_phase=week - current.start_week + 1,
+            week_in_phase=in_block - current.start_week + 1,
             weeks_in_phase=current.end_week - current.start_week + 1,
             sessions_cleared=sum(code in cleared for code in required),
             sessions_required=0 if current.is_trial else len(required),
@@ -315,4 +435,5 @@ def read_arc(db: Db, user: CurrentUser) -> ArcOut:
         current_phase_ord=current.ord if current else None,
         phases=phases,
         progress=progress,
+        block=block,
     )

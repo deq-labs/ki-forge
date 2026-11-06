@@ -16,7 +16,13 @@ import { pathColors, radius, spacing, type PathSlug } from '@/theme/tokens';
 
 type ProgramPath = Program['paths'][number];
 
-const AREA_LABEL: Record<string, string> = { delts: 'Delts', back: 'Back', arms: 'Arms', legs: 'Legs', engine: 'Engine' };
+const AREA_LABEL: Record<string, string> = {
+  delts: 'Delts',
+  back: 'Back',
+  arms: 'Arms',
+  legs: 'Legs',
+  engine: 'Engine',
+};
 
 /** Path picker: onboarding step 2, and Profile › Change path. Re-themes live as you choose. */
 export default function Paths() {
@@ -26,15 +32,13 @@ export default function Paths() {
   const onboarding = from === 'onboarding';
   const draft = useOnboarding();
   const current = me.data?.enrollment?.path_slug;
-  const [selected, setSelected] = useState<PathSlug>(
-    onboarding ? draft.path : isPathSlug(current) ? current : 'storm',
-  );
+  const [selected, setSelected] = useState<PathSlug>(onboarding ? draft.path : isPathSlug(current) ? current : 'storm');
 
   return (
     <PathThemeProvider path={selected}>
       <PathPicker
-        // Paths with their own block program (Iron Tempo) arrive with 1RM entry in #65.
-        paths={program.data?.paths.filter((p) => !p.program)}
+        paths={program.data?.paths}
+        currentPath={current}
         loading={program.isPending}
         selected={selected}
         onSelect={setSelected}
@@ -52,8 +56,10 @@ function PathPicker({
   onSelect,
   onboarding,
   enrollmentId,
+  currentPath,
 }: {
   paths?: ProgramPath[];
+  currentPath?: string;
   loading: boolean;
   selected: PathSlug;
   onSelect: (p: PathSlug) => void;
@@ -68,6 +74,10 @@ function PathPicker({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const path = paths?.find((p) => p.slug === selected);
+  const current = paths?.find((p) => p.slug === currentPath);
+  // Iron Tempo runs its own program: switching to or from it starts a new run (your XP and history stay).
+  const restart =
+    !onboarding && !!enrollmentId && !!path && !!current && (path.program ?? null) !== (current.program ?? null);
 
   async function confirm() {
     if (!path) return;
@@ -79,6 +89,14 @@ function PathPicker({
     setSaving(true);
     setError(null);
     try {
+      if (restart) {
+        setPath(selected);
+        await api.raw('post', `/v1/enrollments/${enrollmentId}/end`, { body: { status: 'abandoned' } });
+        await queryClient.invalidateQueries({ queryKey: ['me', owner] });
+        await queryClient.invalidateQueries({ queryKey: ['week', owner] });
+        router.replace('/onboarding/start-date');
+        return;
+      }
       await api.raw('patch', `/v1/enrollments/${enrollmentId}`, { body: { path_slug: selected } });
       await queryClient.invalidateQueries({ queryKey: ['me', owner] });
       await queryClient.invalidateQueries({ queryKey: ['week', owner] });
@@ -104,7 +122,8 @@ function PathPicker({
           Who are you training to become?
         </KText>
         <KText color="inkMuted">
-          Every path runs the same core program. Your path sets the focus lifts, your frame target and your aura.
+          The four character paths share the core program; yours sets the focus lifts, your frame target and your aura.
+          Iron Tempo runs its own EMOM program.
         </KText>
 
         {loading && <ActivityIndicator color={colors.ki} style={styles.loading} />}
@@ -156,10 +175,21 @@ function PathPicker({
             <KText variant="caption" color="inkMuted">
               {path.build}
             </KText>
+            {path.program ? (
+              <KText variant="caption" color="kiHot">
+                Its own program: 5 days a week of EMOM strength and conditioning, with a calisthenics day for car-in
+                days. 5-week blocks: 4 build weeks, then a deload. Loads come from your 1-rep maxes.
+              </KText>
+            ) : null}
             {top3.map(([area, v]) => (
               <Meter key={area} label={AREA_LABEL[area] ?? area} value={v} />
             ))}
           </Panel>
+        )}
+        {restart && (
+          <KText variant="caption" color="inkMuted">
+            Switching to {path?.name} starts a new run with a new start date. Your XP, level and history stay.
+          </KText>
         )}
         {error && (
           <KText color="danger" accessibilityRole="alert">
@@ -169,7 +199,15 @@ function PathPicker({
       </ScrollView>
       <View style={styles.footer}>
         <PrimaryButton
-          label={saving ? 'Saving…' : path ? `Begin as ${path.name}` : 'Loading paths…'}
+          label={
+            saving
+              ? 'Saving…'
+              : !path
+                ? 'Loading paths…'
+                : restart
+                  ? `Restart as ${path.name}`
+                  : `Begin as ${path.name}`
+          }
           onPress={confirm}
           disabled={!path || saving}
         />
@@ -183,7 +221,14 @@ const styles = StyleSheet.create({
   body: { padding: spacing[4], gap: spacing[3] },
   loading: { marginTop: spacing[5] },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[3], marginTop: spacing[2] },
-  card: { flexBasis: '47%', flexGrow: 1, borderWidth: 2, borderRadius: radius.lg, padding: spacing[3], gap: spacing[1] },
+  card: {
+    flexBasis: '47%',
+    flexGrow: 1,
+    borderWidth: 2,
+    borderRadius: radius.lg,
+    padding: spacing[3],
+    gap: spacing[1],
+  },
   art: { borderRadius: radius.md, alignItems: 'center', paddingVertical: spacing[2], marginBottom: spacing[2] },
   active: { marginTop: spacing[1] },
   detail: { gap: spacing[2] },

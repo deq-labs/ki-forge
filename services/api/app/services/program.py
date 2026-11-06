@@ -10,7 +10,7 @@ program version.
 from __future__ import annotations
 
 import hashlib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cache, cached_property
 from pathlib import Path
 
@@ -39,7 +39,11 @@ def program_etag() -> str:
 
 @dataclass(frozen=True)
 class ProgramIds:
-    """DB row ids for the program's content, by slug / code / ord."""
+    """DB row ids for the program's content, by slug / code / ord.
+
+    `program_id` and `phases` are the main arc's. Template codes are unique across all programs, so
+    `templates` covers block programs too; block program phases are in `block_phases`.
+    """
 
     program_id: int
     exercises: dict[str, int]
@@ -47,6 +51,16 @@ class ProgramIds:
     phases: dict[int, int]  # by ord
     paths: dict[str, int]
     badges: dict[str, int]
+    programs: dict[str, int] = field(default_factory=dict)  # every program by slug
+    block_phases: dict[tuple[str, int], int] = field(default_factory=dict)  # (program slug, ord)
+
+    def program_id_for(self, program: Program) -> int:
+        return self.programs.get(program.slug, self.program_id)
+
+    def phase_id(self, program: Program, ord_: int) -> int:
+        if program.slug in self.programs and (program.slug, ord_) in self.block_phases:
+            return self.block_phases[(program.slug, ord_)]
+        return self.phases[ord_]
 
     def exercise_slug(self, exercise_id: int) -> str:
         return self._exercise_slugs[exercise_id]
@@ -101,22 +115,44 @@ def program_ids(db: Session) -> ProgramIds:
     def pairs(stmt) -> dict:
         return {k: v for k, v in db.execute(stmt).all()}
 
+    block_ids = {
+        b.slug: db.scalar(
+            select(ProgramRow.id).where(ProgramRow.slug == b.slug, ProgramRow.version == b.version)
+        )
+        for b in program.programs.values()
+    }
+    program_rows = [program_id, *(i for i in block_ids.values() if i is not None)]
     ids = ProgramIds(
         program_id=program_id,
         exercises=pairs(select(ExerciseRow.slug, ExerciseRow.id)),
         templates=pairs(
             select(SessionTemplateRow.code, SessionTemplateRow.id).where(
-                SessionTemplateRow.program_id == program_id
+                SessionTemplateRow.program_id.in_(program_rows)
             )
         ),
         phases=pairs(select(PhaseRow.ord, PhaseRow.id).where(PhaseRow.program_id == program_id)),
         paths=pairs(select(PathRow.slug, PathRow.id)),
         badges=pairs(select(BadgeRow.slug, BadgeRow.id)),
+        programs={program.slug: program_id, **{k: v for k, v in block_ids.items() if v is not None}},
+        block_phases={
+            (slug, ord_): pid
+            for slug, bid in block_ids.items()
+            if bid is not None
+            for ord_, pid in db.execute(select(PhaseRow.ord, PhaseRow.id).where(PhaseRow.program_id == bid))
+        },
     )
+    every = [program, *program.programs.values()]
     missing = (
         [f"exercise {s}" for s in program.exercises if s not in ids.exercises]
-        + [f"template {t.code}" for t in program.session_templates if t.code not in ids.templates]
+        + [f"program {b.slug}" for b in program.programs.values() if block_ids[b.slug] is None]
+        + [f"template {t.code}" for p in every for t in p.session_templates if t.code not in ids.templates]
         + [f"phase {p.ord}" for p in program.phases if p.ord not in ids.phases]
+        + [
+            f"phase {b.slug}/{p.ord}"
+            for b in program.programs.values()
+            for p in b.phases
+            if block_ids[b.slug] is not None and (b.slug, p.ord) not in ids.block_phases
+        ]
         + [f"path {s}" for s in program.paths if s not in ids.paths]
         + [f"badge {b.slug}" for b in program.badges if b.slug not in ids.badges]
     )

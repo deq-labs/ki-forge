@@ -33,10 +33,11 @@ def recompute_progression(db: Session, user_id: uuid.UUID) -> dict[str, Progress
     sets = logged_sets(db, (ws.id for ws, _ in rows))
     states: dict[str, ProgressionState] = {}
     for ws, path_id in rows:
-        phase = phase_for(ws.week, program)
+        path_slug = ids.path_slug(ws.path_id or path_id)  # the path the session was done on
+        phase = phase_for(ws.week, program.for_path(path_slug))
         built = built_for(
             program,
-            ids.path_slug(ws.path_id or path_id),  # the path the session was done on
+            path_slug,
             ids.template_code(ws.session_template_id),
             ws.week,
             ws.garage_mode,

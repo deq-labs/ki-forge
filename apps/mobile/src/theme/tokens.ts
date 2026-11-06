@@ -23,7 +23,9 @@ export const colors = {
   "pathTitan": "#ff4d6d",
   "pathTitan2": "#ff9e5e",
   "pathBlade": "#5ee0a0",
-  "pathBlade2": "#d4ff6a"
+  "pathBlade2": "#d4ff6a",
+  "pathIronTempo": "#b8c7dc",
+  "pathIronTempo2": "#6f9bff"
 } as const;
 
 /** Each path's energy pair; the ThemeProvider re-points `ki` / `kiHot` to the active path. */
@@ -43,6 +45,10 @@ export const pathColors = {
   "blade": {
     "ki": "#5ee0a0",
     "kiHot": "#d4ff6a"
+  },
+  "iron-tempo": {
+    "ki": "#b8c7dc",
+    "kiHot": "#6f9bff"
   }
 } as const;
 

@@ -67,6 +67,7 @@ function Navigator() {
         </Stack.Protected>
         <Stack.Protected guard={signedIn}>
           <Stack.Screen name="paths" />
+          <Stack.Screen name="lifts" />
         </Stack.Protected>
         <Stack.Protected guard={!signedIn}>
           <Stack.Screen name="sign-in" />

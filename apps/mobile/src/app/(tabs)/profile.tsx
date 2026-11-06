@@ -10,10 +10,11 @@ import { Silhouette } from '@/components/silhouette';
 import { GhostButton, Panel } from '@/components/ui';
 import { getDb } from '@/db/db';
 import { deleteOwner } from '@/db/repo';
+import { formatLoad } from '@/lib/lifts';
 import { api, ApiError } from '@/lib/api';
 import { defaultApiUrl } from '@/lib/config';
 import { parseIsoDate, shortDate } from '@/lib/dates';
-import { useMe, useProgram, useTrials } from '@/lib/queries';
+import { useLifts, useMe, useProgram, useTrials } from '@/lib/queries';
 import { levelProgress } from '@/lib/xp';
 import { useSettings } from '@/state/settings';
 import { useTrainingPrefs } from '@/state/training-prefs';
@@ -33,6 +34,7 @@ export default function ProfileScreen() {
           <>
             <Header />
             <PathCard />
+            <LiftsCard />
             <TrialResults />
             <Settings />
             <TrainingSettings />
@@ -114,6 +116,38 @@ function PathCard() {
   );
 }
 
+/** Your 1RMs (Iron Tempo): EMOM loads are a percent of these. Tap to update. */
+function LiftsCard() {
+  const router = useRouter();
+  const me = useMe().data!;
+  const program = useProgram();
+  const lifts = useLifts();
+  const path = program.data?.paths.find((p) => p.slug === me.enrollment?.path_slug);
+  if (!path?.program || !lifts.data) return null;
+  const units = me.user.units === 'metric' ? 'metric' : 'imperial';
+  return (
+    <Panel style={styles.list}>
+      <KText variant="cardTitle" style={styles.listTitle}>
+        1-rep maxes
+      </KText>
+      {lifts.data.lifts.map((l, i) => (
+        <SettingRow
+          key={l.exercise}
+          first={i === 0}
+          label={l.name}
+          hint={
+            l.updated_at
+              ? `Tested ${new Date(l.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`
+              : 'Not entered yet'
+          }
+          value={<KText variant="dataSm">{l.one_rm_lb == null ? '—' : formatLoad(l.one_rm_lb, units)}</KText>}
+          onPress={() => router.push('/lifts?from=profile')}
+        />
+      ))}
+    </Panel>
+  );
+}
+
 /** Every Trial with its numbers; tap to enter or edit (lifts, reps, row, bodyweight, shoulders, waist). */
 function TrialResults() {
   const { colors } = useTheme();
@@ -161,7 +195,10 @@ function Checkbox({ checked }: { checked: boolean }) {
     <View
       style={[
         styles.check,
-        { borderColor: checked ? colors.volt : colors.inkFaint, backgroundColor: checked ? colors.volt : 'transparent' },
+        {
+          borderColor: checked ? colors.volt : colors.inkFaint,
+          backgroundColor: checked ? colors.volt : 'transparent',
+        },
       ]}>
       {checked && (
         <KText variant="bodyStrong" color="night900">
@@ -196,7 +233,11 @@ function SettingRow({
       accessibilityRole={role}
       accessibilityState={role === 'checkbox' ? { checked: !!checked } : undefined}
       accessibilityHint={hint}
-      style={({ pressed }) => [styles.row, !first && { borderTopColor: colors.line, borderTopWidth: 1 }, pressed && { opacity: 0.7 }]}>
+      style={({ pressed }) => [
+        styles.row,
+        !first && { borderTopColor: colors.line, borderTopWidth: 1 },
+        pressed && { opacity: 0.7 },
+      ]}>
       <View style={styles.flex}>
         <KText>{label}</KText>
         {hint ? (
@@ -256,7 +297,9 @@ function Settings() {
           </KText>
         }
         hint="Tap to switch"
-        onPress={() => void run(() => api.patch('/v1/me', { units: me.user.units === 'metric' ? 'imperial' : 'metric' }))}
+        onPress={() =>
+          void run(() => api.patch('/v1/me', { units: me.user.units === 'metric' ? 'imperial' : 'metric' }))
+        }
       />
       {me.enrollment && (
         <SettingRow
@@ -266,7 +309,9 @@ function Settings() {
           checked={garageDefault}
           onPress={() =>
             void run(() =>
-              api.raw('patch', `/v1/enrollments/${me.enrollment!.id}`, { body: { garage_mode_default: !garageDefault } }),
+              api.raw('patch', `/v1/enrollments/${me.enrollment!.id}`, {
+                body: { garage_mode_default: !garageDefault },
+              }),
             )
           }
         />
@@ -311,7 +356,13 @@ function Segmented<T extends number>({
               onPress={() => onChange(o.value)}
               accessibilityRole="radio"
               accessibilityState={{ checked: on }}
-              style={[styles.segItem, { borderColor: on ? colors.volt : colors.line, backgroundColor: on ? colors.panelRaised : 'transparent' }]}>
+              style={[
+                styles.segItem,
+                {
+                  borderColor: on ? colors.volt : colors.line,
+                  backgroundColor: on ? colors.panelRaised : 'transparent',
+                },
+              ]}>
               <KText variant="caption" color={on ? 'volt' : 'ink'}>
                 {o.label}
               </KText>
@@ -367,14 +418,17 @@ function TrainingSettings() {
       </View>
       <SettingRow
         label="Custom rest per exercise"
-        hint={customCount ? `${customCount} exercise${customCount === 1 ? '' : 's'} set from Train · tap to reset` : 'Set it from an exercise card in Train'}
+        hint={
+          customCount
+            ? `${customCount} exercise${customCount === 1 ? '' : 's'} set from Train · tap to reset`
+            : 'Set it from an exercise card in Train'
+        }
         value={customCount ? <KText color="volt">Reset</KText> : undefined}
         onPress={() => customCount && prefs.set({ perExercise: {} })}
       />
     </Panel>
   );
 }
-
 
 /** Restart the program (new path and start date) and delete the account, each with a confirmation step. */
 function RunActions() {
@@ -394,7 +448,11 @@ function RunActions() {
       await queryClient.invalidateQueries({ queryKey: ['week', devEmail] });
       // With no active run the app routes to onboarding: path, then start date.
     } catch (e) {
-      toast(e instanceof ApiError && e.offline ? 'Restarting needs a connection to the server.' : String((e as Error).message));
+      toast(
+        e instanceof ApiError && e.offline
+          ? 'Restarting needs a connection to the server.'
+          : String((e as Error).message),
+      );
     } finally {
       setBusy(false);
       setConfirm(null);
@@ -409,7 +467,11 @@ function RunActions() {
       queryClient.clear();
       signOut();
     } catch (e) {
-      toast(e instanceof ApiError && e.offline ? 'Deleting needs a connection to the server.' : String((e as Error).message));
+      toast(
+        e instanceof ApiError && e.offline
+          ? 'Deleting needs a connection to the server.'
+          : String((e as Error).message),
+      );
       setBusy(false);
       setConfirm(null);
     }
@@ -518,7 +580,11 @@ function DevSection() {
           setApiUrl(url || null);
           void queryClient.invalidateQueries();
         }}
-        style={[textStyle('dataSm'), styles.input, { color: colors.ink, backgroundColor: colors.night800, borderColor: colors.line }]}
+        style={[
+          textStyle('dataSm'),
+          styles.input,
+          { color: colors.ink, backgroundColor: colors.night800, borderColor: colors.line },
+        ]}
       />
       <View style={styles.devGap}>
         <GhostButton
@@ -541,10 +607,25 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: spacing[4] },
   avatar: { width: 80, height: 80, alignItems: 'center', justifyContent: 'center' },
   avatarLevel: { position: 'absolute' },
-  pathCard: { flexDirection: 'row', alignItems: 'center', gap: spacing[3], borderWidth: 1.5, borderRadius: radius.lg, padding: spacing[4], minHeight: 72 },
+  pathCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[3],
+    borderWidth: 1.5,
+    borderRadius: radius.lg,
+    padding: spacing[4],
+    minHeight: 72,
+  },
   list: { padding: 0, overflow: 'hidden' },
   listTitle: { paddingHorizontal: spacing[4], paddingTop: spacing[4], paddingBottom: spacing[2] },
-  row: { flexDirection: 'row', alignItems: 'center', gap: spacing[3], paddingHorizontal: spacing[4], minHeight: 60, paddingVertical: spacing[3] },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[3],
+    paddingHorizontal: spacing[4],
+    minHeight: 60,
+    paddingVertical: spacing[3],
+  },
   check: { width: 28, height: 28, borderRadius: 6, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   actions: { gap: spacing[3] },
   confirm: { gap: spacing[3], borderWidth: 1.5 },
@@ -555,7 +636,15 @@ const styles = StyleSheet.create({
   segWrap: { borderTopWidth: 1, padding: spacing[4], gap: spacing[4] },
   segBlock: { gap: spacing[2] },
   seg: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] },
-  segItem: { minHeight: 44, minWidth: 56, paddingHorizontal: spacing[3], borderRadius: radius.md, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
+  segItem: {
+    minHeight: 44,
+    minWidth: 56,
+    paddingHorizontal: spacing[3],
+    borderRadius: radius.md,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   devGap: { marginTop: spacing[3] },
   input: { minHeight: 48, borderWidth: 1, borderRadius: radius.md, paddingHorizontal: spacing[3] },
 });

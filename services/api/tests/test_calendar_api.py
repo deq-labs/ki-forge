@@ -44,7 +44,14 @@ def test_week_requires_enrollment(client: TestClient) -> None:
 def test_golden_foundation_week1_upper_a_storm(client: TestClient) -> None:
     enroll(client, dt.date(2026, 10, 26))
     body = client.get("/v1/week", params={"week": 1}).json()
-    assert body["phase"] == {"ord": 1, "name": "Foundation", "kind": "phase", "rir_target": 3}
+    assert body["phase"] == {
+        "ord": 1,
+        "name": "Foundation",
+        "kind": "phase",
+        "rir_target": 3,
+        "block": None,
+        "deload_note": None,
+    }
     assert [s["code"] for s in body["sessions"]] == [
         "upper_a",
         "lower_a",

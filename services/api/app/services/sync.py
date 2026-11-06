@@ -80,8 +80,10 @@ def _upsert_sessions(
     db: Session, user: User, e: Enrollment, program: Program, sessions: list[SessionInput]
 ) -> dict[uuid.UUID, WorkoutSession]:
     ids = program_ids(db)
+    program = program.for_path(ids.path_slug(e.path_id))  # the run's program (a path may bring its own)
+    codes = {t.code for t in program.session_templates if not t.garage_only}
     for s in sessions:
-        if s.template_code not in ids.templates:
+        if s.template_code not in ids.templates or s.template_code not in codes:
             raise _reject("unknown_template", f"session {s.client_id}: unknown template {s.template_code!r}")
         phase = phase_for(s.week, program)
         if phase is None or phase.is_trial:
@@ -93,7 +95,7 @@ def _upsert_sessions(
                 user_id=user.id,
                 enrollment_id=e.id,
                 session_template_id=ids.templates[s.template_code],
-                phase_id=ids.phases[phase.ord],
+                phase_id=ids.phase_id(program, phase.ord),
                 path_id=e.path_id,
                 week=s.week,
                 garage_mode=s.garage_mode,
@@ -220,7 +222,8 @@ def run_sync(
     }
     awards: list[Award] = []
     for ws, score in scored.values():
-        kind = program.template(ids.template_code(ws.session_template_id)).kind
+        own = program.for_path(ids.path_slug(ws.path_id) if ws.path_id else path_slug)
+        kind = own.template(ids.template_code(ws.session_template_id)).kind
         mine = session_awards(str(ws.client_id), kind, score)
         awards += mine
         result.sessions.append(
@@ -240,7 +243,7 @@ def run_sync(
         cleared = [
             ids.template_code(ws.session_template_id) for ws in week_sessions if week_scores[ws.id][1].cleared
         ]
-        if is_full_week(program, cleared):
+        if is_full_week(program.for_path(path_slug), cleared):
             awards.append(full_week_award(str(e.id), week))
 
     result.xp_awarded = record_awards(db, user.id, awards)

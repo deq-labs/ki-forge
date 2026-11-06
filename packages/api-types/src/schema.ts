@@ -31,6 +31,8 @@ export interface paths {
         /**
          * Read Arc
          * @description Phases with dates and status, plus progress through the current week.
+         *
+         *     A repeating block program (Iron Tempo) shows the current block's phases.
          */
         get: operations["read_arc_v1_arc_get"];
         put?: never;
@@ -180,6 +182,27 @@ export interface paths {
         patch: operations["update_me_v1_me_patch"];
         trace?: never;
     };
+    "/v1/me/lifts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Lifts */
+        get: operations["read_lifts_v1_me_lifts_get"];
+        /**
+         * Put Lifts
+         * @description Set or clear 1RMs (lb). Each lift set here counts as re-tested now.
+         */
+        put: operations["put_lifts_v1_me_lifts_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/program": {
         parameters: {
             query?: never;
@@ -314,6 +337,8 @@ export interface components {
         };
         /** ArcOut */
         ArcOut: {
+            /** Block */
+            block?: number | null;
             /** Current Phase Ord */
             current_phase_ord: number | null;
             /** Current Week */
@@ -423,6 +448,25 @@ export interface components {
             slug: string;
             /** Version */
             version: number;
+        };
+        /** BlockView */
+        BlockView: {
+            /** Cap Seconds */
+            cap_seconds: number | null;
+            /** Interval Seconds */
+            interval_seconds: number | null;
+            /** Kind */
+            kind: string;
+            /** Minutes */
+            minutes: number | null;
+            /** Movements */
+            movements: components["schemas"]["MovementView"][];
+            /** Name */
+            name: string;
+            /** Rest Seconds */
+            rest_seconds: number | null;
+            /** Rounds */
+            rounds: number;
         };
         /** Body_import_workbook_endpoint_v1_import_workbook_post */
         Body_import_workbook_endpoint_v1_import_workbook_post: {
@@ -618,6 +662,44 @@ export interface components {
             /** To */
             to: number;
         };
+        /** LevelView */
+        LevelView: {
+            /** Amount */
+            amount: number | null;
+            /** Exercise */
+            exercise: string;
+            /** Name */
+            name: string;
+            /** Percent */
+            percent: number | null;
+            /** Unit */
+            unit: string;
+            /** Weight Lb */
+            weight_lb: number | null;
+        };
+        /** LiftOut */
+        LiftOut: {
+            /** Exercise */
+            exercise: string;
+            /** Name */
+            name: string;
+            /** One Rm Lb */
+            one_rm_lb: number | null;
+            /** Updated At */
+            updated_at: string | null;
+        };
+        /** LiftsOut */
+        LiftsOut: {
+            /** Lifts */
+            lifts: components["schemas"]["LiftOut"][];
+        };
+        /** LiftsPut */
+        LiftsPut: {
+            /** Lifts */
+            lifts: {
+                [key: string]: number | null;
+            };
+        };
         /** MeOut */
         MeOut: {
             /** Badges */
@@ -656,6 +738,17 @@ export interface components {
             levels: components["schemas"]["TargetOut"][];
             /** Note */
             note?: string | null;
+        };
+        /** MovementView */
+        MovementView: {
+            /** Exercise */
+            exercise: string;
+            /** Levels */
+            levels: components["schemas"]["LevelView"][];
+            /** Name */
+            name: string;
+            /** Note */
+            note: string | null;
         };
         /** NewBadge */
         NewBadge: {
@@ -772,6 +865,10 @@ export interface components {
         };
         /** PhaseSummary */
         PhaseSummary: {
+            /** Block */
+            block?: number | null;
+            /** Deload Note */
+            deload_note?: string | null;
             /** Kind */
             kind: string;
             /** Name */
@@ -807,6 +904,7 @@ export interface components {
         };
         /** PrescriptionView */
         PrescriptionView: {
+            block?: components["schemas"]["BlockView"] | null;
             /** Current Step */
             current_step?: string | null;
             /** Exercise */
@@ -817,6 +915,11 @@ export interface components {
             is_path_technique: boolean;
             /** Is Swap */
             is_swap: boolean;
+            /**
+             * Key
+             * @default
+             */
+            key: string;
             /** Name */
             name: string;
             /** Note */
@@ -834,6 +937,8 @@ export interface components {
             rep_min: number;
             /** Rest Seconds */
             rest_seconds: number | null;
+            /** Role */
+            role?: string | null;
             /** Sets */
             sets: number;
             /**
@@ -991,6 +1096,11 @@ export interface components {
             date: string;
             /** Garage Mode */
             garage_mode: boolean;
+            /**
+             * Garage Twin
+             * @default false
+             */
+            garage_twin: boolean;
             /** Kind */
             kind: string;
             /** Name */
@@ -1005,6 +1115,8 @@ export interface components {
             sets_needed: number;
             /** Short */
             short: string;
+            /** Warmup */
+            warmup?: string | null;
         };
         /** SetSchemeOut */
         SetSchemeOut: {
@@ -1274,6 +1386,11 @@ export interface components {
             current_week: number;
             /** Full Week */
             full_week: boolean;
+            /**
+             * Lifts Needed
+             * @default []
+             */
+            lifts_needed: string[];
             phase: components["schemas"]["PhaseSummary"];
             /** Sessions */
             sessions: components["schemas"]["SessionView"][];
@@ -1737,6 +1854,90 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_lifts_v1_me_lifts_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LiftsOut"];
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_lifts_v1_me_lifts_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-dev-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LiftsPut"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LiftsOut"];
                 };
             };
             /** @description Not signed in */
