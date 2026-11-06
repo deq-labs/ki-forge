@@ -120,7 +120,9 @@ def put_trial(phase_ord: int, body: TrialIn, db: Db, user: CurrentUser) -> Trial
     program = get_program()
     e = _enrollment(db, user)
     ids = program_ids(db)
-    phase = next((p for p in program.phases if p.ord == phase_ord), None)
+    # A block program path (Iron Tempo) has no Trials: its 1RMs are entered instead.
+    own = program.for_path(ids.path_slug(e.path_id))
+    phase = next((p for p in own.phases if p.ord == phase_ord), None)
     if phase is None or not phase.is_trial:
         raise ApiError(404, "not_found", f"no Trial with phase ord {phase_ord}")
     known = {t.type for t in program.tests}
@@ -151,6 +153,8 @@ def list_trials(db: Db, user: CurrentUser) -> list[TrialOut]:
     program = get_program()
     e = _enrollment(db, user)
     path_slug = program_ids(db).path_slug(e.path_id)
+    if program.for_path(path_slug) is not program:
+        return []  # a block program path (Iron Tempo) has no Trials
     entered = trial_results(db, user.id, e.id)
     return [
         _trial_out(program, e, path_slug, p.ord, entered.get(p.ord, {})) for p in program.phases if p.is_trial

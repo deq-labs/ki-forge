@@ -1405,6 +1405,11 @@ export interface components {
              */
             lifts_needed: string[];
             phase: components["schemas"]["PhaseSummary"];
+            /**
+             * Retest Due
+             * @default false
+             */
+            retest_due: boolean;
             /** Sessions */
             sessions: components["schemas"]["SessionView"][];
             /**

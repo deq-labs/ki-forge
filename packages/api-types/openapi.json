@@ -3346,6 +3346,11 @@
           "phase": {
             "$ref": "#/components/schemas/PhaseSummary"
           },
+          "retest_due": {
+            "default": false,
+            "title": "Retest Due",
+            "type": "boolean"
+          },
           "sessions": {
             "items": {
               "$ref": "#/components/schemas/SessionView"

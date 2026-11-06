@@ -17,7 +17,7 @@ import { KText } from '@/components/k-text';
 import { Panel, PrimaryButton } from '@/components/ui';
 import type { Arc, Program } from '@/lib/api';
 import { parseIsoDate, shortDate } from '@/lib/dates';
-import { useArc, useProgram, useTrials } from '@/lib/queries';
+import { useArc, useMe, useProgram, useTrials } from '@/lib/queries';
 import { fieldOf, formatField, GROUPS } from '@/lib/trial-form';
 import { useTheme } from '@/theme/theme';
 import { radius, spacing } from '@/theme/tokens';
@@ -29,6 +29,7 @@ type ProgramPhase = Program['phases'][number];
 function describe(p: ProgramPhase): string {
   if (p.kind === 'trial') return 'Test week · 9 tests';
   const m = p.modifiers;
+  if (m.deload) return `${m.deload.percent}% loads, fewer EMOM rounds, no finishers or X3`;
   const bits: string[] = [];
   if (m.main_lift_scheme) bits.push(`main lift ${m.main_lift_scheme.sets} × ${m.main_lift_scheme.rep_min}–${m.main_lift_scheme.rep_max}`);
   if (m.main_lift_rir) bits.push(`main lift RIR ${m.main_lift_rir.join('–')}`);
@@ -37,7 +38,7 @@ function describe(p: ProgramPhase): string {
   if (m.optional_day) bits.push('optional 5th day');
   if (m.extra_conditioning_sessions) bits.push(`+${m.extra_conditioning_sessions} conditioning session`);
   if (m.progression === 'hold_weights') bits.push('hold your weights');
-  if (p.deload_every) bits.push(`deload every ${p.deload_every}th week`);
+  if (p.deload_every && !m.deload) bits.push(`deload every ${p.deload_every}th week`);
   bits.push(p.calorie_mode === 'surplus' ? 'small surplus' : p.calorie_mode === 'deficit' ? 'calorie deficit' : 'eat at maintenance');
   return bits.join(' · ');
 }
@@ -54,7 +55,13 @@ export default function ArcScreen() {
   const [open, setOpen] = useState<ArcPhase | null>(null);
 
   const phases = arc.data?.phases ?? [];
-  const byOrd = new Map(program.data?.phases.map((p) => [p.ord, p]) ?? []);
+  // A path with its own block program (Iron Tempo) shows the current block, not the 84-week arc.
+  const block = arc.data?.block ?? null;
+  const me = useMe();
+  const own = program.data?.programs?.find(
+    (b) => b.slug === program.data?.paths.find((p) => p.slug === me.data?.enrollment?.path_slug)?.program,
+  );
+  const byOrd = new Map((own?.phases ?? program.data?.phases ?? []).map((p) => [p.ord, p]));
   const complete = new Map(trials.data?.map((t) => [t.phase_ord, t.complete]) ?? []);
   // Phases are numbered 1, 2, 3… in order; Trials are not counted.
   const phaseNo = new Map(phases.filter((p) => p.kind !== 'trial').map((p, i) => [p.ord, i + 1]));
@@ -66,12 +73,16 @@ export default function ArcScreen() {
       </View>
       <ScrollView contentContainerStyle={styles.body}>
         <KText variant="label" color="inkMuted">
-          {program.data?.cycle_weeks ?? 84}-week arc · cycle 1
+          {block ? `${own?.cycle_weeks ?? 5}-week block · block ${block}` : `${program.data?.cycle_weeks ?? 84}-week arc · cycle 1`}
         </KText>
         <KText variant="screenTitle" accessibilityRole="header">
-          Your training arc
+          {block ? 'Your training block' : 'Your training arc'}
         </KText>
-        <KText color="inkMuted">Clear each Trial to unlock the next phase and +500 XP.</KText>
+        <KText color="inkMuted">
+          {block
+            ? 'Four build weeks, then a deload. After the deload a new block starts: re-test your 1-rep maxes.'
+            : 'Clear each Trial to unlock the next phase and +500 XP.'}
+        </KText>
 
         {arc.isPending && <ActivityIndicator color={colors.ki} style={styles.loading} />}
         <View style={styles.map}>

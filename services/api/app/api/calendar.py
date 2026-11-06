@@ -120,6 +120,8 @@ class WeekOut(BaseModel):
     full_week: bool
     sessions: list[SessionView]  # empty in Trial weeks: those are test weeks
     lifts_needed: list[str] = []  # 1RM lifts this week's % targets need that you have not entered
+    # A new block started (after a deload) and some 1RM was last tested before it: time to re-test.
+    retest_due: bool = False
 
 
 class ArcPhase(BaseModel):
@@ -209,6 +211,17 @@ def _block_view(program: Program, block: Block, lifts: dict[str, Lift]) -> Block
 
 def _lifts_used(block: Block) -> list[str]:
     return [t.percent_of or m.exercise for m in block.movements for t in m.levels if t.percent is not None]
+
+
+def _retest_due(
+    program: Program, started_on: dt.date, week: int, phase: Phase, lifts: dict[str, Lift]
+) -> bool:
+    """Block 2 onward, outside the deload: any 1RM entered before this block started should be re-tested."""
+    block = block_of(week, program)
+    if not block or block < 2 or phase.modifiers.deload or not lifts:
+        return False
+    block_start = session_date(started_on, (block - 1) * program.cycle_weeks, 1)
+    return any(lift in lifts and lifts[lift].updated_at.date() < block_start for lift in program.one_rm_lifts)
 
 
 def _cleared_days(program: Program, cleared: set[str]) -> set[str]:
@@ -383,6 +396,7 @@ def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, 
         full_week=is_full_week(program, [s.code for s in sessions if s.cleared]),
         sessions=sessions,
         lifts_needed=[x for x in program.one_rm_lifts if x in needed],
+        retest_due=_retest_due(program, e.started_on, week, phase, lifts),
     )
 
 

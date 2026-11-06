@@ -54,6 +54,7 @@ export default function BaseScreen() {
           <>
             <Hero />
             <OpenTrial />
+            <BlockNotices week={week.data} />
             <NextQuest week={week.data} />
             <ThisWeek week={week.data} />
             <StatTiles
@@ -189,6 +190,39 @@ function sigil(short: string): string {
 function minutes(s: WeekSession): number {
   const secs = s.prescriptions.reduce((t, p) => t + p.sets * ((p.rest_seconds ?? 60) + 40), 0);
   return Math.max(5, Math.round(secs / 300) * 5);
+}
+
+/** Iron Tempo: the deload week banner, and the 1RM re-test prompt once a new block starts. */
+function BlockNotices({ week }: { week?: Week }) {
+  const { colors } = useTheme();
+  const router = useRouter();
+  if (!week) return null;
+  return (
+    <>
+      {week.phase.deload_note ? (
+        <Panel style={[styles.notice, { borderColor: colors.volt }]}>
+          <KText variant="label" color="volt">
+            Deload week{week.phase.block ? ` · block ${week.phase.block}` : ''}
+          </KText>
+          <KText variant="caption">{week.phase.deload_note}</KText>
+        </Panel>
+      ) : null}
+      {week.retest_due ? (
+        <Panel style={[styles.notice, { borderColor: colors.ki }]}>
+          <KText variant="label" color="kiHot">
+            Block {week.phase.block} starts
+          </KText>
+          <KText variant="caption">Re-test your 1-rep maxes so this block&apos;s loads fit where you are now.</KText>
+          <GhostButton label="Update my lifts" onPress={() => router.push('/lifts?from=retest')} />
+        </Panel>
+      ) : week.lifts_needed?.length ? (
+        <Panel style={[styles.notice, { borderColor: colors.line }]}>
+          <KText variant="caption">Enter your 1-rep maxes to see this week&apos;s loads.</KText>
+          <GhostButton label="Enter my lifts" onPress={() => router.push('/lifts?from=profile')} />
+        </Panel>
+      ) : null}
+    </>
+  );
 }
 
 function NextQuest({ week }: { week?: Week }) {
@@ -388,6 +422,7 @@ function Badges() {
 }
 
 const styles = StyleSheet.create({
+  notice: { gap: spacing[2], borderWidth: 1.5 },
   safe: { flex: 1 },
   hud: { paddingHorizontal: spacing[4] },
   body: {
