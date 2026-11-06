@@ -11,7 +11,11 @@ export type TrainingPrefs = {
   supersetTransition: number; // rest between superset partners (0 = go straight to the next exercise)
   perExercise: Record<string, number>; // exercise slug → your own rest in seconds
   emomLevel: number; // L1 = 0, L2 = 1, L3 = 2: picked per session, remembered for the next one
+  bands: string[]; // your resistance bands for X3 sets, lightest first
+  lastBand: Record<string, string>; // exercise slug → the band used last time
 };
+
+export const DEFAULT_BANDS = ['White', 'Light gray', 'Dark gray', 'Black', 'Orange'];
 
 export const DEFAULT_PREFS: TrainingPrefs = {
   restEnabled: true,
@@ -19,6 +23,8 @@ export const DEFAULT_PREFS: TrainingPrefs = {
   supersetTransition: 0,
   perExercise: {},
   emomLevel: 0,
+  bands: DEFAULT_BANDS,
+  lastBand: {},
 };
 
 function load(): TrainingPrefs {
@@ -39,8 +45,11 @@ export const useTrainingPrefs = create<State>((set, get) => ({
   ...load(),
   set: (patch) => {
     set(patch);
-    const { restEnabled, restAdjust, supersetTransition, perExercise, emomLevel } = get();
-    kv.set(KEY, JSON.stringify({ restEnabled, restAdjust, supersetTransition, perExercise, emomLevel }));
+    const { restEnabled, restAdjust, supersetTransition, perExercise, emomLevel, bands, lastBand } = get();
+    kv.set(
+      KEY,
+      JSON.stringify({ restEnabled, restAdjust, supersetTransition, perExercise, emomLevel, bands, lastBand }),
+    );
   },
   setExerciseRest: (slug, seconds) => {
     const perExercise = { ...get().perExercise };

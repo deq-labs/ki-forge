@@ -43,6 +43,7 @@ class SyncSet(BaseModel):
     logged_at: AwareDatetime
     # The session row's `key` (from GET /v1/week) for a block round, where an exercise can be in two rows.
     slot: str | None = Field(default=None, max_length=16)
+    band: str | None = Field(default=None, max_length=32)  # X3 sets: the band used
 
 
 class SyncIn(BaseModel):

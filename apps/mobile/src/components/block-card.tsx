@@ -23,7 +23,13 @@ import { useTheme } from '@/theme/theme';
 import { radius, spacing } from '@/theme/tokens';
 
 /** One movement of a round as logged: the exercise done, the amount (reps, cal, steps or seconds) and load. */
-export type RoundEntry = { exercise: string; amount: number; weight_lb: number };
+export type RoundEntry = {
+  exercise: string;
+  amount: number;
+  unit: string; // reps | cal | steps | seconds
+  weight_lb: number;
+  split_seconds?: number | null; // for time: when this round was finished
+};
 
 type Props = {
   row: Row;
@@ -54,7 +60,7 @@ function mmss(s: number): string {
 function defaults(row: Row, level: number): RoundEntry[] {
   return row.block!.movements.map((m) => {
     const l = levelOf(m, level);
-    return { exercise: l.exercise, amount: l.amount ?? 0, weight_lb: l.weight_lb ?? 0 };
+    return { exercise: l.exercise, amount: l.amount ?? 0, unit: l.unit, weight_lb: l.weight_lb ?? 0 };
   });
 }
 
@@ -93,6 +99,9 @@ export function BlockCard({
   }
   const [editing, setEditing] = useState(false);
   const [formFor, setFormFor] = useState<string | null>(null);
+  const timer = useIntervalTimer();
+  const forTimeRunning = block.kind === 'for_time' && timer.key === timerKey && timer.startedAt != null;
+  const result = forTimeResult(row, sets);
   const missingLoad = block.movements.some((m) => {
     const l = levelOf(m, lvl);
     return l.percent != null && l.weight_lb == null;
@@ -272,11 +281,22 @@ export function BlockCard({
             </View>
           )}
 
+          {result ? (
+            <KText variant="bodyStrong" color="good">
+              {result}
+            </KText>
+          ) : null}
           {next !== null ? (
             <View style={styles.actions}>
               <Pressable
                 onPress={() => {
-                  onLogRound(next, entries);
+                  // For time: each round keeps the time it was finished at; the last one is your result.
+                  const split = forTimeRunning ? Math.round((Date.now() - timer.startedAt!) / 1000) : null;
+                  onLogRound(
+                    next,
+                    entries.map((e) => ({ ...e, split_seconds: split })),
+                  );
+                  if (forTimeRunning && next === block.rounds) timer.stop();
                   setEditing(false);
                 }}
                 accessibilityRole="button"
@@ -300,6 +320,21 @@ export function BlockCard({
       )}
     </View>
   );
+}
+
+/** "5 rounds in 12:34", or "3 rounds by 15:00 (capped)": the for-time result from the logged splits. */
+export function forTimeResult(row: Row, sets: LocalSet[]): string | null {
+  const block = row.block;
+  if (block?.kind !== 'for_time') return null;
+  const rounds = roundsLogged(row, sets);
+  const splits = sets.filter((s) => s.slot === row.key && s.seconds != null).map((s) => s.seconds!);
+  if (!rounds.length || !splits.length) return null;
+  const last = Math.max(...splits);
+  if (rounds.length >= block.rounds) return `${block.rounds} rounds in ${mmss(last)}`;
+  const cap = block.cap_seconds ?? 0;
+  return cap && last >= cap
+    ? `${rounds.length} rounds by ${mmss(cap)} (capped)`
+    : `${rounds.length} rounds at ${mmss(last)}`;
 }
 
 /** The interval timer: which minute and movement is up, time left, and the round; buzzes on each change. */

@@ -17,7 +17,7 @@ import { parseIsoDate, shortDate } from '@/lib/dates';
 import { useLifts, useMe, useProgram, useTrials } from '@/lib/queries';
 import { levelProgress } from '@/lib/xp';
 import { useSettings } from '@/state/settings';
-import { useTrainingPrefs } from '@/state/training-prefs';
+import { DEFAULT_BANDS, useTrainingPrefs } from '@/state/training-prefs';
 import { toast } from '@/state/toast';
 import { textStyle, useTheme } from '@/theme/theme';
 import { pathColors, radius, spacing, type PathSlug } from '@/theme/tokens';
@@ -426,7 +426,55 @@ function TrainingSettings() {
         value={customCount ? <KText color="volt">Reset</KText> : undefined}
         onPress={() => customCount && prefs.set({ perExercise: {} })}
       />
+      <BandsSetting />
     </Panel>
+  );
+}
+
+/** Your resistance bands for X3 sets (Iron Tempo), lightest first, comma-separated. */
+function BandsSetting() {
+  const { colors } = useTheme();
+  const prefs = useTrainingPrefs();
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(prefs.bands.join(', '));
+  if (!editing) {
+    return (
+      <SettingRow
+        label="X3 bands"
+        hint={prefs.bands.join(' · ')}
+        value={<KText color="volt">Edit</KText>}
+        onPress={() => {
+          setText(prefs.bands.join(', '));
+          setEditing(true);
+        }}
+      />
+    );
+  }
+  const save = () => {
+    const bands = text
+      .split(',')
+      .map((b) => b.trim().slice(0, 32))
+      .filter(Boolean);
+    prefs.set({ bands: bands.length ? bands : DEFAULT_BANDS });
+    setEditing(false);
+  };
+  return (
+    <View style={[styles.segWrap, { borderTopColor: colors.line }]}>
+      <KText>X3 bands, lightest first</KText>
+      <TextInput
+        value={text}
+        onChangeText={setText}
+        onSubmitEditing={save}
+        autoFocus
+        accessibilityLabel="X3 bands, separated by commas"
+        style={[
+          textStyle('body'),
+          styles.bandInput,
+          { color: colors.ink, borderColor: colors.line, backgroundColor: colors.night800 },
+        ]}
+      />
+      <GhostButton label="Save bands" onPress={save} />
+    </View>
   );
 }
 
@@ -600,6 +648,7 @@ function DevSection() {
 }
 
 const styles = StyleSheet.create({
+  bandInput: { minHeight: 44, borderWidth: 1, borderRadius: radius.md, paddingHorizontal: spacing[3] },
   safe: { flex: 1 },
   flex: { flex: 1 },
   center: { textAlign: 'center' },

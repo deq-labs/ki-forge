@@ -108,6 +108,7 @@ def restore_export(
                 rir=r.get("rir"),
                 is_swap=r.get("is_swap", False),
                 slot=r.get("slot"),
+                band=r.get("band"),
                 supersedes_client_id=new_id(client_of_row[r["supersedes_id"]])
                 if r.get("supersedes_id")
                 else None,
