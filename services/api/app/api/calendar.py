@@ -110,6 +110,12 @@ class SessionView(BaseModel):
     twin_warmup: str | None = None
     # False for a car-out-only day of a block program (Iron Tempo Saturday): hidden in garage mode.
     available_in_garage: bool = True
+    # Short day (#81): the roles it drops from this day (empty = the day has no short version), whether this
+    # week's attempt is short, and what it means. `sets_needed` and `cleared` follow the attempt's choice.
+    short_day_roles: list[str] = []
+    short_day: bool = False
+    short_day_note: str | None = None
+    ended: bool = False  # ended early (#81): finished without clearing; the week moves on to the next quest
 
 
 class WeekOut(BaseModel):
@@ -333,6 +339,8 @@ def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, 
             # A logged session keeps the path it was done on; an unstarted one uses the run's current path.
             sess_path = ids.path_slug(best[0].path_id) if best and best[0].path_id else path_slug
             built = built_for(base, sess_path, t.code, week, garage)
+            short = bool(best and best[0].short_day)
+            short_rule = base.for_path(sess_path).short_day
             # The per-row alternative; a day with a whole car-in twin has none.
             other = None if t.garage_template else built_for(base, sess_path, t.code, week, not garage)
             assert built is not None
@@ -367,6 +375,13 @@ def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, 
                 return rows
 
             twin = built_for(base, sess_path, t.code, week, not garage) if t.garage_template else None
+            day_roles = {i.role for i in built.items} | ({i.role for i in twin.items} if twin else set())
+            short_roles = [r for r in short_rule.skip_roles if r in day_roles] if short_rule else []
+            scored = (
+                built_for(base, sess_path, t.code, week, garage, short) if short and short_roles else built
+            )
+            assert scored is not None
+            cleared = bool(best and best[1].cleared)
             sessions.append(
                 SessionView(
                     code=t.code,
@@ -376,8 +391,8 @@ def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, 
                     kind=t.kind,
                     required_for_full_week=t.required_for_full_week,
                     garage_mode=garage,
-                    cleared=bool(best and best[1].cleared),
-                    sets_needed=built.sets_needed,
+                    cleared=cleared,
+                    sets_needed=scored.sets_needed,
                     sets_logged=best[1].sets_logged if best else 0,
                     warmup=built.warmup,
                     garage_twin=t.garage_template is not None,
@@ -385,6 +400,10 @@ def read_week(db: Db, user: CurrentUser, week: int | None = Query(default=None, 
                     twin_prescriptions=views(twin, [None] * len(twin.items), sess_path) if twin else None,
                     twin_warmup=twin.warmup if twin else None,
                     available_in_garage=not (program.repeats and t.garage_template is None),
+                    short_day_roles=short_roles,
+                    short_day=short and bool(short_roles),
+                    short_day_note=short_rule.note if short_rule and short_roles else None,
+                    ended=bool(best and best[0].completed_at is not None and not cleared),
                 )
             )
 

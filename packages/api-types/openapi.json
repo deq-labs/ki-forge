@@ -327,6 +327,16 @@
             "title": "Session Templates",
             "type": "array"
           },
+          "short_day": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ShortDayOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "slug": {
             "title": "Slug",
             "type": "string"
@@ -2538,6 +2548,11 @@
             "title": "Date",
             "type": "string"
           },
+          "ended": {
+            "default": false,
+            "title": "Ended",
+            "type": "boolean"
+          },
           "garage_mode": {
             "title": "Garage Mode",
             "type": "boolean"
@@ -2577,6 +2592,30 @@
           "short": {
             "title": "Short",
             "type": "string"
+          },
+          "short_day": {
+            "default": false,
+            "title": "Short Day",
+            "type": "boolean"
+          },
+          "short_day_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Short Day Note"
+          },
+          "short_day_roles": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Short Day Roles",
+            "type": "array"
           },
           "twin_prescriptions": {
             "anyOf": [
@@ -2663,6 +2702,33 @@
           "rep_max"
         ],
         "title": "SetSchemeOut",
+        "type": "object"
+      },
+      "ShortDayOut": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "skip_roles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Skip Roles",
+            "type": "array"
+          }
+        },
+        "required": [
+          "skip_roles"
+        ],
+        "title": "ShortDayOut",
         "type": "object"
       },
       "StatsOut": {
@@ -2853,6 +2919,17 @@
             "default": false,
             "title": "Garage Mode",
             "type": "boolean"
+          },
+          "short_day": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Short Day"
           },
           "started_at": {
             "format": "date-time",

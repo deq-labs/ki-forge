@@ -13,13 +13,22 @@ import { useQuestName } from '@/components/rewards';
 import { TrialWeek } from '@/components/trial-week';
 import { GhostButton, Panel, PrimaryButton } from '@/components/ui';
 import { getDb } from '@/db/db';
-import { completeSession, currentSets, ensureSession, findSession, logSet, type LocalSet } from '@/db/repo';
+import {
+  completeSession,
+  currentSets,
+  ensureSession,
+  findSession,
+  logSet,
+  setShortDay,
+  type LocalSet,
+} from '@/db/repo';
 import { dayName, parseIsoDate } from '@/lib/dates';
 import { haptic } from '@/lib/feedback';
 import { formatLoad } from '@/lib/lifts';
 import { useMe, useProgram, useWeek } from '@/lib/queries';
 import { requestSync, syncNow } from '@/lib/sync';
-import { afterSet, doneFor, nextOpenRow, progress, rowsFor, setsForRow, type Row } from '@/lib/train';
+import { afterSet, doneFor, nextOpenRow, progress, rowsFor, rowsForDay, setsForRow, type Row } from '@/lib/train';
+import { useIntervalTimer } from '@/state/interval';
 import { useRest } from '@/state/rest';
 import { useTrainingPrefs } from '@/state/training-prefs';
 import { useSettings } from '@/state/settings';
@@ -39,7 +48,8 @@ export default function TrainScreen() {
   const [garageOn] = useGarage();
   // Car-out-only days (Iron Tempo Saturday) are hidden while the car is in.
   const sessions = (week.data?.sessions ?? []).filter((s) => !garageOn || s.available_in_garage !== false);
-  const active = sessions.find((s) => s.code === code) ?? sessions.find((s) => !s.cleared) ?? sessions[0];
+  const active =
+    sessions.find((s) => s.code === code) ?? sessions.find((s) => !s.cleared && !s.ended) ?? sessions[0];
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.night900 }]} edges={['top']}>
@@ -79,7 +89,7 @@ export default function TrainScreen() {
                   onPress={() => setCode(s.code)}
                   accessibilityRole="tab"
                   accessibilityState={{ selected: on }}
-                  accessibilityLabel={`${s.short}${s.cleared ? ', cleared' : ''}`}
+                  accessibilityLabel={`${s.short}${s.cleared ? ', cleared' : s.ended ? ', ended early' : ''}`}
                   style={[
                     styles.tab,
                     { backgroundColor: on ? colors.ink : colors.panel, borderColor: on ? colors.ink : colors.line },
@@ -130,7 +140,7 @@ function SessionView({
   // A day with a whole twin (car-in calisthenics) switches to the twin's rows; others swap per row.
   const useTwin = !!session.garage_twin && garage !== session.garage_mode && !!session.twin_prescriptions;
   const warmup = useTwin ? session.twin_warmup : session.warmup;
-  const rows: Row[] = useMemo(
+  const dayRows: Row[] = useMemo(
     () =>
       useTwin
         ? rowsFor(session.twin_prescriptions!, garage, garage, (slug) => exercises.get(slug)?.name)
@@ -148,10 +158,19 @@ function SessionView({
     },
   });
   const sets = local.data?.sets ?? [];
+  // Full or Short day (#81): this device's choice, else the server's.
+  const shortRoles = useMemo(() => session.short_day_roles ?? [], [session.short_day_roles]);
+  const short = shortRoles.length > 0 && (local.data?.session?.short_day ?? session.short_day ?? false);
+  const rows = useMemo(() => rowsForDay(dayRows, shortRoles, short), [dayRows, shortRoles, short]);
   const prog = progress(rows, sets);
   const logged = Math.max(prog.done, session.sets_logged);
   const allDone = logged >= prog.needed && prog.needed > 0;
   const [open, setOpen] = useState<number | null>(null);
+  const [confirmEnd, setConfirmEnd] = useState(false);
+  const ended = !session.cleared && (session.ended || !!local.data?.session?.completed_at);
+  // Everything a short day needs is logged: ending now can count as a short day, which clears.
+  const shortProg = shortRoles.length && !short ? progress(rowsForDay(dayRows, shortRoles, true), sets) : null;
+  const shortReady = !!shortProg && shortProg.needed > 0 && shortProg.done >= shortProg.needed;
   const expanded = open ?? nextOpenRow(prog.rowsDone, -1);
 
   const pathName = program.data?.paths.find((p) => p.slug === me.data?.enrollment?.path_slug)?.name ?? '';
@@ -251,6 +270,31 @@ function SessionView({
     router.navigate('/');
   }
 
+  async function chooseShort(value: boolean) {
+    if (value === short) return;
+    const db = await getDb();
+    const s = await ensureSession(db, owner, { template_code: session.code, week: weekNo, garage_mode: garage });
+    await setShortDay(db, s.client_id, value);
+    await queryClient.invalidateQueries({ queryKey: localKey });
+    requestSync(queryClient);
+    setOpen(null);
+  }
+
+  /** End early (#81): logged sets keep their XP; as a short day it clears when the short rows are done. */
+  async function endEarly(asShort: boolean) {
+    const db = await getDb();
+    const s = await ensureSession(db, owner, { template_code: session.code, week: weekNo, garage_mode: garage });
+    if (asShort) await setShortDay(db, s.client_id, true);
+    await completeSession(db, s.client_id);
+    useIntervalTimer.getState().stop();
+    useRest.getState().skip();
+    if (asShort) haptic.cleared();
+    useQuestName.getState().set(session.name);
+    setConfirmEnd(false);
+    void syncNow(queryClient); // a short-day clear shows the server's rewards
+    router.navigate('/');
+  }
+
   function saveAndExit() {
     requestSync(queryClient, 0);
     router.navigate('/');
@@ -292,6 +336,45 @@ function SessionView({
             {session.garage_twin
               ? 'Car in: the calisthenics version of today.'
               : 'Garage mode on. Rack, rower and treadmill moves are swapped.'}
+          </KText>
+        </View>
+      )}
+      {shortRoles.length > 0 && !session.cleared && (
+        <View style={styles.dayLength}>
+          <View style={styles.seg} accessibilityRole="radiogroup" accessibilityLabel="Session length">
+            {[false, true].map((v) => {
+              const on = v === short;
+              return (
+                <Pressable
+                  key={String(v)}
+                  onPress={() => void chooseShort(v)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: on }}
+                  style={[
+                    styles.segBtn,
+                    {
+                      borderColor: on ? colors.ki : colors.line,
+                      backgroundColor: on ? colors.panelRaised : colors.night800,
+                    },
+                  ]}>
+                  <KText variant="bodyStrong" color={on ? 'kiHot' : 'inkMuted'}>
+                    {v ? 'Short day' : 'Full day'}
+                  </KText>
+                </Pressable>
+              );
+            })}
+          </View>
+          {short && session.short_day_note ? (
+            <KText variant="caption" color="inkMuted">
+              {session.short_day_note}
+            </KText>
+          ) : null}
+        </View>
+      )}
+      {ended && (
+        <View style={[styles.banner, { borderColor: colors.line }]}>
+          <KText variant="caption" color="inkMuted">
+            Ended early. Your logged sets kept their XP. Log the rest any time this week to clear it.
           </KText>
         </View>
       )}
@@ -353,6 +436,27 @@ function SessionView({
         ) : session.cleared ? null : (
           <PrimaryButton label={`Clear quest · ${prog.needed - logged} sets to go`} onPress={() => {}} disabled />
         )}
+        {!session.cleared && !allDone && !ended && logged > 0 ? (
+          confirmEnd ? (
+            <Panel style={styles.endPanel}>
+              <KText variant="bodyStrong">
+                End with {logged} of {prog.needed} sets?
+              </KText>
+              <KText variant="caption" color="inkMuted">
+                {shortReady
+                  ? 'Everything a short day needs is done, so it can count as a short day and clear.'
+                  : "Your logged sets keep their XP, but the day won't count as cleared."}
+              </KText>
+              {shortReady ? (
+                <PrimaryButton label="Count it as a short day" onPress={() => void endEarly(true)} />
+              ) : null}
+              <GhostButton label={shortReady ? 'End without clearing' : 'End session'} onPress={() => void endEarly(false)} />
+              <GhostButton label="Keep going" onPress={() => setConfirmEnd(false)} />
+            </Panel>
+          ) : (
+            <GhostButton label="End session early" onPress={() => setConfirmEnd(true)} />
+          )
+        ) : null}
         <GhostButton label="Save and exit" onPress={saveAndExit} />
       </View>
     </ScrollView>
@@ -381,4 +485,15 @@ const styles = StyleSheet.create({
   fill: { height: 8, borderRadius: 4 },
   banner: { borderWidth: 1, borderRadius: radius.md, padding: spacing[3] },
   actions: { gap: spacing[3], marginTop: spacing[2] },
+  dayLength: { gap: spacing[2] },
+  seg: { flexDirection: 'row', gap: spacing[2] },
+  segBtn: {
+    flex: 1,
+    minHeight: 44,
+    borderRadius: radius.md,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  endPanel: { gap: spacing[3] },
 });

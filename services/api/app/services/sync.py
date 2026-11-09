@@ -36,6 +36,7 @@ class SessionInput:
     garage_mode: bool
     started_at: dt.datetime
     completed_at: dt.datetime | None = None
+    short_day: bool | None = None  # None = leave as stored (older clients)
 
 
 @dataclass(frozen=True)
@@ -103,9 +104,17 @@ def _upsert_sessions(
                 garage_mode=s.garage_mode,
                 started_at=s.started_at,
                 completed_at=s.completed_at,
+                short_day=bool(s.short_day),
             )
             .on_conflict_do_nothing(index_elements=[WorkoutSession.client_id])
         )
+        if s.short_day is not None:
+            # Full / Short can be switched until the day is over; the latest sync wins.
+            db.execute(
+                WorkoutSession.__table__.update()
+                .where(WorkoutSession.client_id == s.client_id, WorkoutSession.user_id == user.id)
+                .values(short_day=s.short_day)
+            )
         if s.completed_at is not None:
             db.execute(
                 WorkoutSession.__table__.update()

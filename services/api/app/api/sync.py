@@ -27,6 +27,9 @@ class SyncSession(BaseModel):
     garage_mode: bool = False
     started_at: AwareDatetime
     completed_at: AwareDatetime | None = None
+    # Done as the program's short day (#81); omitted = unchanged. A session with `completed_at` that is not
+    # cleared was ended early.
+    short_day: bool | None = None
 
 
 class SyncSet(BaseModel):

@@ -158,6 +158,14 @@ class DeloadRule:
 
 
 @dataclass(frozen=True, slots=True)
+class ShortDay:
+    """A program's short version of a day (#81): the same session without these roles; it still clears."""
+
+    skip_roles: tuple[str, ...]
+    note: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
 class PhaseModifiers:
     main_lift_scheme: SetScheme | None = None
     main_lift_rir: tuple[int, ...] | None = None
@@ -282,6 +290,7 @@ class Program:
     programs: Mapping[str, Program] = field(default_factory=lambda: _frozen_map(None))
     repeats: bool = False  # the cycle starts over after `cycle_weeks` (block programs)
     one_rm_lifts: tuple[str, ...] = ()  # lifts whose 1RM the user enters (for % targets)
+    short_day: ShortDay | None = None  # offered on every day of this program when set
 
     def for_path(self, path_slug: str) -> Program:
         """The program a path runs: its own block program, or this one."""
@@ -635,6 +644,7 @@ def parse_program(data: Mapping[str, Any]) -> Program:
                 cycle_weeks=b["cycle_weeks"],
                 repeats=b.get("repeats", False),
                 one_rm_lifts=tuple(b.get("one_rm_lifts", [])),
+                short_day=_short_day(b.get("short_day")),
                 **schedule(b),
                 **shared,
             )
@@ -654,6 +664,15 @@ def parse_program(data: Mapping[str, Any]) -> Program:
     )
     _validate(program)
     return program
+
+
+def _short_day(d: Mapping[str, Any] | None) -> ShortDay | None:
+    if d is None:
+        return None
+    roles = tuple(d["skip_roles"])
+    if not roles:
+        raise ProgramError("short_day.skip_roles is empty")
+    return ShortDay(skip_roles=roles, note=d.get("note"))
 
 
 def load_program(path: Path | str) -> Program:

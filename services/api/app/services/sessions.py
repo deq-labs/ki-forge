@@ -32,14 +32,24 @@ def current_week(enrollment: Enrollment, user: User) -> int:
 
 
 def built_for(
-    program: Program, enrollment_path: str, code: str, week: int, garage_mode: bool
+    program: Program,
+    enrollment_path: str,
+    code: str,
+    week: int,
+    garage_mode: bool,
+    short_day: bool = False,
 ) -> BuiltSession | None:
     program = program.for_path(enrollment_path)  # a path may run its own block program
     phase = phase_for(week, program)
     if phase is None:
         return None
     return build_session(
-        program, program.template(code), phase, program.path(enrollment_path), garage_mode=garage_mode
+        program,
+        program.template(code),
+        phase,
+        program.path(enrollment_path),
+        garage_mode=garage_mode,
+        short_day=short_day,
     )
 
 
@@ -87,7 +97,9 @@ def score_stored(
     out = {}
     for ws in sessions:
         slug = ids.path_slug(ws.path_id) if ws.path_id else path_slug
-        built = built_for(program, slug, ids.template_code(ws.session_template_id), ws.week, ws.garage_mode)
+        built = built_for(
+            program, slug, ids.template_code(ws.session_template_id), ws.week, ws.garage_mode, ws.short_day
+        )
         if built is not None:
             out[ws.id] = (built, score_session(built, sets[ws.id]))
     return out

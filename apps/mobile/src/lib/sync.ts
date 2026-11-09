@@ -84,6 +84,7 @@ async function run(queryClient: QueryClient): Promise<SyncResponse | null> {
           garage_mode: s.garage_mode,
           started_at: s.started_at,
           completed_at: s.completed_at,
+          short_day: s.short_day ?? undefined,
         })),
         sets: batch.sets.map((s) => ({
           client_id: s.client_id,

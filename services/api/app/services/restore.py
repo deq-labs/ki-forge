@@ -92,6 +92,7 @@ def restore_export(
                 garage_mode=s["garage_mode"],
                 started_at=_ts(s["started_at"]),
                 completed_at=_ts(s.get("completed_at")),
+                short_day=bool(s.get("short_day", False)),
             )
             for s in sessions
         ]

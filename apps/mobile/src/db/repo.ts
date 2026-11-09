@@ -10,6 +10,8 @@ export type LocalSession = {
   garage_mode: boolean;
   started_at: string;
   completed_at: string | null;
+  /** Done as the program's short day (#81); null = not chosen on this device. */
+  short_day: boolean | null;
   synced: boolean;
 };
 
@@ -34,10 +36,19 @@ export type LocalSet = {
   band: string | null;
 };
 
-type SessionRow = Omit<LocalSession, 'garage_mode' | 'synced'> & { garage_mode: number; synced: number };
+type SessionRow = Omit<LocalSession, 'garage_mode' | 'short_day' | 'synced'> & {
+  garage_mode: number;
+  short_day: number | null;
+  synced: number;
+};
 type SetRow = Omit<LocalSet, 'is_swap' | 'synced'> & { is_swap: number; synced: number };
 
-const toSession = (r: SessionRow): LocalSession => ({ ...r, garage_mode: !!r.garage_mode, synced: !!r.synced });
+const toSession = (r: SessionRow): LocalSession => ({
+  ...r,
+  garage_mode: !!r.garage_mode,
+  short_day: r.short_day == null ? null : !!r.short_day,
+  synced: !!r.synced,
+});
 const toSet = (r: SetRow): LocalSet => ({ ...r, is_swap: !!r.is_swap, synced: !!r.synced });
 const now = () => new Date().toISOString();
 
@@ -74,7 +85,14 @@ export async function ensureSession(
     }
     return existing;
   }
-  const session: LocalSession = { client_id: uuid4(), ...s, started_at: now(), completed_at: null, synced: false };
+  const session: LocalSession = {
+    client_id: uuid4(),
+    ...s,
+    started_at: now(),
+    completed_at: null,
+    short_day: null,
+    synced: false,
+  };
   await db.runAsync(
     'INSERT INTO sessions (client_id, owner, template_code, week, garage_mode, started_at) VALUES (?, ?, ?, ?, ?, ?)',
     session.client_id,
@@ -94,6 +112,11 @@ export async function completeSession(db: SQLiteDatabase, clientId: string): Pro
     now(),
     clientId,
   );
+}
+
+/** Full or Short day (#81); marked unsynced so the choice reaches the server. */
+export async function setShortDay(db: SQLiteDatabase, clientId: string, short: boolean): Promise<void> {
+  await db.runAsync('UPDATE sessions SET short_day = ?, synced = 0 WHERE client_id = ?', short ? 1 : 0, clientId);
 }
 
 export type NewSet = Pick<LocalSet, 'exercise_slug' | 'set_no' | 'weight_lb' | 'reps' | 'rir' | 'is_swap'> & {

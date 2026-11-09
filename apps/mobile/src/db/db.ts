@@ -49,6 +49,8 @@ const MIGRATIONS: string[] = [
   `ALTER TABLE sets ADD COLUMN slot TEXT;`,
   // 3: seconds (holds, for-time splits) and the band of an X3 set
   `ALTER TABLE sets ADD COLUMN seconds INTEGER; ALTER TABLE sets ADD COLUMN band TEXT;`,
+  // 4: Full / Short day (#81); null = never switched, the server's value stands
+  `ALTER TABLE sessions ADD COLUMN short_day INTEGER;`,
 ];
 
 export async function migrate(db: SQLite.SQLiteDatabase): Promise<void> {

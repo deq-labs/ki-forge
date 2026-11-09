@@ -11,6 +11,7 @@ import {
   prescriptionLine,
   progress,
   roundSets,
+  rowsForDay,
   roundsFinished,
   roundsLogged,
   setsForRow,
@@ -254,5 +255,30 @@ describe('timer cues and auto-logged rounds', () => {
       roundSets(row(), sets, 2).map((x) => x?.exercise_slug),
       ['conventional-deadlift', undefined, undefined],
     );
+  });
+});
+
+describe('short day (#81)', () => {
+  const day = [
+    row({ key: 'p0', role: 'main' }),
+    row({ key: 'p1', role: 'finisher', index: 1 }),
+    row({ key: 'p2', role: 'accessory', block: null, exercise: 'one-arm-dumbbell-row', sets: 4, index: 2 }),
+    row({ key: 'p3', role: null, block: null, exercise: 'chin-up', sets: 3, index: 3 }),
+    row({ key: 'p4', role: 'x3', block: null, exercise: 'x3-bar-curl', sets: 1, index: 4 }),
+  ];
+  it('drops the skipped roles and re-indexes', () => {
+    const short = rowsForDay(day, ['finisher', 'core', 'x3'], true);
+    assert.deepEqual(
+      short.map((r) => [r.key, r.index]),
+      [
+        ['p0', 0],
+        ['p2', 1],
+        ['p3', 2],
+      ],
+    );
+  });
+  it('is the full day when not short or not offered', () => {
+    assert.equal(rowsForDay(day, ['finisher'], false), day);
+    assert.equal(rowsForDay(day, [], true), day);
   });
 });

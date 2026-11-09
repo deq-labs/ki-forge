@@ -481,6 +481,7 @@ export interface components {
             repeats: boolean;
             /** Session Templates */
             session_templates: components["schemas"]["SessionTemplateOut"][];
+            short_day?: components["schemas"]["ShortDayOut"] | null;
             /** Slug */
             slug: string;
             /** Version */
@@ -1188,6 +1189,11 @@ export interface components {
              * Format: date
              */
             date: string;
+            /**
+             * Ended
+             * @default false
+             */
+            ended: boolean;
             /** Garage Mode */
             garage_mode: boolean;
             /**
@@ -1209,6 +1215,18 @@ export interface components {
             sets_needed: number;
             /** Short */
             short: string;
+            /**
+             * Short Day
+             * @default false
+             */
+            short_day: boolean;
+            /** Short Day Note */
+            short_day_note?: string | null;
+            /**
+             * Short Day Roles
+             * @default []
+             */
+            short_day_roles: string[];
             /** Twin Prescriptions */
             twin_prescriptions?: components["schemas"]["PrescriptionView"][] | null;
             /** Twin Warmup */
@@ -1226,6 +1244,13 @@ export interface components {
             rest_seconds?: number | null;
             /** Sets */
             sets: number;
+        };
+        /** ShortDayOut */
+        ShortDayOut: {
+            /** Note */
+            note?: string | null;
+            /** Skip Roles */
+            skip_roles: string[];
         };
         /** StatsOut */
         StatsOut: {
@@ -1288,6 +1313,8 @@ export interface components {
              * @default false
              */
             garage_mode: boolean;
+            /** Short Day */
+            short_day?: boolean | null;
             /**
              * Started At
              * Format: date-time
