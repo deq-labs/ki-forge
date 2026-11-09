@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -104,6 +104,8 @@ export default function TrainScreen() {
   );
 }
 
+type LogRoundOpts = { auto?: boolean; replaces?: (LocalSet | undefined)[] };
+
 type WeekSession = NonNullable<ReturnType<typeof useWeek>['data']>['sessions'][number];
 
 function SessionView({
@@ -186,28 +188,47 @@ function SessionView({
     }
   }
 
+  // Round writes run one at a time: the timer can log several finished rounds at once (#80), and two
+  // concurrent first writes would each create a session.
+  const roundQueue = useRef<Promise<void>>(Promise.resolve());
+  function onLogRound(row: Row, round: number, entries: RoundEntry[], opts: LogRoundOpts = {}) {
+    roundQueue.current = roundQueue.current
+      .then(() => logRound(row, round, entries, opts))
+      .catch(() => {});
+  }
+
   /** A block round: one set per movement, all with the round number and the row's key as their slot. */
-  async function onLogRound(row: Row, round: number, entries: RoundEntry[]) {
+  async function logRound(row: Row, round: number, entries: RoundEntry[], { auto, replaces }: LogRoundOpts) {
     const db = await getDb();
     const s = await ensureSession(db, owner, { template_code: session.code, week: weekNo, garage_mode: garage });
-    for (const e of entries) {
-      await logSet(db, owner, s.client_id, {
-        exercise_slug: e.exercise,
-        set_no: round,
-        weight_lb: e.weight_lb,
-        // Held seconds go in `seconds`; reps, calories and steps in `reps`.
-        reps: e.unit === 'seconds' ? null : e.amount,
-        seconds: e.unit === 'seconds' ? e.amount : (e.split_seconds ?? null),
-        rir: null,
-        is_swap: false,
-        slot: row.key ?? null,
-      });
+    for (const [i, e] of entries.entries()) {
+      await logSet(
+        db,
+        owner,
+        s.client_id,
+        {
+          exercise_slug: e.exercise,
+          set_no: round,
+          weight_lb: e.weight_lb,
+          // Held seconds go in `seconds`; reps, calories and steps in `reps`.
+          reps: e.unit === 'seconds' ? null : e.amount,
+          seconds: e.unit === 'seconds' ? e.amount : (e.split_seconds ?? null),
+          rir: null,
+          is_swap: false,
+          slot: row.key ?? null,
+        },
+        replaces?.[i]?.client_id ?? null,
+      );
     }
-    haptic.set();
+    if (!auto) haptic.set(); // the timer's own cue already marks an auto-logged round
     useQuestName.getState().set(session.name);
     await queryClient.invalidateQueries({ queryKey: localKey });
     requestSync(queryClient);
-    const setsDone = rows.map((r) => doneFor(r, sets) + (r.index === row.index ? 1 : 0));
+    if (replaces) return; // a correction: stay put
+    const fresh = await currentSets(db, s.client_id);
+    const setsDone = rows.map((r) => doneFor(r, fresh));
+    // Mid-timer rounds keep the card open and start no rest; the last one moves on as usual.
+    if (auto && setsDone[row.index] < row.sets) return;
     const next = afterSet(rows, row.index, setsDone, useTrainingPrefs.getState());
     if (next.rest) startRest(next.rest);
     setOpen(next.open ?? -1);
@@ -308,7 +329,7 @@ function SessionView({
             incrementOf={(slug) => exercises.get(slug)?.increment_lb ?? 5}
             formOf={formOf}
             onToggle={() => setOpen(expanded === i ? -1 : i)}
-            onLogRound={(round, entries) => void onLogRound(row, round, entries)}
+            onLogRound={(round, entries, opts) => onLogRound(row, round, entries, opts)}
           />
         ) : (
           <ExerciseCard
