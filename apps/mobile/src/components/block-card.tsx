@@ -1,18 +1,20 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { FormCues, Stepper, type FormInfo } from '@/components/exercise-card';
 import { KText } from '@/components/k-text';
 import type { LocalSet } from '@/db/repo';
-import { haptic } from '@/lib/feedback';
 import {
   blockSeconds,
   intervalState,
   levelOf,
   nextRound,
   prescriptionLine,
+  roundSets,
+  roundsFinished,
   roundsLogged,
   targetLine,
+  upNext,
   type Level,
   type Row,
 } from '@/lib/train';
@@ -42,7 +44,11 @@ type Props = {
   incrementOf: (slug: string) => number;
   formOf?: (slug: string) => FormInfo | undefined;
   onToggle: () => void;
-  onLogRound: (round: number, entries: RoundEntry[]) => void;
+  /**
+   * Log a round. `auto`: the timer logged it at its targets (no rest, the card stays open until the last
+   * one). `replaces`: the round's existing sets, one per movement, when changing a logged round.
+   */
+  onLogRound: (round: number, entries: RoundEntry[], opts?: { auto?: boolean; replaces?: (LocalSet | undefined)[] }) => void;
 };
 
 const KIND_LABEL: Record<string, string> = {
@@ -61,6 +67,22 @@ function defaults(row: Row, level: number): RoundEntry[] {
   return row.block!.movements.map((m) => {
     const l = levelOf(m, level);
     return { exercise: l.exercise, amount: l.amount ?? 0, unit: l.unit, weight_lb: l.weight_lb ?? 0 };
+  });
+}
+
+/** A logged round as editable entries (movements missing from it get the targets). */
+function fromLogged(row: Row, level: number, logged: (LocalSet | undefined)[]): RoundEntry[] {
+  return defaults(row, level).map((d, i) => {
+    const s = logged[i];
+    if (!s) return d;
+    const held = d.unit === 'seconds';
+    return {
+      exercise: s.exercise_slug,
+      amount: (held ? s.seconds : s.reps) ?? d.amount,
+      unit: d.unit,
+      weight_lb: s.weight_lb,
+      split_seconds: held ? null : (s.seconds ?? null),
+    };
   });
 }
 
@@ -98,9 +120,38 @@ export function BlockCard({
     setEntries(defaults(row, lvl));
   }
   const [editing, setEditing] = useState(false);
+  // Changing a round that is already logged (e.g. one the timer logged at its targets).
+  const [fix, setFix] = useState<{ round: number; entries: RoundEntry[] } | null>(null);
   const [formFor, setFormFor] = useState<string | null>(null);
   const timer = useIntervalTimer();
-  const forTimeRunning = block.kind === 'for_time' && timer.key === timerKey && timer.startedAt != null;
+  const running = timer.key === timerKey && timer.startedAt != null;
+  const forTimeRunning = block.kind === 'for_time' && running;
+
+  // Auto-log (#80): each EMOM / "every N:NN" round is logged at its targets when its last interval ends,
+  // also after coming back to the app. Rounds you logged yourself are left alone.
+  const autoLogged = useRef(new Set<number>());
+  const logFinished = () => {
+    const { startedAt } = useIntervalTimer.getState();
+    if (!running || startedAt == null) return;
+    const elapsed = (Date.now() - startedAt) / 1000;
+    const finished = roundsFinished(block, elapsed);
+    for (let n = 1; n <= finished; n++) {
+      if (done.includes(n) || autoLogged.current.has(n)) continue;
+      autoLogged.current.add(n);
+      onLogRound(n, n === next ? entries : defaults(row, lvl), { auto: true });
+    }
+    // Close the timer a moment after the end, once the "done" cue has played.
+    const total = blockSeconds(block);
+    if (block.kind !== 'for_time' && total && elapsed >= total + 2) timer.stop();
+  };
+  const onTick = useEffectEvent(logFinished);
+  useEffect(() => {
+    if (!running) return;
+    autoLogged.current.clear();
+    onTick();
+    const id = setInterval(() => onTick(), 1000);
+    return () => clearInterval(id);
+  }, [running, timer.startedAt]);
   const result = forTimeResult(row, sets);
   const missingLoad = block.movements.some((m) => {
     const l = levelOf(m, lvl);
@@ -183,7 +234,15 @@ export function BlockCard({
             </View>
           )}
 
-          <Timer row={row} timerKey={timerKey} level={lvl} />
+          <Timer
+            row={row}
+            timerKey={timerKey}
+            level={lvl}
+            onStop={() => {
+              logFinished(); // rounds whose time is up count, even if Stop beats the next check
+              timer.stop();
+            }}
+          />
 
           <View style={styles.moves}>
             {block.movements.map((m, i) => {
@@ -226,59 +285,72 @@ export function BlockCard({
           <View style={styles.rounds} accessibilityLabel={`${done.length} of ${row.sets} rounds logged`}>
             {Array.from({ length: block.rounds }, (_, i) => i + 1).map((n) => {
               const on = done.includes(n);
+              const fixing = fix?.round === n;
               return (
-                <View
+                <Pressable
                   key={n}
+                  disabled={!on}
+                  onPress={() =>
+                    setFix(fixing ? null : { round: n, entries: fromLogged(row, lvl, roundSets(row, sets, n)) })
+                  }
+                  accessibilityRole={on ? 'button' : undefined}
+                  accessibilityLabel={on ? `Round ${n} logged. Change it` : `Round ${n}`}
+                  accessibilityState={on ? { expanded: fixing } : undefined}
                   style={[
                     styles.round,
                     {
-                      borderColor: on ? colors.good : n === next ? colors.ki : colors.line,
+                      borderColor: fixing ? colors.volt : on ? colors.good : n === next ? colors.ki : colors.line,
                       backgroundColor: on ? colors.good : 'transparent',
                     },
                   ]}>
                   <KText variant="dataSm" color={on ? 'night900' : n === next ? 'kiHot' : 'inkMuted'}>
                     {on ? '✓' : n}
                   </KText>
-                </View>
+                </Pressable>
               );
             })}
           </View>
+          {done.length > 0 && !fix && (
+            <KText variant="caption" color="inkMuted">
+              {running && block.kind !== 'for_time'
+                ? 'Rounds log themselves at the targets when their time is up. Tap a ✓ to change one.'
+                : 'Tap a ✓ to change that round.'}
+            </KText>
+          )}
+
+          {fix && (
+            <View style={[styles.fix, { borderColor: colors.volt }]}>
+              <KText variant="bodyStrong">Change round {fix.round}</KText>
+              <RoundEditor
+                row={row}
+                level={lvl}
+                entries={fix.entries}
+                incrementOf={incrementOf}
+                onChange={(entries) => setFix({ ...fix, entries })}
+              />
+              <View style={styles.fixActions}>
+                <Pressable
+                  onPress={() => {
+                    onLogRound(fix.round, fix.entries, { replaces: roundSets(row, sets, fix.round) });
+                    setFix(null);
+                  }}
+                  accessibilityRole="button"
+                  style={({ pressed }) => [styles.log, styles.flex, { backgroundColor: colors.ink, opacity: pressed ? 0.85 : 1 }]}>
+                  <KText variant="cardTitle" color="night900">
+                    Save round {fix.round}
+                  </KText>
+                </Pressable>
+                <Pressable onPress={() => setFix(null)} accessibilityRole="button" style={styles.editBtn}>
+                  <KText variant="caption" color="volt">
+                    Cancel
+                  </KText>
+                </Pressable>
+              </View>
+            </View>
+          )}
 
           {next !== null && editing && (
-            <View style={styles.edit}>
-              {entries.map((e, i) => {
-                const l = levelOf(block.movements[i], lvl);
-                const unit =
-                  l.unit === 'cal' ? 'cal' : l.unit === 'steps' ? 'steps' : l.unit === 'seconds' ? 's' : 'reps';
-                return (
-                  <View key={i} style={styles.editRow}>
-                    <KText variant="caption" color="inkMuted">
-                      {l.name}
-                    </KText>
-                    <View style={styles.steppers}>
-                      <Stepper
-                        value={e.amount}
-                        unit={unit}
-                        step={l.unit === 'seconds' ? 5 : 1}
-                        min={0}
-                        label={unit}
-                        onChange={(v) => setEntries((xs) => xs.map((x, j) => (j === i ? { ...x, amount: v } : x)))}
-                      />
-                      {(l.weight_lb != null || l.percent != null) && (
-                        <Stepper
-                          value={e.weight_lb}
-                          unit="lb"
-                          step={incrementOf(l.exercise) || 5}
-                          min={0}
-                          label="Weight"
-                          onChange={(v) => setEntries((xs) => xs.map((x, j) => (j === i ? { ...x, weight_lb: v } : x)))}
-                        />
-                      )}
-                    </View>
-                  </View>
-                );
-              })}
-            </View>
+            <RoundEditor row={row} level={lvl} entries={entries} incrementOf={incrementOf} onChange={setEntries} />
           )}
 
           {result ? (
@@ -322,6 +394,58 @@ export function BlockCard({
   );
 }
 
+/** Reps (cal, steps, seconds) and load per movement for one round. */
+function RoundEditor({
+  row,
+  level,
+  entries,
+  incrementOf,
+  onChange,
+}: {
+  row: Row;
+  level: number;
+  entries: RoundEntry[];
+  incrementOf: (slug: string) => number;
+  onChange: (entries: RoundEntry[]) => void;
+}) {
+  const set = (i: number, patch: Partial<RoundEntry>) => onChange(entries.map((x, j) => (j === i ? { ...x, ...patch } : x)));
+  return (
+    <View style={styles.edit}>
+      {entries.map((e, i) => {
+        const l = levelOf(row.block!.movements[i], level);
+        const unit = l.unit === 'cal' ? 'cal' : l.unit === 'steps' ? 'steps' : l.unit === 'seconds' ? 's' : 'reps';
+        return (
+          <View key={i} style={styles.editRow}>
+            <KText variant="caption" color="inkMuted">
+              {l.name}
+            </KText>
+            <View style={styles.steppers}>
+              <Stepper
+                value={e.amount}
+                unit={unit}
+                step={l.unit === 'seconds' ? 5 : 1}
+                min={0}
+                label={unit}
+                onChange={(v) => set(i, { amount: v })}
+              />
+              {(l.weight_lb != null || l.percent != null) && (
+                <Stepper
+                  value={e.weight_lb}
+                  unit="lb"
+                  step={incrementOf(l.exercise) || 5}
+                  min={0}
+                  label="Weight"
+                  onChange={(v) => set(i, { weight_lb: v })}
+                />
+              )}
+            </View>
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
 /** "5 rounds in 12:34", or "3 rounds by 15:00 (capped)": the for-time result from the logged splits. */
 export function forTimeResult(row: Row, sets: LocalSet[]): string | null {
   const block = row.block;
@@ -337,37 +461,28 @@ export function forTimeResult(row: Row, sets: LocalSet[]): string | null {
     : `${rounds.length} rounds at ${mmss(last)}`;
 }
 
-/** The interval timer: which minute and movement is up, time left, and the round; buzzes on each change. */
-function Timer({ row, timerKey, level }: { row: Row; timerKey: string; level: number }) {
+/**
+ * The interval timer: a 5 s "get ready", then which minute and movement is up and the time left. The last
+ * 10 s preview what's next and the last 3 count down big (with beeps from `TimerCues`).
+ */
+function Timer({ row, timerKey, level, onStop }: { row: Row; timerKey: string; level: number; onStop: () => void }) {
   const { colors } = useTheme();
   const block = row.block!;
-  const { key, startedAt, start, stop } = useIntervalTimer();
+  const { key, startedAt, start } = useIntervalTimer();
   const running = key === timerKey && startedAt != null;
   const [now, setNow] = useState(() => Date.now());
-  const lastSlot = useRef<string | null>(null);
 
   useEffect(() => {
     if (!running) return;
-    const t = setInterval(() => setNow(Date.now()), 250);
+    const t = setInterval(() => setNow(Date.now()), 200);
     return () => clearInterval(t);
   }, [running]);
-
-  const state = running ? intervalState(block, Math.max(0, (now - startedAt!) / 1000)) : null;
-  const slotId = state ? `${state.round}:${state.movement}:${state.finished}` : null;
-  useEffect(() => {
-    if (!slotId) {
-      lastSlot.current = null;
-      return;
-    }
-    if (lastSlot.current && lastSlot.current !== slotId) haptic.restDone();
-    lastSlot.current = slotId;
-  }, [slotId]);
 
   if (block.kind === 'circuit') return null; // at your own pace; rest between rounds uses the rest timer
   const total = blockSeconds(block);
   const labels = block.movements.map((m) => levelOf(m, level).name);
 
-  if (!running || !state) {
+  if (!running) {
     return (
       <Pressable
         onPress={() => start(timerKey, block, labels)}
@@ -380,23 +495,45 @@ function Timer({ row, timerKey, level }: { row: Row; timerKey: string; level: nu
     );
   }
 
+  const raw = (now - startedAt!) / 1000;
+  const leadIn = raw < 0 ? Math.ceil(-raw) : 0;
+  const state = intervalState(block, Math.max(0, raw));
   const up =
     state.movement != null
       ? labels[state.movement]
       : block.kind === 'for_time'
         ? 'All rounds, as fast as you can'
         : 'Every movement this interval';
+  const following = upNext(block, raw, labels);
+  // Seconds to the next change: the interval's end, or the cap for time.
+  const toChange = leadIn || state.secondsLeft;
+  const countdown = !state.finished && toChange > 0 && toChange <= 3 ? toChange : null;
+
   return (
     <View
-      style={[styles.timer, { borderColor: colors.volt, backgroundColor: colors.night800 }]}
+      style={[styles.timer, { borderColor: countdown ? colors.kiHot : colors.volt, backgroundColor: colors.night800 }]}
       accessibilityRole="timer"
       accessibilityLiveRegion="polite"
       accessibilityLabel={
-        state.finished ? 'Time' : `${up}. ${mmss(state.secondsLeft)} left. Round ${state.round} of ${block.rounds}`
+        leadIn
+          ? `Get ready. ${labels[0]} in ${leadIn}`
+          : state.finished
+            ? 'Time'
+            : `${up}. ${mmss(state.secondsLeft)} left. Round ${state.round} of ${block.rounds}`
       }>
-      {state.finished ? (
+      {leadIn ? (
+        <>
+          <KText variant="label" color="inkMuted">
+            Get ready
+          </KText>
+          <KText variant="burst" color="kiHot">
+            {leadIn}
+          </KText>
+          <KText variant="bodyStrong">First: {block.kind === 'emom' ? labels[0] : up}</KText>
+        </>
+      ) : state.finished ? (
         <KText variant="cardTitle" color="good">
-          {block.kind === 'for_time' ? 'Time cap. Log your rounds.' : 'Done. Log your rounds.'}
+          {block.kind === 'for_time' ? 'Time cap. Log your rounds.' : 'Done. Every round is logged.'}
         </KText>
       ) : (
         <>
@@ -407,17 +544,22 @@ function Timer({ row, timerKey, level }: { row: Row; timerKey: string; level: nu
                 ? `${mmss(state.elapsed)} elapsed`
                 : `Round ${state.round}/${block.rounds}`}
           </KText>
-          <KText variant="burst" color="volt">
-            {block.kind === 'for_time' ? mmss(state.elapsed) : mmss(state.secondsLeft)}
+          <KText variant="burst" color={countdown ? 'kiHot' : 'volt'}>
+            {countdown ?? (block.kind === 'for_time' ? mmss(state.elapsed) : mmss(state.secondsLeft))}
           </KText>
           <KText variant="bodyStrong">{up}</KText>
+          {following && state.secondsLeft <= 10 ? (
+            <KText variant="caption" color="volt">
+              Next: {following}
+            </KText>
+          ) : null}
         </>
       )}
       <Pressable
-        onPress={stop}
+        onPress={onStop}
         accessibilityRole="button"
         style={[styles.stop, { backgroundColor: colors.panelRaised }]}>
-        <KText variant="bodyStrong">{state.finished ? 'Close timer' : 'Stop'}</KText>
+        <KText variant="bodyStrong">{state.finished && !leadIn ? 'Close timer' : 'Stop'}</KText>
       </Pressable>
     </View>
   );
@@ -456,6 +598,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   edit: { gap: spacing[3] },
+  fix: { borderWidth: 1.5, borderRadius: radius.md, padding: spacing[3], gap: spacing[3] },
+  fixActions: { flexDirection: 'row', alignItems: 'center', gap: spacing[2] },
   editRow: { gap: spacing[1] },
   steppers: { flexDirection: 'row', gap: spacing[3] },
   actions: { gap: spacing[2] },

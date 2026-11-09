@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArcIcon, BarbellIcon, PersonIcon, ScanIcon, StarIcon } from '@/components/icons';
 import { KText } from '@/components/k-text';
 import { RestTimer, Toasts } from '@/components/rest-timer';
+import { TimerCues } from '@/components/timer-cues';
 import { textStyle, useTheme } from '@/theme/theme';
 import { radius, spacing } from '@/theme/tokens';
 
@@ -62,6 +63,7 @@ export default function TabLayout() {
         <Toasts />
         <RestTimer />
       </View>
+      <TimerCues />
     </View>
   );
 }

@@ -4,14 +4,18 @@ import { describe, it } from 'node:test';
 import {
   afterSet,
   blockSeconds,
+  cueAt,
   intervalState,
   levelOf,
   nextRound,
   prescriptionLine,
   progress,
+  roundSets,
+  roundsFinished,
   roundsLogged,
   setsForRow,
   targetLine,
+  upNext,
   type BlockInfo,
   type Level,
   type Row,
@@ -196,5 +200,59 @@ describe('interval timer', () => {
       finished: false,
     });
     assert.equal(intervalState(ft, 900).finished, true);
+  });
+});
+
+describe('timer cues and auto-logged rounds', () => {
+  const every = { ...emom, kind: 'interval', rounds: 6, interval_seconds: 150 };
+  const ft = { ...emom, kind: 'for_time', rounds: 5, interval_seconds: null, cap_seconds: 900 };
+
+  it('finishes an EMOM round when its last minute ends', () => {
+    assert.equal(roundsFinished(emom, -3), 0);
+    assert.equal(roundsFinished(emom, 179), 0); // minute 3 still running
+    assert.equal(roundsFinished(emom, 180), 1);
+    assert.equal(roundsFinished(emom, 1259), 6);
+    assert.equal(roundsFinished(emom, 5000), 7); // capped
+  });
+  it('finishes each "every N:NN" interval; never for time', () => {
+    assert.equal(roundsFinished(every, 300), 2);
+    assert.equal(roundsFinished(ft, 800), 0);
+    assert.equal(roundsFinished({ ...emom, kind: 'circuit', interval_seconds: null }, 800), 0);
+  });
+  it('ticks 3-2-1 before each minute, then go, then done', () => {
+    const cues = Array.from({ length: 8 }, (_, i) => cueAt(emom, i - 5));
+    assert.deepEqual(cues, [null, null, 'tick', 'tick', 'tick', 'go', null, null]); // lead-in
+    assert.deepEqual(
+      [56, 57, 58, 59, 60, 61].map((t) => cueAt(emom, t)),
+      [null, 'tick', 'tick', 'tick', 'go', null],
+    );
+    assert.equal(cueAt(emom, 1257), 'tick');
+    assert.equal(cueAt(emom, 1260), 'done');
+    assert.equal(cueAt(emom, 1261), null);
+  });
+  it('counts down to the cap for time', () => {
+    assert.equal(cueAt(ft, 300), null);
+    assert.equal(cueAt(ft, 897), 'tick');
+    assert.equal(cueAt(ft, 900), 'done');
+  });
+  it('previews the next movement', () => {
+    const labels = ['Deadlift', 'C2B', 'Row'];
+    assert.equal(upNext(emom, 55, labels), 'C2B');
+    assert.equal(upNext(emom, 175, labels), 'Deadlift'); // minute 4 starts round 2
+    assert.equal(upNext(emom, 1255, labels), null); // last minute
+    assert.equal(upNext(every, 10, labels), 'Round 2');
+    assert.equal(upNext(ft, 10, labels), null);
+  });
+  it('finds a round\'s sets per movement', () => {
+    const sets = [...round(1, 'pull-up'), s('conventional-deadlift', 2)];
+    const r1 = roundSets(row(), sets, 1);
+    assert.deepEqual(
+      r1.map((x) => x?.exercise_slug),
+      ['conventional-deadlift', 'pull-up', 'calorie-row'],
+    );
+    assert.deepEqual(
+      roundSets(row(), sets, 2).map((x) => x?.exercise_slug),
+      ['conventional-deadlift', undefined, undefined],
+    );
   });
 });

@@ -139,6 +139,15 @@ export function nextRound<T extends LoggedLike>(row: Pick<Row, 'block' | 'key'>,
   return null;
 }
 
+/** A round's logged sets, one per movement (undefined where that movement isn't logged in the round). */
+export function roundSets<T extends LoggedLike>(row: Pick<Row, 'block' | 'key'>, sets: T[], round: number): (T | undefined)[] {
+  const mine = sets.filter((s) => s.slot === row.key && s.set_no === round);
+  return (row.block?.movements ?? []).map((m) => {
+    const ok = accepts(m);
+    return mine.filter((s) => ok.has(s.exercise_slug)).at(-1);
+  });
+}
+
 /** "3 @ 80% · 240 lb", "15 cal", "20 steps", "30 s", "10 × 50 lb", "Max cal". */
 export function targetLine(l: Level, load: (lb: number) => string): string {
   const unit = l.unit === 'cal' ? ' cal' : l.unit === 'steps' ? ' steps' : l.unit === 'seconds' ? ' s' : '';
@@ -189,6 +198,53 @@ export function intervalState(block: TimedBlock, elapsed: number): IntervalState
 export function blockSeconds(block: TimedBlock): number {
   if (block.kind === 'for_time' || !block.interval_seconds) return block.cap_seconds ?? 0;
   return block.rounds * block.interval_seconds * (block.kind === 'emom' ? block.movements.length : 1);
+}
+
+/** Seconds of "get ready" between pressing Start and the first interval. */
+export const LEAD_IN_SECONDS = 5;
+
+/**
+ * Rounds whose last interval has ended `elapsed` seconds in (EMOM and "every N:NN"; these are logged at
+ * their targets automatically). For-time rounds and circuits go at your own pace, so 0.
+ */
+export function roundsFinished(block: TimedBlock, elapsed: number): number {
+  if (block.kind === 'for_time' || block.kind === 'circuit' || !block.interval_seconds || elapsed <= 0) return 0;
+  const n = block.kind === 'emom' ? Math.max(1, block.movements.length) : 1;
+  const slots = Math.floor(elapsed / block.interval_seconds);
+  return Math.min(block.rounds, Math.floor(slots / n));
+}
+
+export type Cue = 'tick' | 'go' | 'done';
+
+/**
+ * The sound for whole second `t` of a block timer (negative during the lead-in): a tick at 3, 2 and 1 s
+ * before each interval change, "go" at the change, "done" at the end or the time cap.
+ */
+export function cueAt(block: TimedBlock, t: number): Cue | null {
+  if (block.kind === 'circuit') return null;
+  if (t < 0) return t >= -3 ? 'tick' : null;
+  if (t === 0) return 'go';
+  const total = blockSeconds(block);
+  if (total && t === total) return 'done';
+  if (total && t > total) return null;
+  const step = block.kind === 'for_time' || !block.interval_seconds ? total : block.interval_seconds;
+  if (!step) return null;
+  const into = t % step;
+  if (into === 0) return 'go';
+  return step - into <= 3 ? 'tick' : null;
+}
+
+/**
+ * What comes after the current interval, shown in its last 10 s: the next EMOM minute's movement,
+ * "Round 4" for "every N:NN" blocks, null at the end.
+ */
+export function upNext(block: TimedBlock, elapsed: number, labels: string[]): string | null {
+  if (block.kind === 'for_time' || block.kind === 'circuit' || !block.interval_seconds) return null;
+  const t = Math.max(0, Math.floor(elapsed));
+  const n = block.kind === 'emom' ? Math.max(1, block.movements.length) : 1;
+  const next = Math.floor(t / block.interval_seconds) + 1;
+  if (next >= block.rounds * n) return null;
+  return block.kind === 'emom' ? (labels[next % n] ?? null) : `Round ${next + 1}`;
 }
 
 /** The step to log by default: the one you're on, else the first. */

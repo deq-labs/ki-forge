@@ -454,6 +454,13 @@ function TrainingSettings() {
         checked={prefs.restEnabled}
         onPress={() => prefs.set({ restEnabled: !prefs.restEnabled })}
       />
+      <SettingRow
+        label="Timer beeps"
+        hint="3-2-1 before each interval and the end of rest; plays over music"
+        role="checkbox"
+        checked={prefs.cueSound}
+        onPress={() => prefs.set({ cueSound: !prefs.cueSound })}
+      />
       <View style={[styles.segWrap, { borderTopColor: colors.line }]}>
         <Segmented
           label="Rest length"
