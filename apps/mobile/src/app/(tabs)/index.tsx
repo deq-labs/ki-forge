@@ -263,13 +263,16 @@ function NextQuest({ week }: { week?: Week }) {
     );
   }
 
-  const open = week.sessions.filter((s) => !s.cleared);
+  // A day ended early (#81) is done for now: the next quest moves on.
+  const open = week.sessions.filter((s) => !s.cleared && !s.ended);
   const next =
     open.find((s) => s.required_for_full_week && s.date >= today) ?? open.find((s) => s.date >= today) ?? open[0];
   if (!next) {
     return (
       <Panel style={styles.quest}>
-        <KText variant="cardTitle">Week cleared. Every quest done.</KText>
+        <KText variant="cardTitle">
+          {week.sessions.some((s) => s.ended) ? 'Week done. Every quest cleared or ended.' : 'Week cleared. Every quest done.'}
+        </KText>
       </Panel>
     );
   }
@@ -320,12 +323,13 @@ function ThisWeek({ week }: { week?: Week }) {
         {days.map((d) => {
           const iso = isoDate(d);
           const cleared = week.sessions.some((s) => s.date === iso && s.cleared);
+          const ended = !cleared && week.sessions.some((s) => s.date === iso && s.ended);
           const isToday = iso === today;
           return (
             <View
               key={iso}
               style={styles.day}
-              accessibilityLabel={`${dayName(d)}${cleared ? ', cleared' : ''}${isToday ? ', today' : ''}`}>
+              accessibilityLabel={`${dayName(d)}${cleared ? ', cleared' : ended ? ', ended early' : ''}${isToday ? ', today' : ''}`}>
               {cleared ? (
                 <LinearGradient
                   colors={energyFill(theme)}
@@ -343,8 +347,13 @@ function ThisWeek({ week }: { week?: Week }) {
                       borderColor: isToday ? colors.volt : colors.line,
                       borderWidth: isToday ? 2 : 1,
                     },
-                  ]}
-                />
+                  ]}>
+                  {ended ? (
+                    <KText variant="bodyStrong" color="inkMuted">
+                      –
+                    </KText>
+                  ) : null}
+                </View>
               )}
               <KText variant="caption" color={isToday ? 'ink' : 'inkMuted'} style={isToday && styles.bold}>
                 {dayName(d)}

@@ -74,6 +74,16 @@ export function rowsFor(
   });
 }
 
+/**
+ * The day's rows as chosen (#81): a short day drops the rows whose role the program's short day skips
+ * (`short_day_roles` from the week). Rows are re-indexed so `index` stays their position on screen.
+ */
+export function rowsForDay(rows: Row[], shortRoles: string[], short: boolean): Row[] {
+  if (!short || !shortRoles.length) return rows;
+  const skip = new Set(shortRoles);
+  return rows.filter((r) => !r.role || !skip.has(r.role)).map((r, index) => ({ ...r, index }));
+}
+
 /** Done-style rows (conditioning, carries, holds) are logged as reps = 1 against rep_max = 1. */
 export function isDoneStyle(p: Pick<Prescription, 'rep_min' | 'rep_max'>): boolean {
   return p.rep_max === 1 && p.rep_min === 1;

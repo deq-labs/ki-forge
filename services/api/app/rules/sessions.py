@@ -90,6 +90,7 @@ def build_session(
     path: TrainingPath,
     *,
     garage_mode: bool = False,
+    short_day: bool = False,
 ) -> BuiltSession:
     # A whole-day garage twin replaces the template; its exercises are already garage-friendly, so the
     # per-exercise swaps below do not apply to it.
@@ -101,8 +102,12 @@ def build_session(
     garage_overrides: dict[int, str] = {}  # item index -> prescription-level garage swap
 
     # 1-4: template prescriptions, path conditioning, main lift scheme, extra sets.
+    # A deload drops some roles; so does the program's short day (#81), when asked for and offered.
+    skip = set(deload.skip_roles if deload else ())
+    if short_day and program.short_day:
+        skip.update(program.short_day.skip_roles)
     for i, pr in enumerate(template.prescriptions):
-        if deload and pr.role in deload.skip_roles:
+        if pr.role in skip:
             continue
         slug = path.conditioning_exercise if pr.exercise == PATH_CONDITIONING else pr.exercise
         sets, rep_min, rep_max = pr.sets, pr.rep_min, pr.rep_max

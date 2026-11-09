@@ -231,6 +231,8 @@ class WorkoutSession(Base):
     path_id: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("paths.id"))
     week: Mapped[int] = mapped_column(SmallInteger)
     garage_mode: Mapped[bool] = mapped_column(Boolean, server_default=text("false"))
+    # Done as the program's short day (migration 0009, #81): scored without its `short_day.skip_roles`.
+    short_day: Mapped[bool] = mapped_column(Boolean, server_default=text("false"))
     started_at: Mapped[dt.datetime] = mapped_column(TZ)
     completed_at: Mapped[dt.datetime | None] = mapped_column(TZ)
 

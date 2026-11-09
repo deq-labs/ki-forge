@@ -104,6 +104,11 @@ class DeloadRuleOut(Model):
     note: str | None = None
 
 
+class ShortDayOut(Model):
+    skip_roles: list[str]
+    note: str | None = None
+
+
 class PhaseModifiersOut(Model):
     main_lift_scheme: SetSchemeOut | None
     main_lift_rir: list[int] | None
@@ -193,6 +198,7 @@ class BlockProgramOut(Model):
     cycle_weeks: int
     repeats: bool
     one_rm_lifts: list[str]
+    short_day: ShortDayOut | None = None  # #81: the roles a short day drops
     phases: list[PhaseOut]
     session_templates: list[SessionTemplateOut]
 

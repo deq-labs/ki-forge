@@ -1958,6 +1958,14 @@
         "barbell-back-squat",
         "front-squat"
       ],
+      "short_day": {
+        "skip_roles": [
+          "finisher",
+          "core",
+          "x3"
+        ],
+        "note": "Short day: warm-up, the EMOM and the accessory. The finisher, core and X3 work are dropped, about 35–40 minutes. It still clears the day."
+      },
       "phases": [
         {
           "ord": 1,
